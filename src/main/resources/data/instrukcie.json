@@ -1,0 +1,65 @@
+{
+"type": {
+	"I": [
+                {"label": "op",      "bitSize": 6}, 
+		{"label": "rs",  "bitSize": 5},
+		{"label": "rt",  "bitSize": 5},
+		{"label": "imm", "bitSize": 16}
+            ],
+	"R": [{"label": "op", 	  "bitSize": 6}, 
+		  {"label": "rs", "bitSize": 5},
+		  {"label": "rt", "bitSize": 5},
+		  {"label": "rd", "bitSize": 5},
+		  {"label": "shamt", "bitSize": 5},
+		  {"label": "func",  "bitSize": 6}]
+},
+
+"control": {
+	"0":  {"AluOp": 0, "RegDest": 1, "AluSrc": 0, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"4":  {"AluOp": 2, "RegDest": 0, "AluSrc": 0, "MemRead": 0, "MemWrite": 0, "Branch": 1, "MemToReg": 0, "RegWrite": 0},
+	"5":  {"AluOp": 11, "RegDest": 0, "AluSrc": 0, "MemRead": 0, "MemWrite": 0, "Branch": 1, "MemToReg": 0, "RegWrite": 0},
+	"8":  {"AluOp": 1, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"9":  {"AluOp": 2, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"12": {"AluOp": 3, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"13": {"AluOp": 4, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"14": {"AluOp": 6, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"35": {"AluOp": 1, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"36": {"AluOp": 1, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"37": {"AluOp": 15, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
+	"43": {"AluOp": 1, "RegDest": 0, "AluSrc": 1, "MemRead": 0, "MemWrite": 1, "Branch": 0, "MemToReg": 1, "RegWrite": 0}
+},
+
+    "alu" :{
+            "funcToOperation": [
+                    {"func": 32, "operation": 1},
+                    {"func": 36, "operation": 3},
+                    {"func": 26, "operation": 9},
+                    {"func": 27, "operation": 10},
+                    {"func": 24, "operation": 7},
+                    {"func": 25, "operation": 8},
+                    {"func": 0, "operation": 0},
+                    {"func": 39, "operation": 5},
+                    {"func": 37, "operation": 4},
+                    {"func": 1, "operation": 13},
+                    {"func": 2, "operation": 14},
+                    {"func": 34, "operation": 2},
+                    {"func": 38, "operation": 6}
+            ],
+            "operations": {
+                    "1":  "add",
+                    "2":  "sub",
+                    "3":  "and",
+                    "4":  "or",
+                    "5":  "nor",
+                    "6":  "xor",
+                    "7":  "mul",
+                    "8":  "mulu",
+                    "9":  "div",
+                    "10": "divu",
+                    "11": "bneq",
+                    "13": "sllv",
+                    "14": "srlv",
+                    "15": "lui"
+            }
+    }
+}
