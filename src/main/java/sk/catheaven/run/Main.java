@@ -45,9 +45,12 @@ public class Main {
 		
 		// testing
 		iTypes.forEach(iType -> {
+			System.out.println("" + iType.getType());
+			System.out.println("Fields: " );
 			iType.getFields().forEach(field -> {
 				System.out.println("" + field.getLabel() + " of size " + field.getBitSize() + "b");
 			});
+			System.out.println();
 		});
     }
 	
