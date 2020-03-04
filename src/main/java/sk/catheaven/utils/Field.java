@@ -12,8 +12,8 @@ import java.util.List;
  * @author catlord
  */
 public class Field {
-	private String label;
-	private int bitSize;
+	private final String label;
+	private final int bitSize;
 	
 	public Field(String label, int bitSize){
 		this.label = label;
@@ -33,7 +33,4 @@ public class Field {
 	public int getBitSize() {
 		return bitSize;
 	}
-	
-	
-	
 }

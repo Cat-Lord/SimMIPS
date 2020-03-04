@@ -1,18 +1,19 @@
 {
-"type": {
+    "types": {
 	"I": [
-                {"label": "op",      "bitSize": 6}, 
-		{"label": "rs",  "bitSize": 5},
-		{"label": "rt",  "bitSize": 5},
+                {"label": "op", "bitSize": 6}, 
+		{"label": "rs", "bitSize": 5},
+		{"label": "rt", "bitSize": 5},
 		{"label": "imm", "bitSize": 16}
-            ],
-	"R": [{"label": "op", 	  "bitSize": 6}, 
-		  {"label": "rs", "bitSize": 5},
-		  {"label": "rt", "bitSize": 5},
-		  {"label": "rd", "bitSize": 5},
-		  {"label": "shamt", "bitSize": 5},
-		  {"label": "func",  "bitSize": 6}]
-},
+        ],
+	"R": [{"label": "op", "bitSize": 6}, 
+                {"label": "rs", "bitSize": 5},
+		{"label": "rt", "bitSize": 5},
+		{"label": "rd", "bitSize": 5},
+		{"label": "shamt", "bitSize": 5},
+		{"label": "func",  "bitSize": 6}
+        ]
+    },
 
 "control": {
 	"0":  {"AluOp": 0, "RegDest": 1, "AluSrc": 0, "MemRead": 0, "MemWrite": 0, "Branch": 0, "MemToReg": 1, "RegWrite": 1},
