@@ -33,8 +33,6 @@ public class InstructionType {
 	 * @param json Input file as JSON object
 	 */
 	private void parseFields(JSONArray jsonFields){
-		System.out.println("Parsing for " + this.type);
-		System.out.println("Json array of length: " + jsonFields.length());
 		for(int i = 0; i < jsonFields.length(); i++){
 			JSONObject currField = jsonFields.getJSONObject(i);
 			this.fields.add(new Field(currField.getString("label"), currField.getInt("bitSize")));
