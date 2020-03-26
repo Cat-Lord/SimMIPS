@@ -22,8 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import org.json.JSONObject;
 
-import sk.catheaven.essentials.Data;
-import sk.catheaven.essentials.InstructionType;
+import sk.catheaven.instructionEssentials.Data;
+import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.instructionEssentials.InstructionType;
 
 /**
  *
@@ -52,6 +53,43 @@ public class Main {
 			});
 			System.out.println();
 		});
+		
+		
+		//	have: iTypes ============================================================================================================================
+		
+		// instructions
+		List<Instruction> instructions = new ArrayList<>();
+		JSONObject is = inFile.getJSONObject("instructions");
+
+		Iterator<String> mnemoIter = is.keys();		// current instruction mnemo
+		while(mnemoIter.hasNext()){
+			String mnemo = mnemoIter.next();
+			JSONObject currInstructionJson = is.getJSONObject(mnemo);
+			String iType = currInstructionJson.getString("type");
+			
+			// find specified type in instruction types list
+			for(int j = 0; j < iTypes.size(); j++){
+				InstructionType currIType = iTypes.get(j);
+				if(currIType.getType().equals(iType)){
+					instructions.add(new Instruction(mnemo, currInstructionJson, currIType));
+					break;
+				}
+			};
+		}
+		 
+		System.out.println("Parsed instructions (" + instructions.size() + ")");
+		instructions.forEach((Instruction i) -> {
+			System.out.print(i.getMnemo() + " -- ");
+			System.out.print("Args: [");
+			List<Instruction.ArgumentType> argTypes = i.getArguments();
+			argTypes.forEach((Instruction.ArgumentType argType) -> {
+				System.out.print(argType.toString() + ", ");
+			});
+			
+			System.out.print("]\n");
+			System.out.println();
+		});
+		
     }
 	
 	private static String readFile(String fileName) throws IOException, URISyntaxException{

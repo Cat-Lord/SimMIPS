@@ -1,0 +1,23 @@
+Todo:
+    - calculation of offset (beq/bne): 
+        current PC address (address of beq/bne)
+        +   4
+        +   sign_extended offset << 2
+
+        (offset is the address of target instruction)
+
+    - QUESTION: 
+        - how to represent arguments of lw/sw ?     Possible answer: argument of type "DATA" can be made of "base(reg)" arguments and parsing will be done this way. Possible.
+        - similarly beq labels ?                    Possible answer: define type "LABEL". Don't allow other types of 'adressing'
+        - how to (if even) represent NOP ?          For now no. "nop":  {"type": "R",                                   "fields": {"op": 0,  "rs":  "0", "rt":  "0", "rd":  "0", "shamt": 0, "func": 0 }, "desc": "Empty operation"},
+Done:
+
+
+
+
+
+-------------
+Todo: 
+    - check if parsing different types of argument works. Possible to write junit tests for this part.
+    - rework MAIN, because argument types loading has changed.
+    

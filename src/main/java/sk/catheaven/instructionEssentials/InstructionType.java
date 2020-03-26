@@ -3,14 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.essentials;
+package sk.catheaven.instructionEssentials;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javafx.scene.SnapshotResult;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.utils.Field;
 
@@ -19,8 +16,8 @@ import sk.catheaven.utils.Field;
  * @author catlord
  */
 public class InstructionType {
-	private final String type;		// I, R, ...
-	private List<Field> fields;
+	private final String type;			// I, R, ...
+	private final List<Field> fields;
 	
 	public InstructionType(String type, JSONArray fields){
 		this.type = type;
