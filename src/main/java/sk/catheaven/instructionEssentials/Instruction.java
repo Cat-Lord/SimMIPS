@@ -7,9 +7,12 @@ package sk.catheaven.instructionEssentials;
 
 import java.lang.System.Logger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.utils.Field;
 import sk.catheaven.utils.argumentTypes.ArgumentType;
@@ -27,27 +30,33 @@ public class Instruction {
     private final String mnemo;
 	private final InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final List<ArgumentType> arguments;
+	private final Map<String, String> fieldValues;	// mapping each instruction field to a value (constant, argument or offset(base))
 	private String description;
     
     public Instruction(String mnemo, JSONObject json, InstructionType type){
 		Instruction.logger = System.getLogger(this.getClass().getName());
 		arguments = new ArrayList<>();
+		fieldValues = new HashMap<>();
 		
 		this.mnemo = mnemo;
 		this.type = type;
 		this.description = "";
-		parseInstruction(json, type);
+		parseInstruction(json);
 	}
     
-	private void parseInstruction(JSONObject json, InstructionType type){
-		parseArgs(json);
-		//parseFields(json, type);		// TODO parse fields to reconstruct data from text ( `add r1,r1,r2` -> `0000001001010...` )
+	/**
+	 * 
+	 * @param json
+	 * @param type 
+	 * @throws JSONException In case we dont find fields, we cant create this instruction
+	 */
+	private void parseInstruction(JSONObject json) throws JSONException {
+		parseArgs(json.getJSONArray("args"));
+		parseFields(json.getJSONObject("fields"));		// TODO parse instruction fields
 		this.description = json.getString("desc");
 	}
 	
-	private void parseArgs(JSONObject json){
-		JSONArray jargs = json.getJSONArray("args");	// json array arguments
-		
+	private void parseArgs(JSONArray jargs){
 		Iterator<Object> jiter = jargs.iterator();
 		while(jiter.hasNext()){
 			String arg = (String) jiter.next();
@@ -62,13 +71,19 @@ public class Instruction {
 		}
 	}
 
-	private void parseFields(JSONObject json, InstructionType type){
+	/**
+	 * Finds all fields defined in instruction type in fields and stores it's value in a map.
+	 * Mapping is done like this: Field --> FieldValue.
+	 * @param json Field json object. It should be possible to search for specific fields in this jsonobject.
+	 */
+	private void parseFields(JSONObject json){
 		List<Field> typeArgs = type.getFields();
 		
 		for(Field f : typeArgs){
-			// TODO resolve arguments representation
+			String fieldVal = json.getString(f.getLabel());		// example: get me value of "rs" -> returns "#2"
+			fieldValues.put(f.getLabel(), fieldVal);
 		}
-		
+
 	}
 	
 	public String getMnemo(){
@@ -81,6 +96,10 @@ public class Instruction {
 	
 	public List<ArgumentType> getArguments(){
 		return arguments;
+	}
+	
+	public String getFieldValule(String fieldName){
+		return fieldValues.get(fieldName);
 	}
 	
 	public String getDescription(){

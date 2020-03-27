@@ -32,7 +32,6 @@ public class DataArgumentType extends ArgumentType {
 		if( ! matcher.matches())
 			throw new Exception("Invalid Data Format");
 		
-		
 		// TODO: check if this works
 		String argParts[] = arg.split("(");
 		int offInt  = Integer.parseInt(argParts[0]);											// get offset

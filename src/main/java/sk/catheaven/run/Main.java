@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
+import sk.catheaven.utils.Field;
 import sk.catheaven.utils.argumentTypes.ArgumentType;
 
 /**
@@ -47,7 +48,7 @@ public class Main {
 		
 		// testing
 		iTypes.forEach(iType -> {
-			System.out.println("" + iType.getType());
+			System.out.println("" + iType.getTypeLabel());
 			System.out.println("Fields: " );
 			iType.getFields().forEach(field -> {
 				System.out.println("" + field.getLabel() + " of size " + field.getBitSize() + "b");
@@ -71,26 +72,36 @@ public class Main {
 			// find specified type in instruction types list
 			for(int j = 0; j < iTypes.size(); j++){
 				InstructionType currIType = iTypes.get(j);
-				if(currIType.getType().equals(iType)){
+				if(currIType.getTypeLabel().equals(iType)){
 					instructions.add(new Instruction(mnemo, currInstructionJson, currIType));
 					break;
 				}
 			}
 		}
-		 
+		
+		// arguments
 		System.out.println("Parsed instructions (" + instructions.size() + ")");
 		instructions.forEach((Instruction i) -> {
 			System.out.print(i.getMnemo() + " -- ");
+			
+			// print arguments (REG, INT, ... )
 			System.out.print("Args: [");
 			List<ArgumentType> argTypes = i.getArguments();
-			argTypes.forEach((ArgumentType argType) -> {
-				System.out.print(argType.toString() + ", ");
-			});
-			
-			System.out.print("]\n");
+			for(int ati = 0; ati < argTypes.size()-1; ati++)
+				System.out.print(argTypes.get(ati).toString() + ", ");
+			System.out.print(argTypes.get(argTypes.size()-1).toString() + "]\n");
+
+			// print each field mapping
+			List<Field> fields = i.getInstructionType().getFields();
+			for(Field f : fields){
+				if(i.getFieldValule(f.getLabel()) == null)
+					System.out.println(f.getLabel() + ": ???");
+				else
+					System.out.println(f.getLabel() + ": " + i.getFieldValule(f.getLabel()));
+			}
 			System.out.println();
 		});
-		
+
     }
 	
 	private static String readFile(String fileName) throws IOException, URISyntaxException{

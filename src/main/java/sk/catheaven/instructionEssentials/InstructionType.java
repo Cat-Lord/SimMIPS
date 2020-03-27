@@ -16,11 +16,11 @@ import sk.catheaven.utils.Field;
  * @author catlord
  */
 public class InstructionType {
-	private final String type;			// I, R, ...
+	private final String typeLabel;			// I, R, ...
 	private final List<Field> fields;
 	
 	public InstructionType(String type, JSONArray fields){
-		this.type = type;
+		this.typeLabel = type;
 		this.fields = new ArrayList<>();
 		parseFields(fields);
 	}
@@ -37,10 +37,10 @@ public class InstructionType {
 	}
 
 	/**
-	 * @return the type
+	 * @return the typeLabel
 	 */
-	public String getType() {
-		return type;
+	public String getTypeLabel() {
+		return typeLabel;
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class InstructionType {
 	/**
 	 * Iterates through list of fields and returns field specified by label
 	 * @param fieldLabel A field to return.
-	 * @return specific field from this instruction type.
+	 * @return specific field from this instruction typeLabel.
 	 */
 	public Field getField(String fieldLabel){
 		for(Field f : fields){
