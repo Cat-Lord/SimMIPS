@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hardware;
+package sk.catheaven.hardware;
 
 /**
  *
  * @author catlord
  */
-public class RegBank {
+public class ConstAdder extends Component {
+
+	public ConstAdder(String label) {
+		super(label);
+	}
 	
 }

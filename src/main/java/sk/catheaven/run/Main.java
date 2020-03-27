@@ -5,6 +5,7 @@
  */
 package sk.catheaven.run;
 
+import sk.catheaven.hardware.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import sk.catheaven.instructionEssentials.Data;
@@ -20,6 +23,7 @@ import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
 import sk.catheaven.utils.Field;
 import sk.catheaven.utils.argumentTypes.ArgumentType;
+import sk.catheaven.hardware.*;
 
 /**
  *
@@ -31,11 +35,17 @@ public class Main {
 		parseCPU(new JSONObject(readFile("sk/catheaven/data/cpu.json")));
     }
 	
-	
-	public static void parseCPU(JSONObject inFile) {
-		
+	// CPU
+	public static void parseCPU(JSONObject inFile) throws JSONException {
+		List<Component> components = new ArrayList<>();
+		JSONArray json = inFile.getJSONArray("components");
+		json.forEach((Object jsonComponent) -> {
+			JSONObject jComponent = ((JSONObject)jsonComponent);
+			// TODO: how to do it more effectively ?
+		});
 	}
 	
+	// INSTRUCTION SET
 	public static List<Instruction> parseLayout(JSONObject inFile) throws IOException, URISyntaxException {
 		JSONObject types = inFile.getJSONObject("types");
 		List<InstructionType> iTypes = new ArrayList<>();

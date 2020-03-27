@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hardware;
-
-import org.json.JSONObject;
+package sk.catheaven.hardware;
 
 /**
- * Control Unit.
+ *
  * @author catlord
  */
-public class ControlUnit {
-	public ControlUnit(JSONObject json){
-		
+public class PC extends Component {
+
+	public PC(String label) {
+		super(label);
 	}
+	
 }

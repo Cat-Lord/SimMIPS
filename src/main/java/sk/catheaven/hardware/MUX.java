@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hardware;
+package sk.catheaven.hardware;
 
 /**
  *
  * @author catlord
  */
-public class ConstMux {
+public class MUX extends Component {
+
+	public MUX(String label) {
+		super(label);
+	}
 	
 }
