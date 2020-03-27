@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
+import sk.catheaven.utils.argumentTypes.ArgumentType;
 
 /**
  *
@@ -74,15 +75,15 @@ public class Main {
 					instructions.add(new Instruction(mnemo, currInstructionJson, currIType));
 					break;
 				}
-			};
+			}
 		}
 		 
 		System.out.println("Parsed instructions (" + instructions.size() + ")");
 		instructions.forEach((Instruction i) -> {
 			System.out.print(i.getMnemo() + " -- ");
 			System.out.print("Args: [");
-			List<Instruction.ArgumentType> argTypes = i.getArguments();
-			argTypes.forEach((Instruction.ArgumentType argType) -> {
+			List<ArgumentType> argTypes = i.getArguments();
+			argTypes.forEach((ArgumentType argType) -> {
 				System.out.print(argType.toString() + ", ");
 			});
 			

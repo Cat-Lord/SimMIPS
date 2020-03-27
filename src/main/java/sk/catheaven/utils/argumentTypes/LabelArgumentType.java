@@ -23,7 +23,7 @@ public class LabelArgumentType extends ArgumentType {
 	/**
 	 * Parses argument to detect possible label malformation.
 	 * @param arg Represent instruction argument
-	 * @throws exceptions.InvalidLabelSyntax
+	 * @throws Exception
 	 */
 	@Override
 	public void parse(String arg) throws Exception {
@@ -35,5 +35,9 @@ public class LabelArgumentType extends ArgumentType {
 	
 	public Data getData(){
 		return null;
+	}
+	
+	public String toString(){
+		return "Label";
 	}
 }

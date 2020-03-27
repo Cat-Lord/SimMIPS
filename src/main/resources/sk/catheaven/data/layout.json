@@ -17,27 +17,27 @@
     },
 
     "instructions": {
-        "add":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 32}, "desc": "$t1 = $t2 + $t3"},
-        "and":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 36}, "desc": "$t1 = $t2 & $t3"},
-        "div":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 26}, "desc": "$t1 = t2 / t3"},
-        "divu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 27}, "desc": "$t1 = t2 / t3 (unsigned)"},
-        "mul":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 24}, "desc": "$t1 = t2 * t3"},
-        "mulu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 25}, "desc": "$t1 = t2 * t3 (unsigned)"},
-        "nor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 39}, "desc": "$t1 = ~($t2 | $t3)"},
-        "or":   {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 37}, "desc": "$t1 = $t2 | $t3"},
-        "sllv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 1 }, "desc": "$t1 = $t2 << $t3"},
-        "srlv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 2 }, "desc": "$t1 = $t2 >> $t3"},
-        "sub":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": 0, "func": 34}, "desc": "$t1 = $t2 - $t3"},
-        "xor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": 0,  "rs": "#3", "rt": "#3", "rd": "#1", "shamt": 0, "func": 38}, "desc": "$t1 = $t2 ^ $t3"},
+        "add":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "32"}, "desc": "$t1 = $t2 + $t3"},
+        "and":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "36"}, "desc": "$t1 = $t2 & $t3"},
+        "div":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "26"}, "desc": "$t1 = t2 / t3"},
+        "divu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "27"}, "desc": "$t1 = t2 / t3 (unsigned)"},
+        "mul":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "24"}, "desc": "$t1 = t2 * t3"},
+        "mulu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "25"}, "desc": "$t1 = t2 * t3 (unsigned)"},
+        "nor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "39"}, "desc": "$t1 = ~($t2 | $t3)"},
+        "or":   {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "37"}, "desc": "$t1 = $t2 | $t3"},
+        "sllv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "1" }, "desc": "$t1 = $t2 << $t3"},
+        "srlv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "2" }, "desc": "$t1 = $t2 >> $t3"},
+        "sub":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "34"}, "desc": "$t1 = $t2 - $t3"},
+        "xor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#3", "rt": "#3", "rd": "#1", "shamt": "0", "func": "38"}, "desc": "$t1 = $t2 ^ $t3"},
         
-        "addi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": 8,  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 + 23"},
-        "andi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": 12, "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 & 53"},
-        "bneq": {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": 5,  "rs": "#1", "rt": "#2", "imm": "#3"}, "desc": "PC += ($t1 != $t2) ? (offset * 4 + 4) : 4"},
-        "ori":  {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": 13, "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 | 66"},
-        "xori": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": 14, "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 ^ 641"},
+        "addi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "8",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 + 23"},
+        "andi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "12", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 & 53"},
+        "bneq": {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "5",  "rs": "#1", "rt": "#2", "imm": "#3"}, "desc": "PC += ($t1 != $t2) ? (offset * 4 + 4) : 4"},
+        "ori":  {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "13", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 | 66"},
+        "xori": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "14", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 ^ 641"},
         
-        "lw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": 35, "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "$t1 = MEM[base + $t2]"},
-        "sw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": 43, "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "MEM[base + $t2] = $t1"}
+        "lw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "35", "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "$t1 = MEM[base + $t2]"},
+        "sw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "43", "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "MEM[base + $t2] = $t1"}
     },
 
     "control": {

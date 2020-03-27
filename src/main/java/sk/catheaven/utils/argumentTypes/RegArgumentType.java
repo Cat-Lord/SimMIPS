@@ -31,4 +31,8 @@ public class RegArgumentType extends ArgumentType {
 	public Data getData(){
 		return null;
 	}
+	
+	public String toString(){
+		return "Reg";
+	}
 }

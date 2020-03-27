@@ -24,9 +24,8 @@ import sk.catheaven.utils.argumentTypes.RegArgumentType;
  */
 public class Instruction {
 	private static Logger logger;
-    private Data data;                         // representation in machine code (needed ?)
     private final String mnemo;
-	private final InstructionType type;
+	private final InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final List<ArgumentType> arguments;
 	private String description;
     

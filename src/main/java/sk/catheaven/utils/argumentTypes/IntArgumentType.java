@@ -28,4 +28,8 @@ public class IntArgumentType extends ArgumentType {
 	public Data getData(){
 		return data;
 	}
+	
+	public String toString(){
+		return "Int";
+	}
 }
