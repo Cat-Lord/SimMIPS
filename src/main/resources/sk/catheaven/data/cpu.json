@@ -1,0 +1,28 @@
+{
+    "devices": {
+        "BRANCH_MUX":   {"type": "MUX", "desc": "Chooses from next address or calculated address in case of branching." },
+        "PC":           {"type": "PC", "desc": "Adds 4 to the value of input A." },
+        "CONST_ADDER":  {"type": "ConstAdder", "desc": "Adds 4 to the value of input A." },
+        "I_MEM":        {"type": "InstructionMemory" },
+        "IF_ID":        {"type": "LatchRegister", "desc": "Latch register between Fetch and Decode phase" },
+        
+        "CU":           {"type": "ControlUnit" },
+        "CU_MUX":       {"type": "ConstMUX", "desc": "Activating this MUX results in value of constant output value." }, 
+        "REG_BANK":     {"type": "RegBank" },
+        "SIGN_EXT":     {"type": "SignExt" },
+        "ID_EX":        {"type": "LatchRegister", "desc": "Latch register between Decode and Execute phase" },
+        
+        "EX_CU_MUX":    {"type": "ConstMUX", "desc": "MUX that can zero out signals from control unit in EX phase." },
+        "DEST_REG_MUX": {"type": "MUX", "desc": "Chooses destination register (either rd or rt value from instruction)." },
+        "ADDER":        {"type": "Adder" },
+        "ALU":          {"type": "ALU" },
+        "ALUSrc":       {"type": "MUX", "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." },
+        "EX_MEM":       {"type": "LatchRegister", "desc": "Latch register between Execute and Memory phase" },
+        
+        "BRANCH_AND":   {"type": "AND" },
+        "DATA_MEM":     {"type": "DataMemory"},
+        
+        "MEM_WB":       {"type": "LatchRegister" , "desc": "Latch register between Memory and WriteBack phase"},
+        "WB_MUX":       {"type": "MUX", "desc" : "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle." }
+    }
+}

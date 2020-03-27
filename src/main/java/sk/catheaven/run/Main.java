@@ -5,17 +5,10 @@
  */
 package sk.catheaven.run;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,10 +26,17 @@ import sk.catheaven.utils.argumentTypes.ArgumentType;
  * @author catlord
  */
 public class Main {
-    public static void main(String[] args) throws IOException, URISyntaxException{
+    public static void main(String[] args) throws IOException, URISyntaxException {
+		List<Instruction> instructions = parseLayout(new JSONObject(readFile("sk/catheaven/data/layout.json")));
+		parseCPU(new JSONObject(readFile("sk/catheaven/data/cpu.json")));
+    }
+	
+	
+	public static void parseCPU(JSONObject inFile) {
 		
-		// Test: Parsing input file 
-		JSONObject inFile = new JSONObject(readFile("sk/catheaven/data/layout.json"));
+	}
+	
+	public static List<Instruction> parseLayout(JSONObject inFile) throws IOException, URISyntaxException {
 		JSONObject types = inFile.getJSONObject("types");
 		List<InstructionType> iTypes = new ArrayList<>();
 		
@@ -99,10 +99,13 @@ public class Main {
 				else
 					System.out.println(f.getLabel() + ": " + i.getFieldValule(f.getLabel()));
 			}
+			
+			System.out.println("Description: " + i.getDescription());
 			System.out.println();
 		});
-
-    }
+		
+		return instructions;
+	}
 	
 	private static String readFile(String fileName) throws IOException, URISyntaxException{
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
