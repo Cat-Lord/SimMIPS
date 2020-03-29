@@ -49,13 +49,9 @@ public class Data {
     /**
      * Returns data appropriately adjusted by the mask.
      * @return data
-     * 
-     * TODO: Debug mask creation
-     * 
      */
     public int getData(){
-        //return (data & mask);
-        return data;
+        return (data & mask);
     }
     
     /**
@@ -75,18 +71,22 @@ public class Data {
         String dataString = Integer.toBinaryString(getData());
         String output = "";
         int index = 1;
-        
+		
         // add necessary number of one's
-        for(int i = 0; i < dataString.length(); i++, index++){
-            output += "1";
-            if(index % 4 == 0)
+        for(int i = 0; i < bitSize - dataString.length(); i++, index++){
+			output += "0";
+            if((bitSize - index) % 4 == 0)
                 output += " ";
         }
         
         // append zero's
-        for(int i = 0; i < MAX_BIT_SIZE - dataString.length(); i++, index++){
-            output += "0";
-            if(index % 4 == 0)
+        for(int i = 0; i < dataString.length(); i++, index++){
+			if(dataString.charAt(i) == '0')						// avoids adding one for binary string "0"
+				output += "0";
+			else
+				output += "1";
+            
+            if((bitSize - index) % 4 == 0  &&  i < (dataString.length() -1))
                 output += " ";
         }
         

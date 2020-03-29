@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class DataMemory extends Component {
 
-	public DataMemory(String label) {
+	public DataMemory(String label, JSONObject json) {
 		super(label);
 	}
 	

@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class RegBank extends Component {
 
-	public RegBank(String label) {
+	public RegBank(String label, JSONObject json) {
 		super(label);
 	}
 	

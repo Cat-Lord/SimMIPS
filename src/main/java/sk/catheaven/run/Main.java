@@ -38,11 +38,35 @@ public class Main {
 	// CPU
 	public static void parseCPU(JSONObject inFile) throws JSONException {
 		List<Component> components = new ArrayList<>();
-		JSONArray json = inFile.getJSONArray("components");
-		json.forEach((Object jsonComponent) -> {
-			JSONObject jComponent = ((JSONObject)jsonComponent);
-			// TODO: how to do it more effectively ?
-		});
+		
+		Iterator<String> componentIter = inFile.keys();
+		while(componentIter.hasNext()){
+			String label = componentIter.next();
+			JSONObject componentJO = inFile.getJSONObject(label);
+			String type = componentJO.getString("type");
+			
+			switch(type.toLowerCase()){
+				case "mux": components.add(new MUX(label, componentJO)); break;
+				case "pc": components.add(new PC(label, componentJO)); break;
+				case "constadder": components.add(new ConstAdder(label, componentJO)); break;
+				case "instructionmemory": components.add(new InstructionMemory(label, componentJO)); break;
+				case "latchregister": components.add(new LatchRegister(label, componentJO)); break;
+				
+				case "controlunit": components.add(new ControlUnit(label, componentJO)); break;
+				case "constmux": components.add(new ConstMUX(label, componentJO)); break;
+				case "regbank": components.add(new RegBank(label, componentJO)); break;
+				case "signext": components.add(new SignExtend(label, componentJO)); break;
+				
+				case "adder": components.add(new Adder(label, componentJO)); break;
+				case "alu": components.add(new ALU(label, componentJO)); break;
+				
+				case "and": components.add(new AND(label, componentJO)); break;
+				case "datamemory": components.add(new DataMemory(label, componentJO)); break;
+				
+				default: System.err.println("Unknown Type: " + type); break;
+			}
+			
+		}
 	}
 	
 	// INSTRUCTION SET

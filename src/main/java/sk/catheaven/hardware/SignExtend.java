@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class SignExtend extends Component {
 
-	public SignExtend(String label) {
+	public SignExtend(String label, JSONObject json) {
 		super(label);
 	}
 	

@@ -21,4 +21,9 @@ Done:
 
 
 Notes:
-    - there is a question: how to represent constant values in fields ? Answer: Just represent constant values as strings and everything that isn't a constant begins with "#"
+    - there is a question: how to represent constant values in fields ? Answer: Just represent constant values as strings and everything that isn't a constant begins with "#" 
+
+
+-------------
+Todo: 
+    - Test data functionality. If a number higher than number of bits of that data object gets properly cut by the mask.

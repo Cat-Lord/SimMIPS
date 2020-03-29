@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class ConstAdder extends Component {
 
-	public ConstAdder(String label) {
+	public ConstAdder(String label, JSONObject json) {
 		super(label);
 	}
 	

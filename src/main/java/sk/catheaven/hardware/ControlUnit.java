@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class ControlUnit extends Component {
 
-	public ControlUnit(String label) {
+	public ControlUnit(String label, JSONObject json) {
 		super(label);
 	}
 	

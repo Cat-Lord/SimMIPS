@@ -6,3 +6,5 @@
 
 - How to effectively represent different components of CPU loaded from json ? Like... If I had 50 cpu components, I wouldnt want to write 50 different cases of their creation. 
   Because each component requires different parameters... How ?
+
+- How to represent numbers ? Negative numbers ? How can I know that a 5-bit number is signed or not ? How can i get the biggest value from this 5-bit number without thinking its negative ?

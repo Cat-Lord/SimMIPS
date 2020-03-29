@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class ConstMUX extends Component {
 
-	public ConstMUX(String label) {
+	public ConstMUX(String label, JSONObject json) {
 		super(label);
 	}
 	

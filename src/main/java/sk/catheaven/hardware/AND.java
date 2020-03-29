@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class AND extends Component {
 
-	public AND(String label) {
+	public AND(String label, JSONObject json) {
 		super(label);
 	}
 	

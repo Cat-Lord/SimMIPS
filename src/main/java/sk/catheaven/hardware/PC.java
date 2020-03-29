@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class PC extends Component {
 
-	public PC(String label) {
+	public PC(String label, JSONObject json) {
 		super(label);
 	}
 	

@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class MUX extends Component {
 
-	public MUX(String label) {
+	public MUX(String label, JSONObject json) {
 		super(label);
 	}
 	

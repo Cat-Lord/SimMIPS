@@ -5,13 +5,15 @@
  */
 package sk.catheaven.hardware;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author catlord
  */
 public class LatchRegister extends Component {
 
-	public LatchRegister(String label) {
+	public LatchRegister(String label, JSONObject json) {
 		super(label);
 	}
 	
