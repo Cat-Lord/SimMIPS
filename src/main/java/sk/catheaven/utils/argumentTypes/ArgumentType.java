@@ -19,9 +19,10 @@ import sk.catheaven.instructionEssentials.Data;
 public abstract class ArgumentType {
 	protected static Pattern pattern;
 	protected final static char REG_SYMBOL = 'r';		// defines character that represent symbol for register
-	protected final static String LABEL_REGEX = "[a-zA-Z]\\w*";				// regex for filltering correct labels
-	protected final static String REG_REGEX = REG_SYMBOL + "\\d";			// regex for filltering registers
-	protected final static String DATA_REGEX = "\\d*(" + REG_REGEX + ")";	// regex for filltering data formats
+	
+	protected final static String LABEL_REGEX = "[a-zA-Z]\\w*";					// regex for filltering correct labels
+	protected final static String REG_REGEX = REG_SYMBOL + "\\d+";				// regex for filltering registers
+	protected final static String DATA_REGEX = "\\d+\\(r\\d+\\)";	//"\\d+\\((" + REG_REGEX + ")\\)";	// regex for filltering data formats
 	protected Data data;						// if there are no errors in arguments syntax, here will be the content
 	
 	protected ArgumentType(){

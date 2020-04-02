@@ -14,11 +14,19 @@ public class Data {
     private int mask;
     private int data;
     private int bitSize;
-    
+	
+    /**
+	 * Default constructor sets data to maximal possible size.
+	 */
     public Data(){
         this(32);
     }
     
+	/**
+	 * User specified size of data. Error correction modifies number either to lowest possible
+	 * value of 1 bit or to highest possible value set by <b>MAX_BIT_SIZE</b>.
+	 * @param bitSize 
+	 */
     public Data(int bitSize){
         // need to be careful when checking constraints
         if(bitSize > MAX_BIT_SIZE)
@@ -54,6 +62,14 @@ public class Data {
         return (data & mask);
     }
     
+	/**
+	 * Returns data without mask adjustment.
+	 * @return data
+	 */
+	public int getDataUnmasked(){
+		return data;
+	}
+	
     /**
      * Returns mask. Used for debugging purposes.
      * @return mask

@@ -28,17 +28,18 @@ public class DataArgumentType extends ArgumentType {
 	
 	public void parse(String arg) throws Exception {
 		pattern = Pattern.compile(DATA_REGEX);
-		Matcher matcher = pattern.matcher(arg);
-		if( ! matcher.matches())
+		Matcher matcher = pattern.matcher(arg.toLowerCase());
+		if( ! matcher.matches() )
 			throw new Exception("Invalid Data Format");
 		
+		/*
 		// TODO: check if this works
 		String argParts[] = arg.split("(");
 		int offInt  = Integer.parseInt(argParts[0]);											// get offset
 		int baseInt = Integer.parseInt(argParts[1].substring(0, argParts[1].length()-1));		// cut the last ')' character
 		
 		offset.setData(offInt);
-		base.setData(baseInt);
+		base.setData(baseInt);*/
 	}
 	
 	public Data getData(){

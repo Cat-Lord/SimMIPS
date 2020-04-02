@@ -23,8 +23,8 @@ public class RegArgumentType extends ArgumentType {
 	
 	public void parse(String arg) throws Exception {
 		pattern = Pattern.compile(REG_REGEX);
-		Matcher matcher = pattern.matcher(arg);
-		if( ! matcher.matches())
+		Matcher matcher = pattern.matcher(arg.toLowerCase());
+		if( ! matcher.matches() )
 			throw new Exception("Invalid Register Specified");
 	}
 	

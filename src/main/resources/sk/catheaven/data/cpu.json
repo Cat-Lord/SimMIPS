@@ -1,7 +1,25 @@
 {
-    "BRANCH_MUX"  :{ "type": "MUX", "desc": "Chooses from next address or calculated address in case of branching." },
-    "PC"          :{ "type": "PC", "desc": "Adds 4 to the value of input A." },
-    "CONST_ADDER" :{ "type": "ConstAdder", "desc": "Adds 4 to the value of input A." },
+    "BRANCH_MUX"  :{ "type": "MUX", 
+                     "inputs": {
+                        "InputA": 32,
+                        "InputB": 32,
+                        "Selector": 1
+                     },
+                     "desc": "Chooses from next address or calculated address in case of branching." },
+    
+    "PC"          :{ "type": "PC",
+                     "inputs": {
+                        "nextAddress": 32
+                     },
+                     "desc": "Adds 4 to the value of input A." },
+    
+    "CONST_ADDER" :{ "type": "ConstAdder", 
+                     "inputs": {
+                        "Address": 32,
+                        "Shift": 32,
+                        "Selector": 1
+                     },
+                     "desc": "Adds 4 to the value of input A." },
     "I_MEM"       :{ "type": "InstructionMemory" },
     "IF_ID"       :{ "type": "LatchRegister", "desc": "Latch register between Fetch and Decode phase" },
 

@@ -87,5 +87,18 @@ public class DataTest {
 		d3.setData(-5);
 		assertEquals(27, d3.getData());
 		assertEquals("1 1011", d3.getBinary());
+		
+		//
+		// d32
+		//
+		Data d32 = new Data(100);
+		
+		d32.setData(1234);
+		assertEquals(1234, d32.getData());
+		assertEquals("0000 0000 0000 0000 0000 0100 1101 0010", d32.getBinary());
+		
+		d32.setData(12341234);
+		assertEquals(12341234, d32.getData());
+		assertEquals("0000 0000 1011 1100 0100 1111 1111 0010", d32.getBinary());
 	}
 }
