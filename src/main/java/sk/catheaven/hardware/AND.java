@@ -5,6 +5,7 @@
  */
 package sk.catheaven.hardware;
 
+import IObase.Input;
 import org.json.JSONObject;
 
 /**
@@ -12,9 +13,15 @@ import org.json.JSONObject;
  * @author catlord
  */
 public class AND extends Component {
-
+	private Input inputA, inputB;
+	
 	public AND(String label, JSONObject json) {
 		super(label);
+	}
+	
+	@Override
+	public void execute(){
+		
 	}
 	
 }

@@ -12,8 +12,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,46 +33,28 @@ import sk.catheaven.hardware.*;
  */
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
-		List<Instruction> instructions = parseLayout(new JSONObject(readFile("sk/catheaven/data/layout.json")));
-		parseCPU(new JSONObject(readFile("sk/catheaven/data/cpu.json")));
+		Map<String, Instruction> instructions = parseLayout(new JSONObject(readFile("sk/catheaven/data/layout.json")));
+		
+		try {
+			parseCPU(new JSONObject(readFile("sk/catheaven/data/cpu.json")), instructions);
+		} catch(Exception e) { System.err.println("Failed to create CPU"); }
+		
     }
 	
 	// CPU
-	public static void parseCPU(JSONObject inFile) throws JSONException {
-		List<Component> components = new ArrayList<>();
+	public static void parseCPU(JSONObject inFile, Map<String, Instruction> instructions) throws Exception {
+		CPU cpu = new CPU(inFile, instructions);
 		
-		Iterator<String> componentIter = inFile.keys();
-		while(componentIter.hasNext()){
-			String label = componentIter.next();
-			JSONObject componentJO = inFile.getJSONObject(label);
-			String type = componentJO.getString("type");
-			
-			switch(type.toLowerCase()){
-				case "mux": components.add(new MUX(label, componentJO)); break;
-				case "pc": components.add(new PC(label, componentJO)); break;
-				case "constadder": components.add(new ConstAdder(label, componentJO)); break;
-				case "instructionmemory": components.add(new InstructionMemory(label, componentJO)); break;
-				case "latchregister": components.add(new LatchRegister(label, componentJO)); break;
-				
-				case "controlunit": components.add(new ControlUnit(label, componentJO)); break;
-				case "constmux": components.add(new ConstMUX(label, componentJO)); break;
-				case "regbank": components.add(new RegBank(label, componentJO)); break;
-				case "signext": components.add(new SignExtend(label, componentJO)); break;
-				
-				case "adder": components.add(new Adder(label, componentJO)); break;
-				case "alu": components.add(new ALU(label, componentJO)); break;
-				
-				case "and": components.add(new AND(label, componentJO)); break;
-				case "datamemory": components.add(new DataMemory(label, componentJO)); break;
-				
-				default: System.err.println("Unknown Type: " + type); break;
-			}
-			
+		List<Component> cps = cpu.getComponents();
+		
+		System.out.println("CPU has total of " + cps.size() + " components");
+		for(Component c : cps){
+			System.out.println("" + c.getLabel());
 		}
 	}
 	
 	// INSTRUCTION SET
-	public static List<Instruction> parseLayout(JSONObject inFile) throws IOException, URISyntaxException {
+	public static Map<String, Instruction> parseLayout(JSONObject inFile) throws IOException, URISyntaxException {
 		JSONObject types = inFile.getJSONObject("types");
 		List<InstructionType> iTypes = new ArrayList<>();
 		
@@ -94,7 +78,7 @@ public class Main {
 		//	have: iTypes ============================================================================================================================
 		
 		// instructions
-		List<Instruction> instructions = new ArrayList<>();
+		Map<String, Instruction> instructions = new HashMap<>();
 		JSONObject is = inFile.getJSONObject("instructions");
 
 		Iterator<String> mnemoIter = is.keys();		// current instruction mnemo
@@ -107,7 +91,7 @@ public class Main {
 			for(int j = 0; j < iTypes.size(); j++){
 				InstructionType currIType = iTypes.get(j);
 				if(currIType.getTypeLabel().equals(iType)){
-					instructions.add(new Instruction(mnemo, currInstructionJson, currIType));
+					instructions.put(mnemo, new Instruction(mnemo, currInstructionJson, currIType));
 					break;
 				}
 			}
@@ -115,7 +99,8 @@ public class Main {
 		
 		// arguments
 		System.out.println("Parsed instructions (" + instructions.size() + ")");
-		instructions.forEach((Instruction i) -> {
+		for(String mnemo : instructions.keySet()) {
+			Instruction i = instructions.get(mnemo);
 			System.out.print(i.getMnemo() + " -- ");
 			
 			// print arguments (REG, INT, ... )
@@ -136,7 +121,7 @@ public class Main {
 			
 			System.out.println("Description: " + i.getDescription());
 			System.out.println();
-		});
+		}
 		
 		return instructions;
 	}

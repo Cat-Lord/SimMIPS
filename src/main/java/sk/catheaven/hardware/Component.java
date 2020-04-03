@@ -5,14 +5,23 @@
  */
 package sk.catheaven.hardware;
 
+
 /**
  *
  * @author catlord
  */
-public class Component {
+public abstract class Component {
 	protected String label;
 	
 	public Component(String label){
 		this.label = label;
+	}
+	
+	public String getLabel(){
+		return label;
+	}
+	
+	public void execute(){
+		
 	}
 }

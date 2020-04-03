@@ -27,3 +27,19 @@ Notes:
 -------------
 Todo: 
     - Test data functionality. If a number higher than number of bits of that data object gets properly cut by the mask.
+       
+Done:
+    - tests have been written and successfully tested. Additional tests have been created
+
+
+-------------
+Todo:
+    - parse user input (instruction) and assemble it
+
+Notes: 
+    - operation in component object should be (probably) tied to control signals in code (hard coded). That's
+      why there is "signalToOperation" property, tying operation to a specific signal
+
+    - there is no benefit in dividing the signals into separate list of inputs. Some traditional outputs of 
+      components are signals for other components, so it's hard to define the borderline case - where does an
+      output "transform" into a signal ?
