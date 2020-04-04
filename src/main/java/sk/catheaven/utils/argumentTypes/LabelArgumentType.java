@@ -7,6 +7,7 @@ package sk.catheaven.utils.argumentTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
 
 /**
@@ -23,20 +24,17 @@ public class LabelArgumentType extends ArgumentType {
 	/**
 	 * Parses argument to detect possible label malformation.
 	 * @param arg Represent instruction argument
-	 * @throws Exception
+	 * @throws sk.catheaven.exceptions.SyntaxException
 	 */
 	@Override
-	public void parse(String arg) throws Exception {
+	public void parse(String arg) throws SyntaxException {
 		pattern = Pattern.compile(LABEL_REGEX);
 		Matcher matcher = pattern.matcher(arg);
 		if( ! matcher.matches())
-			throw new Exception("Invalid Label Syntax");
+			throw new SyntaxException("Invalid Label Syntax");
 	}
 	
-	public Data getData(){
-		return null;
-	}
-	
+	@Override
 	public String toString(){
 		return "Label";
 	}

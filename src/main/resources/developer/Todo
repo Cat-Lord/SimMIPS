@@ -35,6 +35,7 @@ Done:
 -------------
 Todo:
     - parse user input (instruction) and assemble it
+    - handle labels when assembling
 
 Notes: 
     - operation in component object should be (probably) tied to control signals in code (hard coded). That's

@@ -5,6 +5,7 @@
  */
 package sk.catheaven.utils.argumentTypes;
 
+import java.lang.System.Logger;
 import java.util.regex.Pattern;
 import sk.catheaven.instructionEssentials.Data;
 
@@ -17,13 +18,13 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public abstract class ArgumentType {
+	protected static Logger logger;
 	protected static Pattern pattern;
 	protected final static char REG_SYMBOL = 'r';		// defines character that represent symbol for register
 	
 	protected final static String LABEL_REGEX = "[a-zA-Z]\\w*";					// regex for filltering correct labels
 	protected final static String REG_REGEX   = REG_SYMBOL + "\\d+";				// regex for filltering registers
 	protected final static String DATA_REGEX  = "\\d+\\((" + REG_REGEX + ")\\)";	// regex for filltering data formats
-	protected Data data;						// if there are no errors in arguments syntax, here will be the content
 	
 	protected ArgumentType(){
 		
@@ -34,7 +35,7 @@ public abstract class ArgumentType {
 		throw new Exception("Trying to parse within abstract ArgumentType class !");
 	}
 	
-	public Data getData(){
-		return null;
+	public int getData(){
+		return 0;
 	}
 }

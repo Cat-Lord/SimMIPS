@@ -7,6 +7,7 @@ package sk.catheaven.utils.argumentTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
 import static sk.catheaven.utils.argumentTypes.ArgumentType.pattern;
 
@@ -15,21 +16,31 @@ import static sk.catheaven.utils.argumentTypes.ArgumentType.pattern;
  * @author catlord
  */
 public class RegArgumentType extends ArgumentType {
-	private Data data;	
+	private Data regIndex;	
 
 	public RegArgumentType(){
 		super();
+		regIndex = new Data(5);
 	}
 	
-	public void parse(String arg) throws Exception {
+	public void parse(String arg) throws SyntaxException {
 		pattern = Pattern.compile(REG_REGEX);
 		Matcher matcher = pattern.matcher(arg.toLowerCase());
 		if( ! matcher.matches() )
-			throw new Exception("Invalid Register Specified");
+			throw new SyntaxException("Invalid Register Specified");
 	}
 	
-	public Data getData(){
-		return null;
+	/**
+	 * From valid argument extracts number and returns it as integer value.
+	 * @param validArgument String representation of register, for example "r3" or "R72".
+	 * @return 
+	 */
+	public int getData(String validArgument){
+		validArgument = validArgument.trim().toLowerCase();
+		String regIndexString = validArgument.substring(validArgument.indexOf(REG_SYMBOL)+1, validArgument.length());
+		regIndex.setData(Integer.parseInt(regIndexString));
+		return regIndex.getData();
+		
 	}
 	
 	public String toString(){

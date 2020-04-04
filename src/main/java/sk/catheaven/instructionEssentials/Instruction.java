@@ -27,8 +27,9 @@ import sk.catheaven.utils.argumentTypes.RegArgumentType;
  */
 public class Instruction {
 	private static Logger logger;
+	
+	private static InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final String mnemo;
-	private final InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final List<ArgumentType> arguments;
 	private final Map<String, String> fieldValues;	// mapping each instruction field to a value (constant, argument or offset(base))
 	private String description;
@@ -44,11 +45,13 @@ public class Instruction {
 		parseInstruction(json);
 	}
     
+	
+	
 	/**
 	 * 
 	 * @param json
 	 * @param type 
-	 * @throws JSONException In case we dont find fields, we cant create this instruction
+	 * @throws JSONException In case we don't find fields, we cant create this instruction.
 	 */
 	private void parseInstruction(JSONObject json) throws JSONException {
 		parseArgs(json.getJSONArray("args"));
@@ -94,7 +97,11 @@ public class Instruction {
 		return type;
 	}
 	
-	public List<ArgumentType> getArguments(){
+	public ArgumentType getArgument(int i) {
+		return arguments.get(i);
+	}
+	
+	public List<ArgumentType> getAllArguments(){
 		return arguments;
 	}
 	

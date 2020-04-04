@@ -37,6 +37,7 @@ public class Data {
             this.bitSize = bitSize;                 // correct value
         
         createMask();
+		this.data = 0;
     }
    
     /**

@@ -5,6 +5,7 @@
  */
 package sk.catheaven.utils.argumentTypes;
 
+import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
 
 /**
@@ -12,21 +13,29 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class IntArgumentType extends ArgumentType {
+	private Data integer;
+	
 	public IntArgumentType(){
 		super();
-		data = new Data(16);				// maximal amount of bits per int number
+		integer = new Data(16);				// maximal amount of bits per int number
 	}
 	
-	public void parse(String arg){
+	public void parse(String arg) throws SyntaxException {
 		try{
-			data.setData(Integer.parseInt(arg)); 
+			integer.setData(Integer.parseInt(arg)); 
 		}catch(NumberFormatException e){
-			throw new NumberFormatException();
+			throw new SyntaxException("Illegal Number format of '" + arg + "'");
 		}
 	}
 	
-	public Data getData(){
-		return data;
+	public int getData(String validArgument) {
+		validArgument = validArgument.trim();
+		
+		try{
+			parse(validArgument);
+		} catch(SyntaxException e) {}
+		
+		return integer.getData();
 	}
 	
 	public String toString(){

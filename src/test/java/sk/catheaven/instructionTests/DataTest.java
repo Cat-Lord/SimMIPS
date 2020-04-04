@@ -22,6 +22,13 @@ public class DataTest {
 	public void test() {
 		
 		//
+		// Initialization tests
+		//
+		Data data = new Data();
+		assertEquals(0, data.getData());
+		assertEquals("0000 0000 0000 0000 0000 0000 0000 0000", data.getBinary());
+		
+		//
 		// d1
 		//
 		Data d1 = new Data(1);

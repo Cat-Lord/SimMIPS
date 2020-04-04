@@ -32,7 +32,8 @@
         
         "addi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "8",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 + 23"},
         "andi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "12", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 & 53"},
-        "bneq": {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "5",  "rs": "#1", "rt": "#2", "imm": "#3"}, "desc": "PC += ($t1 != $t2) ? (offset * 4 + 4) : 4"},
+        "beq":  {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "4",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "PC += ($t1 != $t2) ? (offset * 4 + 4) : 4"},
+        "bneq": {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "5",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "PC += ($t1 != $t2) ? (offset * 4 + 4) : 4"},
         "ori":  {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "13", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 | 66"},
         "xori": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "14", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 ^ 641"},
         
