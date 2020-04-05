@@ -20,7 +20,7 @@ import sk.catheaven.hardware.CPU;
 import sk.catheaven.hardware.Component;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
-import sk.catheaven.utils.Field;
+import sk.catheaven.instructionEssentials.Field;
 import sk.catheaven.utils.argumentTypes.ArgumentType;
 
 /**

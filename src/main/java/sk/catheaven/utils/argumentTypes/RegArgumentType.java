@@ -16,13 +16,14 @@ import static sk.catheaven.utils.argumentTypes.ArgumentType.pattern;
  * @author catlord
  */
 public class RegArgumentType extends ArgumentType {
-	private Data regIndex;	
+	private final Data regIndex;	
 
 	public RegArgumentType(){
 		super();
 		regIndex = new Data(5);
 	}
 	
+	@Override
 	public void parse(String arg) throws SyntaxException {
 		pattern = Pattern.compile(REG_REGEX);
 		Matcher matcher = pattern.matcher(arg.toLowerCase());
@@ -35,6 +36,7 @@ public class RegArgumentType extends ArgumentType {
 	 * @param validArgument String representation of register, for example "r3" or "R72".
 	 * @return 
 	 */
+	@Override
 	public int getData(String validArgument){
 		validArgument = validArgument.trim().toLowerCase();
 		String regIndexString = validArgument.substring(validArgument.indexOf(REG_SYMBOL)+1, validArgument.length());
@@ -43,6 +45,7 @@ public class RegArgumentType extends ArgumentType {
 		
 	}
 	
+	@Override
 	public String toString(){
 		return "Reg";
 	}

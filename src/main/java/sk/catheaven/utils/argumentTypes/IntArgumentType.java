@@ -13,13 +13,14 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class IntArgumentType extends ArgumentType {
-	private Data integer;
+	private final Data integer;
 	
 	public IntArgumentType(){
 		super();
 		integer = new Data(16);				// maximal amount of bits per int number
 	}
 	
+	@Override
 	public void parse(String arg) throws SyntaxException {
 		try{
 			integer.setData(Integer.parseInt(arg)); 
@@ -28,6 +29,7 @@ public class IntArgumentType extends ArgumentType {
 		}
 	}
 	
+	@Override
 	public int getData(String validArgument) {
 		validArgument = validArgument.trim();
 		
@@ -38,6 +40,7 @@ public class IntArgumentType extends ArgumentType {
 		return integer.getData();
 	}
 	
+	@Override
 	public String toString(){
 		return "Int";
 	}

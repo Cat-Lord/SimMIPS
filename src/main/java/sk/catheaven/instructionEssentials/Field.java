@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.utils;
+package sk.catheaven.instructionEssentials;
 
 /**
  * Specifies the field of an instruction. A field has specific bitSize and a label.
