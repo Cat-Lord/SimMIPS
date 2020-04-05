@@ -35,7 +35,7 @@ public abstract class ArgumentType {
 		throw new Exception("Trying to parse within abstract ArgumentType class !");
 	}
 	
-	public int getData(){
+	public int getData(String argument){
 		return 0;
 	}
 }

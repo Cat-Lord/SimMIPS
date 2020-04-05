@@ -37,6 +37,9 @@
         "ori":  {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "13", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 | 66"},
         "xori": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "14", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 ^ 641"},
         
+        "li":   {"type": "I", "args": ["reg", "int"],           "fields": {"op": "36", "rs": "0", "rt": "#1", "imm": "#2" }, "desc": "$t1 = 69"},
+        "lui":  {"type": "I", "args": ["reg", "int"],           "fields": {"op": "37", "rs": "0", "rt": "#1", "imm": "#2"}, "desc": "$t1 = 69"},
+        
         "lw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "35", "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "$t1 = MEM[base + $t2]"},
         "sw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "43", "rs": "#2.offset", "rt": "#1", "imm": "#2.base"}, "desc": "MEM[base + $t2] = $t1"}
     },

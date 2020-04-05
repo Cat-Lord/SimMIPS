@@ -44,20 +44,24 @@ public class CPU {
 	/**
 	 * Assembles the instruction to machine code.
 	 * @param instruction Instruction to parse (as entered by user).
+	 * @return Assembled instruction in the form AssembledInstruction class.
 	 * @throws SyntaxException In case of user error.
 	 */
 	public AssembledInstruction assembleInstruction(String instruction) throws SyntaxException {
+		logger.log(Logger.Level.DEBUG, "Assembling `" + instruction + "`");
+		if(instruction.isBlank()) throw new SyntaxException("Empty instruction !");
 		instruction = checkInstructionFormat(instruction);
 		String args[] = getInstructionArguments(instruction);
-		String mnemo = instruction;
 		
 		// if there are arguments, there is a space after mnemo, otherwise there is only mnemo (which is acceptable)
+		String mnemo = instruction;
 		if(args.length > 0) mnemo = instruction.substring(0, instruction.indexOf(" "));
+		mnemo = mnemo.toLowerCase();
 		
 		checkInstruction(mnemo, args);
 		Data iCode = createICode(mnemo, args);
-		
-		return null;	// new AssembledInstruction(); // TODO
+		System.out.println("Icode created: " + iCode.getBinary());
+		return new AssembledInstruction(this.instructionSet.get(mnemo), instruction, iCode);
 	}
 	
 	/**
@@ -87,10 +91,11 @@ public class CPU {
 	}
 	
 	private String checkInstructionFormat(String instruction){
-		String safeInstruction = instruction.trim();			// leading and trailing tabs, spaces, etc.
 		int commentIndex = instruction.indexOf(COMMENT_CHAR);	// remove comment, if there is any
+		String safeInstruction = instruction.trim();			// leading and trailing tabs, spaces, etc.
 		if(commentIndex >= 0)
-			safeInstruction = instruction.substring(0, commentIndex);
+			safeInstruction = instruction.substring(0, commentIndex).trim();
+		logger.log(Logger.Level.DEBUG, "Instruction seems valid: " + instruction);
 		return safeInstruction;
 	}
 
@@ -107,10 +112,12 @@ public class CPU {
 		InstructionType iType = instruction.getInstructionType();
 		List<Field> fields = iType.getFields();
 		
+		int shiftBy = 0;
 		for(int i = 0; i < fields.size(); i++){
 			String fieldValue = instruction.getFieldValule(fields.get(i).getLabel());
 			int tempCode = iCode.getData();
-			tempCode <<= fields.get(i).getBitSize();
+			shiftBy = fields.get(i).getBitSize();		// remember, by ho many bits we need to shift in next iteration			
+			tempCode <<= shiftBy;
 			
 			// there is no positional character
 			if( ! fieldValue.contains(POSITIONAL_CHAR))	
@@ -126,35 +133,27 @@ public class CPU {
 					
 					// cut off the positional part, so from "#3.offset" get just "#3"
 					String seqString = fieldValue.substring(fieldValue.indexOf(POSITIONAL_CHAR) + 1, fieldValue.indexOf(DATA_CHAR));
-					int seq = 0;
-					try{
-						seq = Integer.parseInt(seqString);
-					} catch(NumberFormatException e) { 
-						logger.log(Logger.Level.WARNING, "createICode(): Number format exception, check argumentType parsing ! Argument: " + args[seq]); 
-					}
+					int seq = Integer.parseInt(seqString);
+					seq--;				// numbering in layout.json starts from 1
 					
 					dat.getPart(fieldValue, args[seq]);
 				}
 				else {
 					// only positional value, i.e. "#3"
 					String seqString = fieldValue.substring(fieldValue.indexOf(POSITIONAL_CHAR) + 1, fieldValue.length());
-					int seq = 0;
-					try{
-						seq = Integer.parseInt(seqString);
-					} catch(NumberFormatException e) { 
-						logger.log(Logger.Level.WARNING, "createICode(): Number format exception, check argumentType parsing ! Argument: " + seqString); 
-					}
+					int seq = Integer.parseInt(seqString);
+					seq--;				// numbering in layout.json starts from 1
 					
-					// sanity check
+					// get the data from argument according to its type
 					try{
-						tempCode |= Integer.parseInt(args[seq]);
+						tempCode |= instruction.getArgument(seq).getData(args[seq]);
 					} catch(IndexOutOfBoundsException e){
-						logger.log(Logger.Level.WARNING, "createICode(): Index out of bounds ! Index: " + seq + ", number of args: " + args.length); 
-					} catch(NumberFormatException e) { 
-						logger.log(Logger.Level.WARNING, "createICode(): Number format exception, check argumentType parsing ! Argument: " + args[seq]); 
+						logger.log(Logger.Level.WARNING, "Argument data car: Index out of bounds ! Index: " + seq + ", number of args: " + args.length); 
 					}
 				}
 			}
+			
+			iCode.setData(tempCode);
 		}
 		
 		return iCode;
@@ -167,11 +166,19 @@ public class CPU {
 	 * @return If there are no arguments after mnemo, returns empty array. Otherwise returns array of strings representing individual arguments.
 	 */
 	private String[] getInstructionArguments(String instruction){
+		instruction = instruction.trim();					// in case there are spaces after the mnemo, dont get confused it as arguments
 		int indexOfFirstSpace = instruction.indexOf(" ");
 		if(indexOfFirstSpace < 0)
-			return new String[0];			// return empty array, there are no arguments
+			return new String[0];							// return empty array, there are no arguments
 		
-		return (instruction.substring(indexOfFirstSpace+1, instruction.length()).split(" "));
+		// remove mnemo and get arguments as one string
+		String argList = instruction.substring(indexOfFirstSpace+1, instruction.length()).trim();
+		
+		String argArr[] = argList.split(",");
+		for(int i = 0; i < argArr.length; i++)
+			argArr[i] = argArr[i].trim();					// remove spacing around each argument (that means from " r1  " -> "r1"
+		
+		return argArr;
 	}
 	
 	private void parseComponents(JSONObject json) throws Exception {

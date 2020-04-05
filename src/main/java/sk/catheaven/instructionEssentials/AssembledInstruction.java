@@ -10,16 +10,17 @@ package sk.catheaven.instructionEssentials;
  * @author catlord
  */
 public class AssembledInstruction {
-	private static Instruction instruction;			// the instruction, this one refers to (for example "add" instruction)
+	private final Instruction instruction;			// the instruction, this one refers to (for example "add" instruction)
 	private final String originalInstruction;		// original instruction as entered by user (without comments)
 	private final Data iCode;
 	
-	public AssembledInstruction(String originalInstruction){
+	public AssembledInstruction(Instruction instruction, String originalInstruction, Data iCode){
+		this.instruction = instruction;
 		this.originalInstruction = originalInstruction;
-		iCode = new Data();
+		this.iCode = iCode;
 	}
 	
-	public int getICode(){
-		return iCode.getData();
+	public Data getData(){
+		return iCode;
 	}
 }

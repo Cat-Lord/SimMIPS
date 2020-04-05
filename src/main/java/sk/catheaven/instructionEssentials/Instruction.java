@@ -28,19 +28,19 @@ import sk.catheaven.utils.argumentTypes.RegArgumentType;
 public class Instruction {
 	private static Logger logger;
 	
-	private static InstructionType type;				// needs to be stored because we have to know how many bits should each field have
+	private final InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final String mnemo;
     private final List<ArgumentType> arguments;
 	private final Map<String, String> fieldValues;	// mapping each instruction field to a value (constant, argument or offset(base))
 	private String description;
     
-    public Instruction(String mnemo, JSONObject json, InstructionType type){
+    public Instruction(String mnemo, JSONObject json, InstructionType iType){
 		Instruction.logger = System.getLogger(this.getClass().getName());
 		arguments = new ArrayList<>();
 		fieldValues = new HashMap<>();
 		
 		this.mnemo = mnemo;
-		this.type = type;
+		this.type = iType;
 		this.description = "";
 		parseInstruction(json);
 	}

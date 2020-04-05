@@ -36,6 +36,7 @@ Done:
 Todo:
     - parse user input (instruction) and assemble it
     - handle labels when assembling
+    - think through the assembledInstruction class. What do we actually need to have fully supported assembled instruction ?
 
 Notes: 
     - operation in component object should be (probably) tied to control signals in code (hard coded). That's

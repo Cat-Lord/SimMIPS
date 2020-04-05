@@ -105,7 +105,7 @@ public class Loader {
 		System.out.println("Parsed instructions (" + instructions.size() + ")");
 		for(String mnemo : instructions.keySet()) {
 			Instruction i = instructions.get(mnemo);
-			System.out.print(i.getMnemo() + " -- ");
+			System.out.print(i.getMnemo() + " (type " + i.getInstructionType().getTypeLabel() + ") -- ");
 			
 			// print arguments (REG, INT, ... )
 			System.out.print("Args: [");
