@@ -14,11 +14,11 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sk.catheaven.utils.argumentTypes.ArgumentType;
-import sk.catheaven.utils.argumentTypes.DataArgumentType;
-import sk.catheaven.utils.argumentTypes.IntArgumentType;
-import sk.catheaven.utils.argumentTypes.LabelArgumentType;
-import sk.catheaven.utils.argumentTypes.RegArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.DataArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.IntArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.LabelArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.RegArgumentType;
 
 /**
  *
@@ -104,7 +104,7 @@ public class Instruction {
 		return arguments;
 	}
 	
-	public String getFieldValule(String fieldName){
+	public String getFieldValue(String fieldName){
 		return fieldValues.get(fieldName);
 	}
 	

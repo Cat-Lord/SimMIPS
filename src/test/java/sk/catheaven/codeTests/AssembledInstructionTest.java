@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.instructionTests;
+package sk.catheaven.codeTests;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,11 +27,6 @@ public class AssembledInstructionTest {
 	public AssembledInstructionTest() {
 	}
 	
-	
-	@BeforeClass
-	public static void setUpClass() throws IOException, URISyntaxException {
-	}
-	
 	@Before
 	public void setUp() throws IOException, URISyntaxException {
 		Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
@@ -41,7 +36,7 @@ public class AssembledInstructionTest {
 	
 	@Test
 	public void test(){
-		
+		/*
 		//
 		// testing for success
 		//
@@ -162,6 +157,20 @@ public class AssembledInstructionTest {
 			assertEquals("00000020", ai.getData().getHex());
 		} catch(SyntaxException e) { System.err.println(e.getMessage()); fail("Exception cought !"); }
 		
+		try{
+			AssembledInstruction ai = assembler.assembleInstruction("add			 r0, r0   ,			 r0 ;veav aev a vawe ad !2 f3 ion26 @\"<>:3");
+			assertEquals("00000020", ai.getData().getHex());
+		} catch(SyntaxException e) { System.err.println(e.getMessage()); fail("Exception cought !"); }
+		
+		try{
+			AssembledInstruction ai = assembler.assembleInstruction("add			 r0, r0   ,			 r0			;veav aev a vawe ad !2 f3 ion26 @\"<>:3");
+			assertEquals("00000020", ai.getData().getHex());
+		} catch(SyntaxException e) { System.err.println(e.getMessage()); fail("Exception cought !"); }
+		
+		try{
+			AssembledInstruction ai = assembler.assembleInstruction("add			 r0, r0   ,			 r0		   ;  add r1, r1 ,r12dd veav aev a vawe ad !2 f3 ion26 @\"<>:3");
+			assertEquals("00000020", ai.getData().getHex());
+		} catch(SyntaxException e) { System.err.println(e.getMessage()); fail("Exception cought !"); }
 		
 		
 		//
@@ -203,6 +212,26 @@ public class AssembledInstructionTest {
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
 		try{
+			assembler.assembleInstruction("add r1,; r2, r1");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("add r1, r2, ; r1");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("; add r1, r2, ; r1");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("; add r1, ; r2, r1");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
 			assembler.assembleInstruction("add e1, r2, r3");
 			fail("Should've cought exception !");
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
@@ -238,12 +267,12 @@ public class AssembledInstructionTest {
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
 		try{
-			assembler.assembleInstruction("addi r5, 3f142h");
+			assembler.assembleInstruction("				addi	 r5,			 3f142h");
 			fail("Should've cought exception !");
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
 		try{
-			assembler.assembleInstruction("lw r1, r1");
+			assembler.assembleInstruction("l	w r1, r1");
 			fail("Should've cought exception !");
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
@@ -258,7 +287,7 @@ public class AssembledInstructionTest {
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
 		try{
-			assembler.assembleInstruction("sw r1, 12095()");
+			assembler.assembleInstruction("sw r1, 12		095()");
 			fail("Should've cought exception !");
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
 		
@@ -296,7 +325,31 @@ public class AssembledInstructionTest {
 			assembler.assembleInstruction("lw r2, 6136(r1b2)(r2)");
 			fail("Should've cought exception !");
 		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("li r1. 21 152");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("beq r5, r1, 1");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("beq r6, r1, incorrect label");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("bNeQ r1r6, r1, flabel");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		
+		try{
+			assembler.assembleInstruction("bNeQ r1r6, r1, flabel:lavel<>2?");
+			fail("Should've cought exception !");
+		} catch(SyntaxException e) { System.out.print("Success, found exception ! --  "); System.err.println(e.getMessage()); }
+		*/
 	}
-	
-	
 }

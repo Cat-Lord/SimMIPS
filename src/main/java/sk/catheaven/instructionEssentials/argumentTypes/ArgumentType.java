@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.utils.argumentTypes;
+package sk.catheaven.instructionEssentials.argumentTypes;
 
 import java.lang.System.Logger;
 import java.util.regex.Pattern;

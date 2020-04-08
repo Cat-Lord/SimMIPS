@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.utils.argumentTypes;
+package sk.catheaven.instructionEssentials.argumentTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
-import sk.catheaven.instructionEssentials.Data;
 
 /**
  * Represent label argument. Label can be almost anything, format is as follows:
@@ -17,6 +16,7 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class LabelArgumentType extends ArgumentType {
+	
 	public LabelArgumentType(){
 		super();
 	}
@@ -30,7 +30,7 @@ public class LabelArgumentType extends ArgumentType {
 	public void parse(String arg) throws SyntaxException {
 		pattern = Pattern.compile(LABEL_REGEX);
 		Matcher matcher = pattern.matcher(arg);
-		if( ! matcher.matches())
+		if( ! matcher.matches() )
 			throw new SyntaxException("Invalid Label Syntax");
 	}
 	

@@ -19,10 +19,10 @@ import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
 import sk.catheaven.instructionEssentials.Field;
-import sk.catheaven.utils.argumentTypes.DataArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.DataArgumentType;
 
 /**
- *
+ * Represents the CPU itself, main working unit of the simulation.
  * @author catlord
  */
 public class CPU {

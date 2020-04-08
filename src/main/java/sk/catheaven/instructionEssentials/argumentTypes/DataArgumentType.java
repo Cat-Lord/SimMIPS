@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.utils.argumentTypes;
+package sk.catheaven.instructionEssentials.argumentTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
-import static sk.catheaven.utils.argumentTypes.ArgumentType.pattern;
+import static sk.catheaven.instructionEssentials.argumentTypes.ArgumentType.pattern;
 
 /**
  * Data argument has syntax of offset(base). Offset is 16-bit
@@ -47,22 +47,18 @@ public class DataArgumentType extends ArgumentType {
 	 * @return 
 	 */
 	public int getPart(String validArgument, String part){
-		switch(part){
-			case ".offset":
+		if(part.contains(".offset")){
 				offset.setData(Integer.parseInt(validArgument.substring(0, validArgument.indexOf("("))));
 				return offset.getData();
-				
-			case ".base":
+		}
+		else if(part.contains(".base")){
 				// cut off the register specified in brackets and call for 
 				String reg = validArgument.substring(validArgument.indexOf("(") + 1,
 													 validArgument.indexOf(")"));
-				
 				return regArg.getData(reg);
-				
-			default: 
-				logger.log(System.Logger.Level.WARNING, "getPart(): Returning default value, part '" + part + "' was not recognized" );
-				break;
 		}
+		else
+			logger.log(System.Logger.Level.WARNING, "getPart(): Returning default value, part '" + part + "' was not recognized" );
 		
 		return 0;
 	}

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.utils.argumentTypes;
+package sk.catheaven.instructionEssentials.argumentTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
-import static sk.catheaven.utils.argumentTypes.ArgumentType.pattern;
+import static sk.catheaven.instructionEssentials.argumentTypes.ArgumentType.pattern;
 
 /**
  *

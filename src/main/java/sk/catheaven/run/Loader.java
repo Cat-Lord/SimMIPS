@@ -21,7 +21,7 @@ import sk.catheaven.hardware.Component;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
 import sk.catheaven.instructionEssentials.Field;
-import sk.catheaven.utils.argumentTypes.ArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
 
 /**
  *
@@ -52,6 +52,7 @@ public class Loader {
 		for(Component c : cps){
 			System.out.println("" + c.getLabel());
 		}
+		System.out.println();
 	}
 	
 	// INSTRUCTION SET
@@ -117,10 +118,10 @@ public class Loader {
 			// print each field mapping
 			List<Field> fields = i.getInstructionType().getFields();
 			for(Field f : fields){
-				if(i.getFieldValule(f.getLabel()) == null)
+				if(i.getFieldValue(f.getLabel()) == null)
 					System.out.println(f.getLabel() + ": ???");
 				else
-					System.out.println(f.getLabel() + ": " + i.getFieldValule(f.getLabel()));
+					System.out.println(f.getLabel() + ": " + i.getFieldValue(f.getLabel()));
 			}
 			
 			System.out.println("Description: " + i.getDescription());

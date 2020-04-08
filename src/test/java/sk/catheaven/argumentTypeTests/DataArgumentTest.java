@@ -7,8 +7,8 @@ package sk.catheaven.argumentTypeTests;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import sk.catheaven.utils.argumentTypes.ArgumentType;
-import sk.catheaven.utils.argumentTypes.DataArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
+import sk.catheaven.instructionEssentials.argumentTypes.DataArgumentType;
 
 /**
  *

@@ -10,7 +10,7 @@ package sk.catheaven.instructionEssentials;
  * @author catlord
  */
 public class Data {
-    private final int MAX_BIT_SIZE = 32;
+    public static final int MAX_BIT_SIZE = 32;
     private int mask;
     private int data;
     private int bitSize;
