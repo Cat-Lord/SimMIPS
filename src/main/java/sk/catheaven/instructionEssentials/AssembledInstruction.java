@@ -13,14 +13,38 @@ public class AssembledInstruction {
 	private final Instruction instruction;			// the instruction, this one refers to (for example "add" instruction)
 	private final String originalInstruction;		// original instruction as entered by user (without comments)
 	private final Data iCode;
+	private final Data address;
 	
-	public AssembledInstruction(Instruction instruction, String originalInstruction, Data iCode){
+	public AssembledInstruction(Instruction instruction, String originalInstruction, Data iCode, Data address){
 		this.instruction = instruction;
 		this.originalInstruction = originalInstruction;
 		this.iCode = iCode;
+		this.address = address;
 	}
 	
-	public Data getData(){
+	
+	/**
+	 * @return the instruction
+	 */
+	public Instruction getInstruction() {
+		return instruction;
+	}
+
+	/**
+	 * @return OriginalInstruction in string format.
+	 */
+	public String getOriginalInstruction() {
+		return originalInstruction;
+	}
+
+	/**
+	 * @return the address
+	 */
+	public Data getAddress() {
+		return address;
+	}
+	
+	public Data getIcode(){
 		return iCode;
 	}
 }

@@ -29,7 +29,8 @@ public class Assembler {
 	// utility declarations
 	private final DataArgumentType dat;
 	private final LabelArgumentType lat;
-						
+	
+	private Map<String, Data> labelsToRemove;			// TODO: remove this list of labels (only for debugging purposes)
 	
 	public Assembler(Map<String, Instruction> instructionSet){
 		Assembler.logger = System.getLogger(this.getClass().getName());
@@ -50,49 +51,14 @@ public class Assembler {
 		String codeLines[] = code.split("\n");
 		Map<String, Data> labels = getLabels(codeLines);			// get all labels with their respective addresses
 		
+		this.labelsToRemove = labels;		// TODO: remove
+		
 		List<AssembledInstruction> assembled = new ArrayList<>();
-		for(int i = 0; i < codeLines.length; i++)
+		for(int i = 0; i < codeLines.length; i++){
 			assembled.add(assembleInstruction(codeLines[i], computeAddress(i), labels));
+		}
 		
 		return assembled;
-	}
-	
-	/**
-	 * When there is a column symbol (:) in code line, we remember address of
-	 * instruction, that follows the label. Label format is checked, so this
-	 * method can result in an exception.
-	 * @param codeLines Instructions array with possible syntactical errors.
-	 * @return Map of label names tied to address represented as Data.
-	 * @throws SyntaxException 
-	 */
-	private Map<String, Data> getLabels(String codeLines[]) throws SyntaxException {
-		Map<String, Data> labels = new HashMap<>();
-		
-		for(int i = 0; i < codeLines.length; i++){
-			logger.log(Logger.Level.DEBUG, "" + (i + ": <" + codeLines[i] +">"));
-			
-			// if there is a label, rememeber it along with the address
-			// of that instruction to allow assembling of the code.
-			if(codeLines[i].contains(":")){
-				int coli = codeLines[i].indexOf(":");
-				String label = codeLines[i].substring(0, coli);			// extract the label
-				
-				lat.parse(label);										// check if the label is correctly formated
-				
-				// throw an exception if there is a label without any instruction following it
-				if(coli+1 >= codeLines[i].length())
-					throw new SyntaxException("Label `" + label + "` doesn't bind to any instruction");
-				
-				// extract the label from the code line
-				codeLines[i] = codeLines[i].substring(coli+1);
-				
-				if(labels.get(label) == null)
-					labels.put(label, computeAddress(i));
-				else
-					throw new SyntaxException("Duplicate label declaration `" + label + "` !");
-			}
-		}
-		return labels;
 	}
 	
 	/**
@@ -119,9 +85,8 @@ public class Assembler {
 		checkInstruction(mnemo, args, labels);
 		Data iCode = createICode(mnemo, args, address, labels);
 		logger.log(System.Logger.Level.DEBUG, String.format("%4s", mnemo) + "-- Icode created: " + iCode.getBinary());
-		System.out.println(String.format("%4s", mnemo) + "-- Icode created: "  + iCode.getHex() + " | " + iCode.getBinary());
 		
-		return new AssembledInstruction(this.instructionSet.get(mnemo), instruction, iCode);
+		return new AssembledInstruction(this.instructionSet.get(mnemo), instruction, iCode, address);
 	}
 	
 	/**
@@ -207,7 +172,6 @@ public class Assembler {
 					
 					// if this arguments is a label argument, calclulate offset (this address - target address)
 					if(seq < instruction.getAllArguments().size()  &&  instruction.getArgument(seq) instanceof LabelArgumentType){
-						logger.log(Logger.Level.WARNING, "Shift by == " + shiftBy);
 						Data offset = new Data(shiftBy);		// we calculate offset that should be only this size wide
 						offset.setData(labels.get(args[seq]).getData() - address.getData() - Data.MAX_BIT_SIZE/8);
 						tempCode |= offset.getData();
@@ -228,6 +192,46 @@ public class Assembler {
 		}
 		
 		return iCode;
+	}
+	
+	/**
+	 * When there is a column symbol (:) in code line, we remember address of
+	 * instruction, that follows the label. Label format is checked, so this
+	 * method can result in an exception.
+	 * @param codeLines Instructions array with possible syntactical errors.
+	 * @return Map of label names tied to address represented as Data.
+	 * @throws SyntaxException 
+	 */
+	private Map<String, Data> getLabels(String codeLines[]) throws SyntaxException {
+		Map<String, Data> labels = new HashMap<>();
+		
+		for(int i = 0; i < codeLines.length; i++){
+			logger.log(Logger.Level.DEBUG, "" + (i + ": <" + codeLines[i] +">"));
+			
+			// if there is a label, rememeber it along with the address
+			// of that instruction to allow assembling of the code.
+			if(codeLines[i].contains(":")){
+				int coli = codeLines[i].indexOf(":");
+				String label = codeLines[i].substring(0, coli);			// extract the label
+				
+				lat.parse(label);										// check if the label is correctly formated
+				
+				// throw an exception if there is a label without any instruction following it
+				if(coli+1 >= codeLines[i].length())
+					throw new SyntaxException("Label `" + label + "` doesn't bind to any instruction");
+				
+				// extract the label from the code line
+				codeLines[i] = codeLines[i].substring(coli+1);
+				
+				if(labels.get(label) == null){
+					labels.put(label, computeAddress(i));
+					System.out.println("LABEL " + label + " (" + computeAddress(i).getHex() + ") == codeline `" + codeLines[i] + "`");
+				}
+				else
+					throw new SyntaxException("Duplicate label declaration `" + label + "` !");
+			}
+		}
+		return labels;
 	}
 	
 	/**
@@ -253,7 +257,7 @@ public class Assembler {
 	}
 	
 	/**
-	 * Prepares code for assemblying by removing redundant spaces, empty lines and comments.
+	 * Prepares code for assembling by removing redundant spaces, empty lines and comments.
 	 * @param code Input code as entered by user.
 	 * @return Code without redundant spaces, empty lines and comments.
 	 */
@@ -296,4 +300,10 @@ public class Assembler {
 
 		return (Integer.parseInt(seqString) - 1); // numbering in layout.json starts from 1, so substract one
 	}
+	
+	// TODO: REMOVE THIS METHOD -- USED ONLY FOR DEBUGGING
+	public Map<String, Data> getLabels(){
+		return this.labelsToRemove;
+	}
+	
 }

@@ -111,10 +111,12 @@ public class Loader {
 			// print arguments (REG, INT, ... )
 			System.out.print("Args: [");
 			List<ArgumentType> argTypes = i.getAllArguments();
-			for(int ati = 0; ati < argTypes.size()-1; ati++)
-				System.out.print(argTypes.get(ati).toString() + ", ");
-			System.out.print(argTypes.get(argTypes.size()-1).toString() + "]\n");
-
+			if(argTypes.size() > 0){
+				for(int ati = 0; ati < argTypes.size()-1; ati++)
+					System.out.print(argTypes.get(ati).toString() + ", ");
+				System.out.print(argTypes.get(argTypes.size()-1).toString() + "]\n");
+			}
+			
 			// print each field mapping
 			List<Field> fields = i.getInstructionType().getFields();
 			for(Field f : fields){

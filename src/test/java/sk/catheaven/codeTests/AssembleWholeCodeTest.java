@@ -7,13 +7,16 @@ package sk.catheaven.codeTests;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
+import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
+import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.run.Loader;
 
 /**
@@ -36,15 +39,53 @@ public class AssembleWholeCodeTest {
 	@Test
 	public void test() {
 		String code = loadCode();		// just to not cover the entire screen with strings
+		List<AssembledInstruction> isList;
 		
 		try{
-			assembler.AssembleCode(code);
-		} catch(SyntaxException e){ System.out.println(e.getMessage()); fail("Exception shouldn't have been cought !"); }
+			isList = assembler.AssembleCode(code);
+		} catch(SyntaxException e){ System.out.println(e.getMessage()); fail("Exception shouldn't have been cought !"); return; }
 		
+		// checking label addresses
+		Map<String, Data> labels = assembler.getLabels();
+
+		assertEquals("00000010", labels.get("cat").getHex());
+		assertEquals("0000002c", labels.get("next").getHex());
+		assertEquals("00000034", labels.get("super_label_version_million").getHex());
+		assertEquals("0000005c", labels.get("ending").getHex());
+
+		// checking each instruction translation
+		assertEquals("25010006", isList.get(0).getIcode().getHex());
+		assertEquals("90060006", isList.get(1).getIcode().getHex());
+		assertEquals("02e28818", isList.get(2).getIcode().getHex());
+		assertEquals("00263001", isList.get(3).getIcode().getHex());
+		assertEquals("003e0822", isList.get(4).getIcode().getHex());
+		assertEquals("00230820", isList.get(5).getIcode().getHex());
+		assertEquals("9007009a", isList.get(6).getIcode().getHex());		// li instruction input value is 10-base
+		assertEquals("14e1fff0", isList.get(7).getIcode().getHex());
+		assertEquals("1021ffec", isList.get(8).getIcode().getHex());
+		assertEquals("10000004", isList.get(9).getIcode().getHex());
+		assertEquals("900103b7", isList.get(10).getIcode().getHex());
+		assertEquals("8cc6007b", isList.get(11).getIcode().getHex());		// same for offset in lw
+		assertEquals("10000000", isList.get(12).getIcode().getHex());
+		assertEquals("00213019", isList.get(13).getIcode().getHex());
+		assertEquals("00210819", isList.get(14).getIcode().getHex());
+		
+		assertEquals("00000000", isList.get(15).getIcode().getHex());
+		assertEquals("00000000", isList.get(16).getIcode().getHex());
+		assertEquals("00000000", isList.get(17).getIcode().getHex());
+		assertEquals("10000010", isList.get(18).getIcode().getHex());
+		
+		assertEquals("00000000", isList.get(19).getIcode().getHex());
+		assertEquals("00000000", isList.get(20).getIcode().getHex());
+		assertEquals("00000000", isList.get(21).getIcode().getHex());
+		assertEquals("00000000", isList.get(22).getIcode().getHex());
+		assertEquals("00270820", isList.get(23).getIcode().getHex());
+		assertEquals("1000ffac", isList.get(24).getIcode().getHex());
 	}
 	
 	private String loadCode(){
-		return "\n\nsubi r1, r8, 6\n" +
+		return "\n\n" +
+				"subi r1, r8, 6\n" +
 				"li r6, 6\n" +
 				"mul r17, r23,r2\n" +
 				"sllv r6, r1, r6\n" +
