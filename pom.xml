@@ -30,6 +30,11 @@
             <artifactId>json</artifactId>
             <version>20190722</version>
         </dependency>
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.10.4</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -31,7 +31,7 @@ public class LabelArgumentType extends ArgumentType {
 		pattern = Pattern.compile(LABEL_REGEX);
 		Matcher matcher = pattern.matcher(arg);
 		if( ! matcher.matches() )
-			throw new SyntaxException("Invalid Label Syntax");
+			throw new SyntaxException("Invalid Label Syntax: `" + arg + "`");
 	}
 	
 	@Override

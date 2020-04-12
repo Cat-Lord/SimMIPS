@@ -43,12 +43,12 @@ public class CPU {
 		this.assembler = new Assembler(instructionSet);
 	}
 	
-	private void parseComponents(JSONObject json) throws Exception {
-		Iterator<String> componentIter = json.keys();
+	private void parseComponents(JSONObject cpuJson) throws Exception {
+		Iterator<String> componentIter = cpuJson.keys();
 		
 		while(componentIter.hasNext()){
 			String label = componentIter.next();
-			JSONObject componentJO = json.getJSONObject(label);
+			JSONObject componentJO = cpuJson.getJSONObject(label);
 			String type = componentJO.getString("type");
 			
 			switch(type.toLowerCase()){

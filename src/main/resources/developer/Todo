@@ -45,3 +45,8 @@ Notes:
     - there is no benefit in dividing the signals into separate list of inputs. Some traditional outputs of 
       components are signals for other components, so it's hard to define the borderline case - where does an
       output "transform" into a signal ?
+
+-------------
+Notes: While doing the control unit class I've stumbled upon a possible logical problem - When an instruction has opcode 0, 
+        it is an arithmetic instruction. Operation, that should be done, is specified by "func" field from instruction. 
+        Shouldn't be the mapping of func to operation done in control unit ? 

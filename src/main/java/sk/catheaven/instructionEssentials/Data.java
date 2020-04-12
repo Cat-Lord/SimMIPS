@@ -48,39 +48,6 @@ public class Data {
     }
     
     /**
-     * Sets data according to the input parameter.
-     * @param data input data to set 
-     */
-    public void setData(int data){
-        this.data = data;
-    }
-    
-    /**
-     * Returns data appropriately adjusted by the mask.
-     * @return data
-     */
-    public int getData(){
-        return (data & mask);
-    }
-    
-	/**
-	 * Returns data without mask adjustment.
-	 * @return data
-	 */
-	public int getDataUnmasked(){
-		return data;
-	}
-	
-    /**
-     * Returns mask. Used for debugging purposes.
-     * @return mask
-     */
-    public int getMask(){
-        return mask;
-    }
-
-    
-    /**
      * Returns binary representation of data in nicer formatting style.
      * @return Binary representation of data
      */
@@ -123,5 +90,45 @@ public class Data {
 		output += dataString;
 		
 		return output;
+	}
+	    
+    /**
+     * Sets data according to the input parameter.
+     * @param data input data to set 
+     */
+    public void setData(int data){
+        this.data = data;
+    }
+    
+    /**
+     * Returns data appropriately adjusted by the mask.
+     * @return data
+     */
+    public int getData(){
+        return (data & mask);
+    }
+    
+	/**
+	 * Returns data without mask adjustment.
+	 * @return data
+	 */
+	public int getDataUnmasked(){
+		return data;
+	}
+	
+    /**
+     * Returns mask. Used for debugging purposes.
+     * @return mask
+     */
+    public int getMask(){
+        return mask;
+    }
+	
+	 /**
+     * Returns bitSize. Used for debugging purposes.
+     * @return mask
+     */
+	public int getBitSize(){
+		return bitSize;
 	}
 }

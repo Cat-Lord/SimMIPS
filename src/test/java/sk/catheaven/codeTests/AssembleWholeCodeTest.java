@@ -42,7 +42,7 @@ public class AssembleWholeCodeTest {
 		List<AssembledInstruction> isList;
 		
 		try{
-			isList = assembler.AssembleCode(code);
+			isList = assembler.assembleCode(code);
 		} catch(SyntaxException e){ System.out.println(e.getMessage()); fail("Exception shouldn't have been cought !"); return; }
 		
 		// checking label addresses
@@ -54,6 +54,7 @@ public class AssembleWholeCodeTest {
 		assertEquals("0000005c", labels.get("ending").getHex());
 
 		// checking each instruction translation
+		// expected values are from MipSIM (previous version)
 		assertEquals("25010006", isList.get(0).getIcode().getHex());
 		assertEquals("90060006", isList.get(1).getIcode().getHex());
 		assertEquals("02e28818", isList.get(2).getIcode().getHex());

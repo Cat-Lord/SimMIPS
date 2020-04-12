@@ -46,7 +46,7 @@ public class Assembler {
 	 * @return List of assembled instructions.
 	 * @throws SyntaxException
 	 */
-	public List<AssembledInstruction> AssembleCode(String code) throws SyntaxException {
+	public List<AssembledInstruction> assembleCode(String code) throws SyntaxException {
 		code = adjustCode(code);									// remove redundancies
 		String codeLines[] = code.split("\n");
 		Map<String, Data> labels = getLabels(codeLines);			// get all labels with their respective addresses
@@ -225,7 +225,8 @@ public class Assembler {
 				
 				if(labels.get(label) == null){
 					labels.put(label, computeAddress(i));
-					System.out.println("LABEL " + label + " (" + computeAddress(i).getHex() + ") == codeline `" + codeLines[i] + "`");
+					logger.log(Logger.Level.DEBUG, "Created label `" + label + "` (address " + computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
+					System.out.println("Created label `" + label + "` (address " + computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
 				}
 				else
 					throw new SyntaxException("Duplicate label declaration `" + label + "` !");
@@ -262,12 +263,18 @@ public class Assembler {
 	 * @return Code without redundant spaces, empty lines and comments.
 	 */
 	private String adjustCode(String code){
-		code = code.replaceAll(COMMENT_CHAR + ".*\n", "");		// erase comments
-		code = code.replaceAll("\n+", "\n");					// merge multiple empty lines
-		code = code.replaceAll("[ \t]+", " ");					// and merge multiple tabs and spaces
-		code = code.replaceAll(":\\s*", ":");					// connect label with instruction closest to it
-		code = code.trim();										// and finally trim any leading/traling newlines/spaces in code
+		// need to manually add newline character, otherwise following replacement wouldn't work (commentary)
+		code = code + "\n";
+		
+		code = code.replaceAll(COMMENT_CHAR + ".*\n", "");			// erase comments
+		code = code.replaceAll("\n+", "\n");						// merge multiple empty lines
+		code = code.replaceAll("[ \t]+", " ");						// and merge multiple tabs and spaces
+		code = code.replaceAll("\n +", "\n");						// remove emty characters at the begining of each line
+		code = code.replaceAll("[ \t]*:\\s*", ":");					// connect label with instruction closest to it (\s  is whitespace character)
+		code = code.trim();											// and finally trim any leading/traling newlines/spaces in code
 
+		System.out.println("CODE after adjusment:\n" + code + "\n");
+		
 		return code;
 	}
 	

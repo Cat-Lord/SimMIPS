@@ -28,7 +28,7 @@ public class RegArgumentType extends ArgumentType {
 		pattern = Pattern.compile(REG_REGEX);
 		Matcher matcher = pattern.matcher(arg.toLowerCase());
 		if( ! matcher.matches() )
-			throw new SyntaxException("Invalid Register Specified");
+			throw new SyntaxException("Invalid Register `" + arg + "` specified");
 	}
 	
 	/**

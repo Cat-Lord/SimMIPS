@@ -35,7 +35,7 @@ public class Loader {
 		
 		try {
 			parseCPU(new JSONObject(readFile(cpuPath)), instructionsSet);
-		} catch(Exception e) { System.err.println("Failed to create CPU"); }
+		} catch(Exception e) { System.err.println("Failed to create CPU -- " + e.getMessage()); }
 	}
 	
 	public CPU getCPU(){
