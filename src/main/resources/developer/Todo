@@ -50,3 +50,16 @@ Notes:
 Notes: While doing the control unit class I've stumbled upon a possible logical problem - When an instruction has opcode 0, 
         it is an arithmetic instruction. Operation, that should be done, is specified by "func" field from instruction. 
         Shouldn't be the mapping of func to operation done in control unit ? 
+
+-------------
+Notes: LatchRegister has (in cpu.json) input/output data defined differently. Each input maps to a specific output(s). That means writing 
+
+        in:  { "number" : 32" }
+        out: { "number" : {"base": 20, "exponent": 12 } }
+        
+       means, that input 'number' maps to two outputs 'base' and 'exponent'. The input/output mapping can be, of course, done 1:1 like this
+
+       in:  { "signal": 2 }
+       out: { "signal: { "description": 2 } }
+
+       where in this example input 'signal' maps to the same-sized output 'description'.

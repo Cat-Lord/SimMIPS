@@ -30,6 +30,13 @@ import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
 public class Loader {
 	private CPU cpu;
 	
+	/**
+	 * Used for debugging. Allows separate method calls.
+	 */
+	public Loader(){
+		
+	}
+	
 	public Loader(String layoutPath, String cpuPath) throws IOException, URISyntaxException {
 		Map<String, Instruction> instructionsSet = parseLayout(new JSONObject(readFile(layoutPath)));
 		
@@ -133,7 +140,7 @@ public class Loader {
 		return instructions;
 	}
 	
-	private String readFile(String fileName) throws IOException, URISyntaxException{
+	public String readFile(String fileName) throws IOException, URISyntaxException{
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		URI uri = classloader.getResource(fileName).toURI();
 		List<String> lines = Files.readAllLines(Paths.get(uri));

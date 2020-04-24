@@ -38,7 +38,7 @@ public class CPU {
 		CPU.logger = System.getLogger(this.getClass().getName());
 		components = new ArrayList<>();
 		this.instructionSet = instructionSet;
-		parseComponents(cpuJson.getJSONObject("components"));
+		//parseComponents(cpuJson.getJSONObject("components"));		//TODO	
 		
 		this.assembler = new Assembler(instructionSet);
 	}

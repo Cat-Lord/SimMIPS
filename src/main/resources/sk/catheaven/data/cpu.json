@@ -1,48 +1,12 @@
 {
     "components" : {
-        "BRANCH_MUX"  :{ "type": "MUX", 
-                     "in": {
-                        "newAddress": 32,
-                        "branchAddress": 32,
-                        "branchSignal": 1
-                     }, 
-                     "out": {
-                        "newAddress": 32
-                     },
-                     "signalToOperation":{
-                        "redirect": "branchSignal"
-                     },
-                     "desc": "Chooses from next address or calculated address in case of branching." },
+        "BRANCH_MUX" :{"type": "MUX", "inputA": 32, "inputB": 32, "output": 32, "desc": "Chooses from next address or calculated address in case of branching." },
 
-        "PC"          :{ "type": "PC",
-                         "in": {
-                            "newAddress": 32
-                         },
-                         "out": {
-                            "address" : 32
-                         },
-                         
-                         "desc": "Adds 4 to the value of input A." },
+        "PC":{ "type": "PC", "inputA": 32, "output": 32, "desc": "Adds 4 to the value of input A." },
 
-        "CONST_ADDER" :{ "type": "ConstAdder", 
-                         
-                         "in": {
-                            "address": 32
-                         },
-                         "out": {
-                            "newAddress": 32
-                         },
-                         "constIn": 4,
-                         "desc": "Adds 4 to the value of input A." },
-        "I_MEM" :{ 
-            "type": "InstructionMemory",
-            "in": {
-                "address": 32
-            },
-            "out": {
-                "iCode": 32
-            }
-        },
+        "CONST_ADDER" :{ "type": "ConstAdder", "inputA": 32, "const" : 4, "output": 32, "desc": "Adds 4 to the value of input A." },
+        
+        "I_MEM" :{ "type": "InstructionMemory" },
         
         "IF_ID" :{
             "type": "LatchRegister",
@@ -51,10 +15,13 @@
                 "iCode": 32
             },
             "out": {
-                "rs" : "6-21",
-                "rt" : "11-16",
-                "rd" : "16-12",
-                "imm": "16-16"
+                "newAddress": { "newAdress" : "32" },
+                "iCode": {
+                    "rs" : "6-27",
+                    "rt" : "11-27",
+                    "rd" : "16-28",
+                    "imm": "16-16"
+                }
             },
             "desc": "Latch register between Fetch and Decode phase" },
 
@@ -105,18 +72,40 @@
                 {"func": 38, "operation": 6}
             ]
         },
-        "CU_MUX"      :{ "type": "ConstMUX", "desc": "Activating this MUX results in value of constant output value." }, 
-        "REG_BANK"    :{ "type": "RegBank" },
-        "SIGN_EXT"    :{ "type": "SignExt" },
-        "ID_EX"       :{ "type": "LatchRegister", "desc": "Latch register between Decode and Execute phase" },
+        "CU_MUX"      :{ "type": "ConstMUX", "inputA": 32, "const": 0, "output": 32, "desc": "Activating this MUX results in value of constant output value." }, 
+        "REG_BANK"    :{ "type": "RegBank", "regCount": 32 },
+        "SIGN_EXT"    :{ "type": "SignExt", "input": 16, "output": 32, "desc": "Extends the output, from 16 bit to 32 bit in size." },
+        "ID_EX" :{ 
+            "type": "LatchRegister",
+            "in": {
+                "controlSignals": 32,
+                "newAddress": 32,
+                "reg1Value": 32,
+                "reg2Value": 32,
+                "immediate": 32,
+                "rt": 5,
+                "rd": 5
+            },
+            
+            "out": {
+                "controlSignals": { "controlSignals" : "32" },
+                "newAddress": { "newAdress" : "32" },
+                "reg1Value": { "aluInputA" : "32" },
+                "reg2Value": { "reg2Value" : "32" },
+                "immediate": { "immediate" : "32" },
+                "rt": { "rt" : "5" },
+                "rd": { "rd" : "5" }
+            },
+            
+            "desc": "Latch register between Decode and Execute phase" },
 
-        "EX_CU_MUX"   :{ "type": "ConstMUX", "desc": "MUX that can zero out signals from control unit in EX phase." },
+        "EX_CU_MUX" :{ "type": "ConstMUX", "desc": "MUX that can zero out signals from control unit in EX phase." },
         "DEST_REG_MUX":{ "type": "MUX", "desc": "Chooses destination register (either rd or rt value from instruction)." },
         "ADDER"       :{ "type": "Adder" },
-        
             
         "ALU" :{ 
             "type": "ALU",
+            "inputA": 32, "inputB": 32, "output": 32,
             "operations": [
                    { "code":  1, "operation":  "add" },
                    { "code":  2, "operation":  "sub" },
@@ -136,14 +125,50 @@
         },
         
         
-        "ALUSrc"      :{ "type": "MUX", "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." },
-        "EX_MEM"      :{ "type": "LatchRegister", "desc": "Latch register between Execute and Memory phase" },
+        "ALUSrc"      :{ "type": "MUX", "inputA": 32, "inputB": 32, "output": 32, "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." },
+        "EX_MEM" :{
+            "type": "LatchRegister",
+            "in": {
+                "controlSignals": 32,
+                "branchAddress": 32,
+                "zeroResultSignal": 1,
+                "aluResult": 32,
+                "reg2Value": 32,
+                "destReg": 5
+            },
+            
+            "out": {
+                "controlSignals": { "controlSignals" : "32" },
+                "branchAddress": { "branchAddress" : "32" },
+                "zeroResultSignal": { "zeroResultSignal" : "1" },
+                "aluResult": { "aluResult" : "32" },
+                "reg2Value": { "reg2Value" : "32" },
+                "destReg": { "destReg" : "5" }
+            },
+            "desc": "Latch register between Execute and Memory phase" 
+        },
 
-        "BRANCH_AND"  :{ "type": "AND" },
+        "BRANCH_AND"  :{ "type": "AND", "inputA": 1, "inputB": 1, "output": 1, "desc": "Output of this AND gate determines, if a branch will be taken or not."},
         "DATA_MEM"    :{ "type": "DataMemory"},
 
-        "MEM_WB"      :{ "type": "LatchRegister" , "desc": "Latch register between Memory and WriteBack phase"},
-        "WB_MUX"      :{ "type": "MUX", "desc" : "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle." }
+        "MEM_WB" :{
+            "type": "LatchRegister" , 
+             "in": {
+                "controlSignals": 32,
+                "memData": 32,
+                "aluResult": 32,
+                "destReg": 5
+            },
+            
+            "out": {
+                "controlSignals": { "controlSignals" : "32" },
+                "memData": { "memData" : "32" },
+                "aluResult": { "aluResult" : "32" },
+                "destReg": { "destReg" : "5" }
+            },
+            "desc": "Latch register between Memory and WriteBack phase"
+        },
+        "WB_MUX"      :{ "type": "MUX", "inputA": 32, "inputB": 32, "output": 32, "desc" : "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle." }
     },
     
     "connections": {

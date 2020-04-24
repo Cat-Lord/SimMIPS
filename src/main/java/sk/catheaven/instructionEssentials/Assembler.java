@@ -224,9 +224,9 @@ public class Assembler {
 				codeLines[i] = codeLines[i].substring(coli+1);
 				
 				if(labels.get(label) == null){
-					labels.put(label, computeAddress(i));
-					logger.log(Logger.Level.DEBUG, "Created label `" + label + "` (address " + computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
-					System.out.println("Created label `" + label + "` (address " + computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
+					labels.put(label, Assembler.computeAddress(i));
+					logger.log(Logger.Level.DEBUG, "Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
+					System.out.println("Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
 				}
 				else
 					throw new SyntaxException("Duplicate label declaration `" + label + "` !");
@@ -284,10 +284,20 @@ public class Assembler {
 	 * @param index Nth address to compute.
 	 * @return Integer representation of computed address.
 	 */
-	private Data computeAddress(int index){
+	public static Data computeAddress(int index){
 		Data d = new Data();
 		d.setData((( (Data.MAX_BIT_SIZE/8) * index) << 2) >>> 2);
 		return d;
+	}
+	
+	/**
+	 * From an address compute an index in list/array or other collection. Reverse
+	 * to the <code>computeAddress</code>.
+	 * @param address Data specifying address to compute index from.
+	 * @return Index of instruction with specified address.
+	 */
+	public static int computeIndex(Data address){
+		return address.getData() / (Data.MAX_BIT_SIZE/8);
 	}
 	
 	/**

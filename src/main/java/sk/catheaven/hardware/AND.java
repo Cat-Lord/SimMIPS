@@ -6,22 +6,23 @@
 package sk.catheaven.hardware;
 
 import IObase.Input;
+import org.json.JSONException;
 import org.json.JSONObject;
+import sk.catheaven.instructionEssentials.Data;
 
 /**
  *
  * @author catlord
  */
-public class AND extends Component {
-	private Input inputA, inputB;
-	
+public class AND extends BinaryComponent {
 	public AND(String label, JSONObject json) {
-		super(label);
+		super(label, json);
 	}
 	
 	@Override
 	public void execute(){
-		
+		output.setData(
+				inputA.getData() & inputB.getData()
+		);
 	}
-	
 }

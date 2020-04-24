@@ -11,10 +11,18 @@ import org.json.JSONObject;
  *
  * @author catlord
  */
-public class Adder extends Component {
+public class Adder extends BinaryComponent {
 
 	public Adder(String label, JSONObject json) {
-		super(label);
+		super(label, json);
+		
+	}
+
+	@Override
+	public void execute() {
+		output.setData(
+			inputA.getData() + inputB.getData()
+		);
 	}
 	
 }

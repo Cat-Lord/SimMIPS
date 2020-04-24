@@ -13,16 +13,19 @@ import sk.catheaven.instructionEssentials.Data;
  *
  * @author catlord
  */
-public class RegBank extends Component {
-	private Data[] registers;
+public class BinaryComponent extends Component {
+	protected Data inputA, inputB;
+	protected Data output;
 	
-	public RegBank(String label, JSONObject json) {
+	public BinaryComponent(String label, JSONObject json) {
 		super(label);
 		
 		setupIO(json);
 	}
-
-	private void setupIO(JSONObject json) throws JSONException {
-		registers = new Data[json.getInt("regCount")];
+	
+	protected void setupIO(JSONObject json) throws JSONException {
+		inputA = new Data(json.getInt("inputA"));
+		inputB = new Data(json.getInt("inputB"));
+		output = new Data(json.getInt("output"));
 	}
 }
