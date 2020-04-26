@@ -131,4 +131,14 @@ public class Data {
 	public int getBitSize(){
 		return bitSize;
 	}
+	
+	/**
+	 * Clone method to allow duplication of data.
+	 * @return Duplicate (clone) of this object as new object with the same data.
+	 */
+	public Data duplicate() {		
+		Data cloned = new Data(this.bitSize);
+		cloned.setData(this.data);
+		return cloned;
+	}
 }

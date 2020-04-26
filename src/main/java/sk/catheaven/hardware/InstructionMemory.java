@@ -42,4 +42,14 @@ public class InstructionMemory extends Component {
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));
 	}
+
+	@Override
+	public Data getData(String selector) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void setData(String selector, Data data) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

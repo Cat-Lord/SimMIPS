@@ -52,6 +52,12 @@ Notes: While doing the control unit class I've stumbled upon a possible logical 
         Shouldn't be the mapping of func to operation done in control unit ? 
 
 -------------
+Todo:
+    - Add 'fork' element
+
+Done:
+    - Fork elements added and described
+
 Notes: LatchRegister has (in cpu.json) input/output data defined differently. Each input maps to a specific output(s). That means writing 
 
         in:  { "number" : 32" }
@@ -63,3 +69,7 @@ Notes: LatchRegister has (in cpu.json) input/output data defined differently. Ea
        out: { "signal: { "description": 2 } }
 
        where in this example input 'signal' maps to the same-sized output 'description'.
+
+-------------
+Todo:
+    - handle bubble signal in latch registers (not all have it !)

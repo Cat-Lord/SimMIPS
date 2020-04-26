@@ -5,10 +5,7 @@
  */
 package sk.catheaven.hardware;
 
-import IObase.Input;
-import org.json.JSONException;
 import org.json.JSONObject;
-import sk.catheaven.instructionEssentials.Data;
 
 /**
  *
@@ -21,8 +18,8 @@ public class AND extends BinaryComponent {
 	
 	@Override
 	public void execute(){
-		output.setData(
-				inputA.getData() & inputB.getData()
+		output.getRight().setData(
+				inputA.getRight().getData() & inputB.getRight().getData()
 		);
 	}
 }

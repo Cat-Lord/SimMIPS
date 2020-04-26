@@ -12,7 +12,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sk.catheaven.instructionEssentials.DataContainer;
+import sk.catheaven.instructionEssentials.Data;
+import sk.catheaven.utils.Cutter;
 
 /**
  *
@@ -20,152 +21,186 @@ import sk.catheaven.instructionEssentials.DataContainer;
  */
 public class ControlUnit extends Component {
 	private static Logger logger;
-	private final DataContainer[] controlSignals;			// all the known signals and their data
-	private final Map<Integer, Integer[]> signalValues;		// mapping of opcodes to final signal values
+	
+	private String[] signalLabels;		// labels of signals
+	private Map<String, Data> signals;
+	private Map<Integer, Integer[]> opcodeToSignals;
 	private final Map<Integer, Integer> funcToOp;			// mapping of "func" field to alu operations
 	
+	private final Data input;
+	private Data output;
+	private final Cutter opcodeParser, funcParser;			// so we don't need to worry about how to get these values, the way is in json
+	private final String funcDependant;						// denotes, which signal changes, when we need to parse func field, see setOutput()
+	
 	/**
-	 * @param label Label of this control unit.
-	 * @param json ControlUnit json object with all necessary information required.
-	 * @throws JSONException
-	 * @throws Exception 
+	 * From a given json file gets all signals with their respective labels.Each signal
+	 * is defined by a label and bit size.This allows easy creation of signals as labeled
+	 * data (thus the DataContainer class).
+	 * @param label
+	 * @param json
 	 */
-	public ControlUnit(String label, JSONObject json) throws JSONException, Exception {
+	public ControlUnit(String label, JSONObject json) throws JSONException {
 		super(label);
 		
-		controlSignals = assignControlSignals(json.getJSONObject("controlCodes").getJSONObject("codesDescription"));
-		signalValues = assignControlValues(json.getJSONObject("controlCodes").getJSONObject("opcodeToControl"), controlSignals.length);
-		funcToOp = assignFuncToOp(json.getJSONArray("funcToOperation"));
+		setupSignals(json.getJSONObject("controlCodes"));
 		
-		if(controlSignals == null || signalValues == null || funcToOp == null)
-			throw new Exception("Undefined objects in CU (" + controlSignals + ", " + signalValues + ", " + funcToOp + ")");
+		String debugOutput = "Signal labels:\n";
+		for(int i = 0; i < signalLabels.length; i++)
+			debugOutput = debugOutput.concat(String.format("\t%2d: %8s ==> %db data\n", i, signalLabels[i], signals.get(signalLabels[i]).getBitSize()));
 		
-		ControlUnit.logger = System.getLogger(this.getClass().getName());
+		System.out.println("\nOpcodes to Signals:");
+		for(Integer opcode : opcodeToSignals.keySet()){
+			debugOutput = debugOutput.concat(String.format("\t%2d: \n", opcode));
+			
+			Integer[] ints = opcodeToSignals.get(opcode);
+			for(int j = 0; j < ints.length; j++)
+				debugOutput = debugOutput.concat(String.format("%2d \n", ints[j]));
+			debugOutput = debugOutput.concat("\n");
+		}
+		
+		logger.log(Logger.Level.DEBUG, debugOutput);
+		funcToOp = loadFuncToOp(json.getJSONArray("funcToOperation"));
+		
+		debugOutput = "Func to operation map:\n";
+		for (int func : funcToOp.keySet())
+			debugOutput = debugOutput.concat("\t" + func + " --> " + funcToOp.get(func) + "\n");
+		logger.log(Logger.Level.DEBUG, debugOutput);
+		
+		this.funcDependant = json.getString("funcDependant");
+		this.input  = new Data(json.getInt("in"));
+		this.opcodeParser = new Cutter(Data.MAX_BIT_SIZE, json.getString("opCodeCut"));
+		this.funcParser   = new Cutter(Data.MAX_BIT_SIZE, json.getString("funcCut"));
 	}
 	
 	/**
-	 * From a given json file gets all signals with their respective labels. Each signal
-	 * is defined by a label and bit size. This allows easy creation of signals as labeled
-	 * data (thus the DataContainer class).
-	 * @param signalsJson Json object containing all signals specified as <code>"signalLabel" : { "bitSize": X }</code> where X is a valid number.
-	 * @return Array of labeled data as DataContainer[].
+	 * From json file loads all the labels and all respective arrays of values.
+	 * @param json
+	 * @throws JSONException
+	 * @throws NumberFormatException 
 	 */
-	private DataContainer[] assignControlSignals(JSONObject signalsJson){
-		DataContainer[] signals = new DataContainer[signalsJson.length()];
+	private void setupSignals(JSONObject json) throws JSONException, NumberFormatException {
+		JSONArray labelsJson = json.getJSONArray("codesDescription");
 		
-		int i = 0;
-		for(String label: signalsJson.keySet()){
-			JSONObject o = signalsJson.getJSONObject(label);
-			signals[i++] = new DataContainer(label, o.getInt("bitSize"));
+		signalLabels = new String[labelsJson.length()];
+		signals = new HashMap<>();
+		int totalBitSize = 0;
+		
+		for(int j = 0; j < labelsJson.length(); j++){
+			JSONObject currentSignal = (JSONObject) labelsJson.getJSONObject(j);
+			String slabel = currentSignal.getString("label");
+			signalLabels[j] = slabel;
+			
+			int bitSize = currentSignal.getInt("bitSize");
+			totalBitSize += bitSize;
+			
+			signals.put(slabel, new Data(bitSize));
 		}
 		
-		// TODO output only for logger
-		System.out.println("Control signals:");
-		for(i = 0; i < signals.length; i++)
-			System.out.println("\tSignal `" + signals[i].getLabel() + "` has bit size of " + signals[i].getData().getBitSize() + "b");
+		this.output = new Data(totalBitSize);
 		
-		return signals;
+		opcodeToSignals = new HashMap<>();
+		JSONObject opsTosigs = json.getJSONObject("opcodeToControl");
+		
+		for(String opcode : opsTosigs.keySet()) {
+			JSONArray vals = opsTosigs.getJSONArray(opcode);
+			Integer[] sigs = new Integer[signalLabels.length];				// store the valueshere		
+			
+			for(int j = 0; j < vals.length(); j++)
+				sigs[j] = vals.getInt(j);
+			
+			opcodeToSignals.put(Integer.parseInt(opcode), sigs);
+		}
 	}
-	
-	/**
-	 * When the control signals are known (by label and bit size), this method creates maps
-	 * opcodes to signal values. For example opcode 3 could map to "AluSrc" = 1, "RegWrite" = 1, etc.
-	 * @param codesJson Json object containing all the necessary mapping (string label and array, for example
-	 * <code>"3": [1,1,0]</code>.
-	 * @param limit Only and exactly this amount of numbers is allowed.
-	 * @return 
-	 */
-	private Map<Integer, Integer[]> assignControlValues(JSONObject codesJson, int limit) throws Exception {
-		Map<Integer, Integer[]> map = new HashMap<>();
-		
-		for(String opcodeString: codesJson.keySet()){
-			JSONArray jsonSignalValues = codesJson.getJSONArray(opcodeString);
-			int arrLen = jsonSignalValues.length();
-			
-			if(arrLen != limit)
-				throw new Exception("Number of values (" + arrLen + ") doesn't fit expected count of " + limit + " elements");
-				
-			
-			// opcode will be represented as integer number for easy manipulation
-			int opcode = 0; 
-			try{
-				opcode = Integer.parseInt(opcodeString);
-			} catch(NumberFormatException e) { 
-				logger.log(Logger.Level.WARNING, e.getMessage()); 
-				throw new Exception("Opcode `" + opcodeString + "` is not a number !");
-			}
-			
-			if(map.get(opcode) != null)
-				throw new Exception("Opcode `" + opcodeString + "` has multiple control signal values assigned !");
-			
-			
-			Integer values[] = new Integer[arrLen];		// array of signal values
-			
-			// remember all the values for this specifigc opcode
-			int i = 0;
-			Iterator<Object> it = jsonSignalValues.iterator();
-			while(it.hasNext())
-				values[i++] = (Integer)it.next();
-			
-			map.put(opcode, values);
-		}
-		
-		
-		// TODO output only for logger
-		System.out.println("Control signal values:");
-		for(Integer it : map.keySet()){
-			Integer arr[] = map.get(it);
-			System.out.print("\t" + it + ": ");
-			
-			for(int j = 0; j < arr.length; j++)
-				System.out.print(arr[j] + " ");
-			System.out.print("\n");
-		}
-		
-		return map;
-	}
-	
+
 	/**
 	 * Creates a map, which binds func field from instruction to operation.
-	 * @param funcs Array of func values and their respective operations.
+	 * @param json Array of func values and their respective operations.
 	 * @return 
 	 */
-	private Map<Integer, Integer> assignFuncToOp(JSONArray funcs){
+	private Map<Integer, Integer> loadFuncToOp(JSONArray json) {
 		Map<Integer, Integer> map = new HashMap<>();
 		
-		Iterator<Object> i = funcs.iterator();
+		Iterator<Object> i = json.iterator();
 		while(i.hasNext()){
 			JSONObject o = (JSONObject) i.next();
 			map.put(o.getInt("func"), o.getInt("operation"));
 		}
 		
-		System.out.println("\nFunc to operation map:");
-		for (int func : map.keySet()) {
-			System.out.println("\t" + func + " --> " + map.get(func));
-		}
-		
 		return map;
+	}
+
+	/**
+	 * Get the input, 'parse' it and put the necessary output for this input.
+	 * The only extra work is done when input opcode is 0 - then we need to
+	 * put output ALU control signal according to func value of instruction.
+	 */
+	@Override
+	public void execute() {
+		opcodeParser.setDataToCut(input);
+		funcParser.setDataToCut(input);
+
+		int opCode = opcodeParser.getCutData().getData();
+		setOutput(opCode, funcParser.getCutData().getData());
+		
+		input.setData(0);		// clear input
 	}
 	
 	/**
-	 * Returns array of values for a given opcode.
-	 * @param opcode From an opcode get all the values as int array.
-	 * @return 
+	 * Get mapping from opcode and set output accordingly. FuncField is provided,
+	 * but is used only if the opcode is equal to zero. If opcode equals to zero,
+	 * a signal pointed to by label <i>funcDependant</i> will be changed by the 
+	 * value defined in <code>funcToOp</code> map.
+	 * After the changes to signals, <code>setOutputValue()</code>.
+	 * @param opcode Opcode of instruction.
 	 */
-	public int[] getControlSignals(int opcode){
-		Integer op = (Integer)opcode;
-		Integer values[] = signalValues.get(op);
+	private void setOutput(int opcode, int funcField){
+		logger.log(Logger.Level.DEBUG, "Setting output by opcode of " + opcode);
 		
-		if(values == null){
-			logger.log(Logger.Level.WARNING, "Asking for unknown values of control signals (opcode " + opcode + ") !");
-			return new int[0];
+		Integer[] signalValues = opcodeToSignals.get(opcode);
+		
+		// check existence
+		if(signalValues == null){
+			logger.log(Logger.Level.WARNING, "There is no output signal for opcode " + opcode);
+			return;
 		}
 		
-		int ret[] = new int[values.length];
-		for(int i = 0; i < values.length; i++)
-			ret[i] = values[i];
+		// shift value of output bitwise left and 'append new value'
+		for(int i = 0; i < signalLabels.length; i++){
+			signals.get(signalLabels[i]).setData(signalValues[i]);
+		}
 		
-		return ret;
+		// if input IS func dependant, change the field, which depends on this change
+		if(opcode == 0){
+			signals.get(funcDependant).setData(funcToOp.get(funcField));
+		}
+		
+		setOutputValue();
 	}
 	
+	/**
+	 * Reset output value to zero and bit-wise shift while updating its value
+	 * with all the fields known in <code>signalLabels</code> array.
+	 */
+	private void setOutputValue(){
+		// sanity set, prepare output 'default' value
+		output.setData(0);
+
+		// shift value of output bitwise left and 'append new value'
+		for(int i = 0; i < signalLabels.length; i++){
+			Data currentData = signals.get(signalLabels[i]);
+			output.setData(
+				( (output.getData() << currentData.getBitSize()) | currentData.getData() )
+			);
+		}
+	}
+
+	@Override
+	public Data getData(String selector) {
+		return output;
+	}
+
+	@Override
+	public void setData(String selector, Data data) {
+		input.setData(data.getData());
+	}
 }

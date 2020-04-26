@@ -12,7 +12,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.utils.Tuple;
+import sk.catheaven.utils.Cutter;
 
 /**
  * JSON description - the inputs in json are simple - one instruction as integer number.
@@ -25,7 +25,7 @@ public class LatchRegister extends Component {
 	private static Logger logger;
 	Map<String, Data> inputs;						// input labels -> data
 	Map<String, ArrayList<String>> iTOo;			// input -> output (only labels)
-	Map<String, Output> outputs;					// output labels -> output
+	Map<String, Cutter> outputs;					// output labels -> output
 	
 	public LatchRegister(String label, JSONObject json) throws Exception {
 		super(label);
@@ -47,14 +47,14 @@ public class LatchRegister extends Component {
 	public void execute() {
 		// clearing outputs
 		outputs.keySet().forEach((ol) -> {
-			outputs.get(ol).setData(0);
+			outputs.get(ol).setDataToCut(0);
 		});
 		
 		inputs.keySet().forEach((ins) -> {
 			Data insData = inputs.get(ins);
 			
 			iTOo.get(ins).forEach((ol) -> {
-				outputs.get(ol).setData(insData);
+				outputs.get(ol).setDataToCut(insData);
 			});
 		});
 		
@@ -75,7 +75,7 @@ public class LatchRegister extends Component {
 			logger.log(Logger.Level.ERROR, "No such output: " + selector);
 			return null;
 		}
-		return outputs.get(selector).getData();
+		return outputs.get(selector).getCutData();
 	}
 	
 	/**
@@ -106,68 +106,14 @@ public class LatchRegister extends Component {
 			for(String inToOut : inputToOutputJson.keySet()){
 				list.add(inToOut);			// remember mapping
 				
-				Output opt = new Output(inputBitSize, inputToOutputJson.getString(inToOut));
+				Cutter opt = new Cutter(inputBitSize, inputToOutputJson.getString(inToOut));
 				outputs.put(inToOut, opt);
 				
-				debugOutput = debugOutput.concat("\t" + inToOut + ": bitSize " + opt.getData().getBitSize() + "\n");
+				debugOutput = debugOutput.concat("\t" + inToOut + ": bitSize " + opt.getCutData().getBitSize() + "\n");
 			}
 			
 			iTOo.put(in, list);
 			logger.log(Logger.Level.DEBUG, debugOutput);
-		}
-	}
-	
-	/**
-	 * Output inner class to nicely contain all the necessary 
-	 * functionality to know for the output. Output can be <i>constant</i>,
-	 * which means it will behave exactly like a <code>Data</code> variable.
-	 * it can also be <i>ranged</i>, where it will know the range of data it 
-	 * will "cut" from. For example range 6-12 means, it will bit-wise shift 
-	 * left for 6 bits and right for 12, thus getting only part of original output.
-	 *  
-	*/
-	public class Output {
-		private final Data data;
-		private Tuple<Integer, Integer> range;
-		
-		/**
-		 * @param originalBitSize The original bitSize this output ties to. Serves to determine bit size of output. 
-		 * @param spec Specification of output. Can be constant integer value or range.
-		 */
-		public Output(int originalBitSize, String spec) throws NumberFormatException {
-			range = null;
-			
-			if(spec.contains("-"))
-				this.data = parseRangedValue(originalBitSize, spec);
-			else
-				this.data = new Data(Integer.parseInt(spec));
-		}
-
-		private Data parseRangedValue(int originalBitSize, String spec) throws NumberFormatException {
-			int from = Integer.parseInt(spec.substring(0, spec.indexOf("-")));
-			int to = Integer.parseInt(spec.substring(spec.indexOf("-") + 1, spec.length()));
-			range = new Tuple<>(from, to);
-			return new Data(originalBitSize - to);		// original size - shift to right gives the actual data size
-		}
-		
-		public void setData(Data origin){
-			if(range == null)
-				data.setData(origin.getData());
-			else{
-				System.out.println("Origin data: " + origin.getHex());
-				System.out.println("shifting " + range.getLeft() + " left and " + range.getRight() + " right");
-				data.setData(
-					(origin.getData() << range.getLeft()) >>> range.getRight()
-				);
-			}
-		}
-		
-		public void setData(int data){
-			this.data.setData(data);
-		}
-		
-		public Data getData(){
-			return data;
 		}
 	}
 }

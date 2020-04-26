@@ -25,4 +25,19 @@ public class RegBank extends Component {
 	private void setupIO(JSONObject json) throws JSONException {
 		registers = new Data[json.getInt("regCount")];
 	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Data getData(String selector) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void setData(String selector, Data data) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

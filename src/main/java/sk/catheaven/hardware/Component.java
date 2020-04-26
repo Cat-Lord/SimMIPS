@@ -5,12 +5,11 @@
  */
 package sk.catheaven.hardware;
 
-
 /**
  *
  * @author catlord
  */
-public abstract class Component {
+public abstract class Component implements Datapathable {
 	protected String label;
 	
 	public Component(String label){
@@ -19,9 +18,5 @@ public abstract class Component {
 	
 	public String getLabel(){
 		return label;
-	}
-	
-	public void execute(){
-		
 	}
 }

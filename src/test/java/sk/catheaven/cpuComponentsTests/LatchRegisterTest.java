@@ -63,7 +63,12 @@ public class LatchRegisterTest {
 		 * TESTING FOR ID_EX latch
 		 */
 		try {
-			tl = new LatchRegister("3", cpuJson.getJSONObject("ID_EX"));	
+			tl = new LatchRegister("3", cpuJson.getJSONObject("ID_EX"));
+			d.setData(69);
+			tl.setData("reg1Value", d);
+			tl.execute();
+			assertEquals(69,tl.getData("aluInputA").getData());
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			fail("Shouldn't have cought an exception ! ");
@@ -74,14 +79,15 @@ public class LatchRegisterTest {
 		 */
 		try {
 			tl = new LatchRegister("4", cpuJson.getJSONObject("IF_ID"));
-			d.setData(0x20916931);		// instruction is: ADDI $17,$4,6931, imm value is 26 929
+			d.setData(0x20916931); // instruction is: ADDI $17,$4,6931, imm value is 26 929
 			tl.setData("iCode", d);
 			tl.execute();
 			
-			System.out.println(" rs: " + tl.getData("rs").getData());
-			System.out.println(" rd: " + tl.getData("rd").getData());
-			System.out.println(" rt: " + tl.getData("rt").getData());
-			System.out.println("imm: " + tl.getData("imm").getData());	
+			assertEquals(4, tl.getData("rs").getData());
+			assertEquals(17, tl.getData("rt").getData());
+			assertEquals(13, tl.getData("rd").getData());
+			assertEquals(26929,tl.getData("imm").getData());
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			fail("Shouldn't have cought an exception ! ");

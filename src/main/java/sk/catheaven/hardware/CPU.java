@@ -69,6 +69,8 @@ public class CPU {
 				case "and": components.add(new AND(label, componentJO)); break;
 				case "datamemory": components.add(new DataMemory(label, componentJO)); break;
 				
+				case "fork": components.add(new Fork(label, componentJO)); break;
+				
 				default: System.err.println("Unknown Type: " + type); break;
 			}
 		}

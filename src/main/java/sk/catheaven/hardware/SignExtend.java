@@ -40,5 +40,15 @@ public class SignExtend extends Component {
 			((input.getData() << bitDiff) >> bitDiff)					// first shift to left and then sign-shift to the right to preserve the sign
 		);
 	}
+
+	@Override
+	public Data getData(String selector) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void setData(String selector, Data data) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 }

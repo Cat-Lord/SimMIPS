@@ -19,7 +19,7 @@ public class Tuple<A,B> {
 		this.left = left;
 		this.right = right;
 	}
-
+	
 	/**
 	 * @return the left
 	 */
@@ -33,6 +33,6 @@ public class Tuple<A,B> {
 	public B getRight() {
 		return right;
 	}
-	
+
 	
 }
