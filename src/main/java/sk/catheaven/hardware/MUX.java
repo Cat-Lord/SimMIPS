@@ -18,36 +18,38 @@ import sk.catheaven.utils.Tuple;
  */
 public class MUX extends BinaryComponent {
 	private final Tuple<String, Data> selector;
-		
+	private static Logger logger;
+	
 	public MUX(String label, JSONObject json) {
 		super(label, json);
 		
+		MUX.logger = System.getLogger(this.getClass().getName());
+		
 		JSONObject selectorJson = json.getJSONObject("selector");
-		selector = new Tuple<>(selectorJson.getString("label"), new Data(selectorJson.getInt("selector")));
+		selector = new Tuple<>(selectorJson.getString("label"), new Data(selectorJson.getInt("bitSize")));
 		
 		logger.log(Logger.Level.DEBUG, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight() + "b");
 	}
 
 	@Override
 	public void execute() {
-		output.getRight().setData(
+		output.setData(
 			(selector.getRight().getData() == 0) ? inputA.getRight().getData() : inputB.getRight().getData()
 		);
 	}
 	
 	@Override
-	public void setData(String inputLabel, Data data) {
-		switch(inputLabel){
-			case "inputA": inputA.getRight().setData(data.getData()); break;
-			case "inputB": inputB.getRight().setData(data.getData()); break;
-			
-			default: { 
-				if(inputLabel.equals(selector.getLeft()))
-					selector.getRight().setData(data.getData());
-				else
-					logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for " + inputLabel); 
-				break; 
-			}
+	public boolean setInput(String selector, Data data) {
+		boolean set = super.setInput(selector, data);
+		if(selector.equals(this.selector.getLeft())){
+			this.selector.getRight().setData(data.getData());
+			set = true;
 		}
+		
+		if( ! set){
+			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			return false;
+		}
+		return true;
 	}
 }

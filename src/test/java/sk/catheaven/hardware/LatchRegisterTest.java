@@ -3,32 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.cpuComponentsTests;
+package sk.catheaven.hardware;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import sk.catheaven.hardware.LatchRegister;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.run.Loader;
 
 /**
  *
  * @author catlord
  */
-public class LatchRegisterTest {
-	private JSONObject cpuJson;
+public class LatchRegisterTest extends Container {
 	
 	public LatchRegisterTest() {
 	}
 	
 	@Before
 	public void setUp() throws IOException, IOException, URISyntaxException {
-		Loader l = new Loader();
-		cpuJson = new JSONObject(l.readFile("sk/catheaven/data/cpu.json")).getJSONObject("components");
 	}
 	
 	/**
@@ -65,9 +60,9 @@ public class LatchRegisterTest {
 		try {
 			tl = new LatchRegister("3", cpuJson.getJSONObject("ID_EX"));
 			d.setData(69);
-			tl.setData("reg1Value", d);
+			tl.setInput("reg1Value", d);
 			tl.execute();
-			assertEquals(69,tl.getData("aluInputA").getData());
+			assertEquals(69,tl.getOutput("aluInputA").getData());
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -80,13 +75,13 @@ public class LatchRegisterTest {
 		try {
 			tl = new LatchRegister("4", cpuJson.getJSONObject("IF_ID"));
 			d.setData(0x20916931); // instruction is: ADDI $17,$4,6931, imm value is 26 929
-			tl.setData("iCode", d);
+			tl.setInput("iCode", d);
 			tl.execute();
 			
-			assertEquals(4, tl.getData("rs").getData());
-			assertEquals(17, tl.getData("rt").getData());
-			assertEquals(13, tl.getData("rd").getData());
-			assertEquals(26929,tl.getData("imm").getData());
+			assertEquals(4, tl.getOutput("rs").getData());
+			assertEquals(17, tl.getOutput("rt").getData());
+			assertEquals(13, tl.getOutput("rd").getData());
+			assertEquals(26929,tl.getOutput("imm").getData());
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

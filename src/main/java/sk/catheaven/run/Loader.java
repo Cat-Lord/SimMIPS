@@ -6,6 +6,7 @@
 package sk.catheaven.run;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 import sk.catheaven.hardware.CPU;
-import sk.catheaven.hardware.Component;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.instructionEssentials.InstructionType;
 import sk.catheaven.instructionEssentials.Field;
@@ -28,42 +28,30 @@ import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
  * @author catlord
  */
 public class Loader {
+	private static Logger logger;
 	private CPU cpu;
 	
 	/**
 	 * Used for debugging. Allows separate method calls.
 	 */
 	public Loader(){
-		
+		Loader.logger = System.getLogger(this.getClass().getName());
 	}
 	
 	public Loader(String layoutPath, String cpuPath) throws IOException, URISyntaxException {
-		Map<String, Instruction> instructionsSet = parseLayout(new JSONObject(readFile(layoutPath)));
-		
 		try {
-			parseCPU(new JSONObject(readFile(cpuPath)), instructionsSet);
-		} catch(Exception e) { System.err.println("Failed to create CPU -- " + e.getMessage()); }
+			Map<String, Instruction> instructionsSet = parseLayout(new JSONObject(readFile(layoutPath)));
+			cpu = new CPU(new JSONObject(readFile(cpuPath)), instructionsSet);
+		} catch(Exception e) { e.printStackTrace(); System.err.println("Failed to create CPU -- " + e.getMessage()); }
 	}
 	
 	public CPU getCPU(){
 		return this.cpu;
 	}
 	
-	// CPU
-	private void parseCPU(JSONObject inFile, Map<String, Instruction> instructionsSet) throws Exception {
-		this.cpu = new CPU(inFile, instructionsSet);
-		
-		List<Component> cps = cpu.getComponents();
-		
-		System.out.println("CPU has total of " + cps.size() + " components");
-		for(Component c : cps){
-			System.out.println("" + c.getLabel());
-		}
-		System.out.println();
-	}
-	
 	// INSTRUCTION SET
-	private Map<String, Instruction> parseLayout(JSONObject inFile) throws IOException, URISyntaxException {
+	private Map<String, Instruction> parseLayout(JSONObject inFile) throws Exception, IOException, URISyntaxException {
+		String debugString;
 		JSONObject types = inFile.getJSONObject("types");
 		List<InstructionType> iTypes = new ArrayList<>();
 		
@@ -74,15 +62,16 @@ public class Loader {
 		}
 		
 		// testing
-		iTypes.forEach(iType -> {
-			System.out.println("" + iType.getTypeLabel());
-			System.out.println("Fields: " );
-			iType.getFields().forEach(field -> {
-				System.out.println("" + field.getLabel() + " of size " + field.getBitSize() + "b");
-			});
-			System.out.println();
-		});
-		
+		debugString = "Instruction Types:\n";
+		for(InstructionType currIType : iTypes){
+			debugString = debugString.concat(currIType.getTypeLabel() + "\n");
+			debugString = debugString.concat("Fields:\n");
+			for(Field f : currIType.getFields()){
+				debugString = debugString.concat(f.getLabel() + " of size " + f.getBitSize() + "b\n");
+			}
+			debugString = debugString.concat("\n");
+		}
+		logger.log(Logger.Level.DEBUG, debugString);
 		
 		//	have: iTypes ============================================================================================================================
 		
@@ -103,38 +92,38 @@ public class Loader {
 					if(instructions.get(mnemo) == null)
 						instructions.put(mnemo, new Instruction(mnemo, currInstructionJson, currIType));
 					else
-						System.out.println("Duplicate instruction " + mnemo + " !");
+						throw new Exception("Duplicate instruction `" + mnemo + "` !");
+					
 					break;
 				}
 			}
 		}
 		
 		// arguments
-		System.out.println("Parsed instructions (" + instructions.size() + ")");
+		debugString = "Parsed instructions (" + instructions.size() + ")\n";
 		for(String mnemo : instructions.keySet()) {
 			Instruction i = instructions.get(mnemo);
-			System.out.print(i.getMnemo() + " (type " + i.getInstructionType().getTypeLabel() + ") -- ");
+			debugString = debugString.concat(i.getMnemo() + " (type " + i.getInstructionType().getTypeLabel() + ") -- ");
 			
 			// print arguments (REG, INT, ... )
-			System.out.print("Args: [");
+			debugString = debugString.concat("Args: [");
 			List<ArgumentType> argTypes = i.getAllArguments();
 			if(argTypes.size() > 0){
 				for(int ati = 0; ati < argTypes.size()-1; ati++)
-					System.out.print(argTypes.get(ati).toString() + ", ");
-				System.out.print(argTypes.get(argTypes.size()-1).toString() + "]\n");
+					debugString = debugString.concat(argTypes.get(ati).toString() + ", ");
+				debugString = debugString.concat(argTypes.get(argTypes.size()-1).toString() + "]\n");
 			}
 			
 			// print each field mapping
 			List<Field> fields = i.getInstructionType().getFields();
 			for(Field f : fields){
 				if(i.getFieldValue(f.getLabel()) == null)
-					System.out.println(f.getLabel() + ": ???");
+					logger.log(Logger.Level.WARNING, "Unknown field/field value relationship error !");
 				else
-					System.out.println(f.getLabel() + ": " + i.getFieldValue(f.getLabel()));
+					debugString = debugString.concat(f.getLabel() + ": " + i.getFieldValue(f.getLabel()) + "\n");
 			}
-			
-			System.out.println("Description: " + i.getDescription());
-			System.out.println();
+			logger.log(Logger.Level.DEBUG, debugString);
+			logger.log(Logger.Level.DEBUG, "Description: " + i.getDescription());
 		}
 		
 		return instructions;

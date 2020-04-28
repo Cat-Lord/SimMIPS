@@ -13,16 +13,12 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class SignExtend extends Component {
-	private Data input, output;
-	private int bitDiff;			// difference in bit size
+	private final Data input, output;
+	private final int bitDiff;			// difference in bit size, used in shifting when execute() method is called
 	
 	public SignExtend(String label, JSONObject json) throws Exception {
 		super(label);
 		
-		setupIO(json);
-	}
-
-	private void setupIO(JSONObject json) throws Exception {
 		int iSize = json.getInt("input");
 		int oSize = json.getInt("output");
 		
@@ -31,24 +27,25 @@ public class SignExtend extends Component {
 		
 		bitDiff = oSize - iSize;
 		input = new Data(iSize);
-		output = new Data(oSize);
+		output = new Data(oSize);	
 	}
 	
 	@Override
 	public void execute() {
 		output.setData(
-			((input.getData() << bitDiff) >> bitDiff)					// first shift to left and then sign-shift to the right to preserve the sign
+			((input.getData() << bitDiff) >> bitDiff)		// first shift to left and then sign-shift to the right to preserve the sign
 		);
 	}
 
 	@Override
-	public Data getData(String selector) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public Data getOutput(String selector) {
+		return output.duplicate();
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public boolean setInput(String selector, Data data) {
+		input.setData(data.getData());
+		return true;
 	}
 	
 }

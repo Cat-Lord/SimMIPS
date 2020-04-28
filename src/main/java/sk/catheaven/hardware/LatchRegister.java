@@ -18,7 +18,7 @@ import sk.catheaven.utils.Cutter;
  * JSON description - the inputs in json are simple - one instruction as integer number.
  * Outputs are specified by intervals. Each interval is described by a number, which
  * represent by how many bits does the IF_ID latch should shift. 
- * Format goes like this: "outputLabel" : "shift_to_left-shift_to_right"
+ * Format goes like this: "outputLabel" : "shift_to_left-shift_to_right".
  * @author catlord
  */
 public class LatchRegister extends Component {
@@ -63,19 +63,24 @@ public class LatchRegister extends Component {
 		});
 	}
 
-	public void setData(String selector, Data data){
-		if(inputs.get(selector) != null)
-			inputs.get(selector).setData(data.getData());
-		else
-			logger.log(Logger.Level.ERROR, "No such input: " + selector);
+	@Override
+	public boolean setInput(String selector, Data data){
+		if(inputs.get(selector) == null){
+			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			return false;
+		}
+			
+		inputs.get(selector).setData(data.getData());
+		return true;			
 	}
 	
-	public Data getData(String selector){
+	@Override
+	public Data getOutput(String selector){
 		if(outputs.get(selector) == null){
 			logger.log(Logger.Level.ERROR, "No such output: " + selector);
 			return null;
 		}
-		return outputs.get(selector).getCutData();
+		return outputs.get(selector).getCutData().duplicate();
 	}
 	
 	/**

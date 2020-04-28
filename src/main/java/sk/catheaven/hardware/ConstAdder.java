@@ -15,17 +15,13 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class ConstAdder extends Component {
-	private Tuple<String, Data> input;
-	private Data constant;
-	private Data output;
+	private final Tuple<String, Data> input;
+	private final Data constant;
+	private final Data output;
 	
 	public ConstAdder(String label, JSONObject json) {
 		super(label);
 		
-		setupIO(json);
-	}
-
-	private void setupIO(JSONObject json) {
 		JSONObject inJson = json.getJSONObject("input");
 		input = new Tuple<>(inJson.getString("label"), new Data(inJson.getInt("bitSize")));
 		
@@ -42,12 +38,13 @@ public class ConstAdder extends Component {
 	}
 
 	@Override
-	public Data getData(String selector) {
+	public Data getOutput(String selector) {
 		return output.duplicate();
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
+	public boolean setInput(String selector, Data data) {
 		input.getRight().setData(data.getData());
+		return true;
 	}
 }

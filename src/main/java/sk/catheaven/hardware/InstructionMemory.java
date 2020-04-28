@@ -5,6 +5,8 @@
  */
 package sk.catheaven.hardware;
 
+import java.lang.System.Logger;
+import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.AssembledInstruction;
@@ -12,17 +14,25 @@ import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 
 /**
- *
+ * Instruction memory stores assembled code. It provides details about original line of code,
+ * assembled instruction code and its multiple representations (binary, hex, decimal).
  * @author catlord
  */
 public class InstructionMemory extends Component {
-	private Data input, output;
-	private List<AssembledInstruction> program;
+	private static Logger logger;
+	
+	private final Data input, output;
+	private final List<AssembledInstruction> program;
 	
 	public InstructionMemory(String label, JSONObject json) {
 		super(label);
 		
-		setupIO(json);
+		InstructionMemory.logger = System.getLogger(this.getClass().getName());
+		
+		input = new Data(json.getInt("input"));
+		output = new Data(json.getInt("output"));
+		
+		program = new ArrayList<>();			// ready to receive copied instructions, not the original list
 	}
 	
 	/**
@@ -30,26 +40,45 @@ public class InstructionMemory extends Component {
 	 * @param program 
 	 */
 	public void setProgram(List<AssembledInstruction> program){
-		this.program = program;
+		if(this.program.addAll(program) == false)
+			logger.log(Logger.Level.ERROR, "Failed to load the program into instruction memoory !");
+	}
+	
+	/**
+	 * Clears the whole program. As a result, list of assembled instruction is 
+	 * empty after this method call.
+	 */
+	public void clearProgram(){
+		program.clear();
 	}
 
+	/**
+	 * From the given input (as address) compute the index, on which is the instruction 
+	 * stored inside the list of assembled instructions. After this computation, set the
+	 * instruction code as output.
+	 * If the requested address yields in an out-of-bounds index, result instruction code
+	 * is zero.
+	 */
 	@Override
 	public void execute() {
 		int index = Assembler.computeIndex(input);
-	}
-
-	private void setupIO(JSONObject json) {
-		input = new Data(json.getInt("input"));
-		output = new Data(json.getInt("output"));
-	}
-
-	@Override
-	public Data getData(String selector) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		
+		try {
+			output.setData(program.get(index).getIcode().getData());
+		} catch(IndexOutOfBoundsException e) {
+			logger.log(Logger.Level.WARNING, "Requesting instruction on address 0x" + input.getHex() + " (as index " + index + "), but address is OUT OF BOUNDS");
+			output.setData(0);
+		}
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public Data getOutput(String selector) {
+		return output.duplicate();
+	}
+
+	@Override
+	public boolean setInput(String selector, Data data) {
+		input.setData(data.getData());
+		return true;
 	}
 }

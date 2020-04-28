@@ -15,17 +15,13 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class ConstMUX extends Component {
-	private Tuple<String, Data> selector;
-	private Data input, constant;
-	private Data output;
+	private final Tuple<String, Data> selector;
+	private final Data input, output;
+	private final Data constant;
 	
 	public ConstMUX(String label, JSONObject json) {
 		super(label);
 		
-		setupIO(json);
-	}
-	
-	private void setupIO(JSONObject json){
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));
 		
@@ -44,17 +40,17 @@ public class ConstMUX extends Component {
 	}
 
 	@Override
-	public Data getData(String selector) {
+	public Data getOutput(String selector) {
 		return output.duplicate();
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
+	public boolean setInput(String selector, Data data) {
 		if(this.selector.getLeft().equals(selector))
 			this.selector.getRight().setData(data.getData());
-		else {
+		else
 			input.setData(data.getData());
-		}
+		return true;
 	}
 	
 }

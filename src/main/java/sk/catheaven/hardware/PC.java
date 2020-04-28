@@ -7,41 +7,36 @@ package sk.catheaven.hardware;
 
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.utils.Tuple;
 
 /**
  * Program counter, which stores and forwards address of next instruction to load.
  * @author catlord
  */
 public class PC extends Component {
-	private Tuple<String, Data> input;
-	private Data output;
+	private final Data input, output;
 	
 	public PC(String label, JSONObject json) {
 		super(label);
 		
-		setupIO(json);
-	}
-
-	private void setupIO(JSONObject json) {
-		JSONObject inputJson = json.getJSONObject("input");
-		input = new Tuple<>(inputJson.getString("label"), new Data(inputJson.getInt("bitSize")));
-		output = new Data(json.getInt("output"));
+		int bitSize = json.getInt("bitSize");
+		
+		input  = new Data(bitSize);
+		output = new Data(bitSize);
 	}
 
 	@Override
 	public void execute() {
-		output.setData(input.getRight().getData());
+		output.setData(input.getData());
 	}
 
 	@Override
-	public Data getData(String selector) {
+	public Data getOutput(String selector) {
 		return output.duplicate();
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
-		input.getRight().setData(data.getData());
+	public boolean setInput(String selector, Data data) {
+		input.setData(data.getData());
+		return true;
 	}
-	
 }

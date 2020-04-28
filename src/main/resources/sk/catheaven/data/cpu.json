@@ -11,18 +11,16 @@
 
         "PC":{ 
             "type": "PC",
-            "input": { "label": "newAddress", "bitSize": 32 },
-            "output": 32,
+            "bitSize": 32,
             "desc": "Adds 4 to the value of input A." 
         },
 
         "AF": {
             "type": "Fork",
             "in": 32,
-            "out": {
-                "address": "32",
-                "address": "32"
-            },
+            "out": [
+                { "label": "address", "bitSize": "32" }
+            ],
             "desc": "Forks address from PC."
         },
 
@@ -37,14 +35,17 @@
         "NAF": {
             "type": "Fork",
             "in": 32,
-            "out": {
-                "newAddress": "32",
-                "newAddress": "32"
-            },
+            "out": [
+                { "label": "newAddress", "bitSize": "32" }
+            ],
             "desc": "Forks new address from constAdder to branch and latch register."
         },
         
-        "I_MEM" :{ "type": "InstructionMemory" },
+        "I_MEM" :{ 
+            "type": "InstructionMemory",
+            "input": 32, 
+            "output": 32
+        },
         
         "IF_ID"  :{
             "type": "LatchRegister",
@@ -128,10 +129,9 @@
         "RTF": {
             "type": "Fork",
             "in": 5,
-            "out": {
-                "rt": "5",
-                "rt": "5"
-            },
+            "out": [
+                { "label": "rt", "bitSize": "5" }
+            ],
             "desc": "Forks 'rt' part of instruction code."
         },
         
@@ -196,7 +196,19 @@
             "desc": "Activating this MUX results in value of constant output value." 
         },
         
-        "REG_BANK" :{ "type": "RegBank", "regCount": 32 },
+        "REG_BANK" :{ 
+            "type": "RegBank", 
+            "dataBitSize": 32,
+            "inputA" : { "label": "rs", "bitSize": 5 },
+            "inputB" : { "label": "rt", "bitSize": 5 },
+            "destReg": { "label": "destReg", "bitSize": 5 },
+            "destRegData": "destRegValue",
+            "outputA": "reg1Value",
+            "outputB": "reg2Value",
+            "regCount": 32,
+            "selector": { "label": "regWriteSignal", "bitSize": 1 },
+            "desc": "Bank of registers of fixed size. Can be used as temporary storage."
+        },
         
         "SIGN_EXT" :{ 
             "type": "SignExt", 
@@ -208,83 +220,81 @@
         "F1": {
             "type": "Fork",
             "in": 11,
-            "out": {
-                "controlSignals": "10",
-                "destRegSignal": "0-10"
-            }
+            "out": [
+                { "label": "controlSignals", "bitSize": "10" },
+                { "label": "destRegSignal", "bitSize": "0-10" }
+            ]
         },
         "F2": {
             "type": "Fork",
             "in": 10,
-            "out": {
-                "controlSignals": "9",
-                "aluSrcSignal": "0-9"
-            }
+            "out": [
+                { "label": "controlSignals"  , "bitSize": "9" },
+                { "label": "aluSrcSignal"  , "bitSize": "0-9" }
+            ]
         },
         "F3": {
             "type": "Fork",
             "in": 9,
-            "out": {
-                "controlSignals": "5",
-                "aluOp": "0-5"
-            }
+            "out":  [
+                { "label": "controlSignals"  , "bitSize": "5" },
+                { "label": "aluOp"  , "bitSize": "0-5" }
+            ]
         },
         "F4": {
             "type": "Fork",
             "in": 5,
-            "out": {
-                "controlSignals": "4",
-                "branchSignal": "0-1"
-            }
+            "out": [
+                { "label": "controlSignals"  , "bitSize": "4" },
+                { "label": "branchSignal"  , "bitSize": "0-1" }
+            ]
         },
         "F5": {
             "type": "Fork",
             "in": 4,
-            "out": {
-                "controlSignals": "3",
-                "memRead": "0-1"
-            }
+            "out": [
+                { "label": "controlSignals"  , "bitSize": "3" },
+                { "label": "memRead"  , "bitSize": "0-1" }
+            ]
         },
         "F6": {
             "type": "Fork",
             "in": 3,
-            "out": {
-                "controlSignals": "2",
-                "memWrite": "0-1"
-            }
+            "out": [
+                { "label": "controlSignals"  , "bitSize": "2" },
+                { "label": "memWrite"  , "bitSize": "0-1" }
+            ]
         },
-        "F6": {
+        "F7": {
             "type": "Fork",
             "in": 2,
-            "out": {
-                "regWriteSignal": "1",
-                "memToRegSignal": "0-1"
-            }
+            "out": [
+                { "label": "regWriteSignal"  , "bitSize": "1" },
+                { "label": "memToRegSignal"  , "bitSize": "0-1" }
+            ]
         },
         "BF": {
             "type": "Fork",
             "in": 1,
-            "out": {
-                "branchSignal": "1",
-                "bubble": "1"
-            },
+            "out": [
+                { "label": "branchSignal"  , "bitSize": "1" },
+                { "label": "bubble"  , "bitSize": "1" }
+            ],
             "desc": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
         },
         "BF1": {
             "type": "Fork",
             "in": 1,
-            "out": {
-                "bubble": "1",
-                "bubble": "1"
-            }
+            "out": [
+                { "label": "bubble"  , "bitSize": "1" }
+            ]
         },
         "BF2": {
             "type": "Fork",
             "in": 1,
-            "out": {
-                "bubble": "1",
-                "bubble": "1"
-            }
+            "out": [
+                { "label": "bubble"  , "bitSize": "1" }
+            ]
         },
 
         "EX_CU_MUX" :{ 
@@ -301,21 +311,25 @@
             "inputA": { "label": "rt", "bitSize": 5 },
             "inputB": { "label": "rs", "bitSize": 5 },
             "output": 5,
-            "selector": {
-                "label": "destRegSignal",
-                "bitSize": 1
-            },
+            "selector": { "label": "destRegSignal", "bitSize": 1 },
             "desc": "Chooses destination register (either rd or rt value from instruction)." 
         },
         
-        "ADDER" :{ "type": "Adder" },
+        "ADDER" :{
+            "type": "Adder",
+            "inputA": { "label": "newAddress", "bitSize": 32 },
+            "inputB": { "label": "immediateValue", "bitSize": 32 },
+            "output": 32,
+            "desc": "Computes branch address by adding offset from immediate value to the value of next address."
+        },
             
         "ALU" :{ 
             "type": "ALU",
-              
-            "out": { "output": 32 },
-            "aluOp": 4,
-            "zeroResultSignal": 1,
+            "inputA": { "label": "aluInputA", "bitSize": 32 },
+            "inputB": { "label": "aluInputB", "bitSize": 32 },
+            "output": 32,
+            "aluOp": { "label": "aluOp", "bitSize": 4 },
+            "zeroResult": { "label": "zeroResultSignal", "bitSize": 1 },
             "operations": [
                 { "code":  1, "operation":  "add" },
                 { "code":  2, "operation":  "sub" },
@@ -337,19 +351,17 @@
         "RVF": {
             "type": "Fork",
             "in": 32,
-            "out": {
-                "reg2Value": "32",
-                "reg2Value": "32"
-            },
+            "out": [
+                { "label": "reg2Value"  , "bitSize": "32" }
+            ],
             "desc": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
         },
         "IVF": {
             "type": "Fork",
             "in": 32,
-            "out": {
-                "immediateValue": "32",
-                "immediateValue": "32"
-            },
+            "out": [
+                { "label": "immediateValue"  , "bitSize": "32" }
+            ],
             "desc": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
         },
         
@@ -358,27 +370,34 @@
             "inputA": { "label": "immediateValue", "bitSize": 32 },
             "inputB": { "label": "reg2Value", "bitSize": 32 },
             "output": 32,
-            "selector": {
-                "label": "aluSrcSignal",
-                "bitSize": 1
-            },
+            "selector": { "label": "aluSrcSignal", "bitSize": 1 },
             "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." 
         },
         
-        "BRANCH_AND"  :{ "type": "AND", "inputA": 1, "inputB": 1, "output": 1, "desc": "Output of this AND gate determines, if a branch will be taken or not."},
+        "BRANCH_AND" :{ 
+            "type": "AND", 
+            "inputA": { "label": "inputA", "bitSize": 1 },
+            "inputB": { "label": "inputB", "bitSize": 1 },
+            "output": 1,
+            "desc": "Output of this AND gate determines, if a branch will be taken or not."
+        },
         
         "ARF": {
             "type": "Fork",
             "in": 32,
-            "out": {
-                "immediateValue": "32",
-                "immediateValue": "32"
-            },
+            "out": [
+                { "label": "immediateValue"  , "bitSize": "32" }
+            ],
             "desc": "Forks result from ALU and forwars it to the data memory and next latch register."
         },
         
         "DATA_MEM" :{ 
             "type": "DataMemory",
+            "bitSize": 32,
+            "inputA": "aluResult",
+            "inputB": "reg2Value",
+            "memRead": { "label": "memReadSignal", "bitSize": 1 },
+            "memWrite": { "label": "memWriteSignal", "bitSize": 1 },
             "capacity": 1000,
             "desc": "Saves data, extra CPU storage and typically much bigger in size than register bank."
         },
@@ -388,10 +407,7 @@
             "inputA": { "label": "memData", "bitSize": 32 },
             "inputB": { "label": "aluResult", "bitSize": 32 },
             "output": 32,
-            "selector": {
-                "label": "memToRegSignal",
-                "bitSize": 1
-            },
+            "selector": { "label": "memToRegSignal", "bitSize": 1 },
             "desc" : "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle." }
     },
     

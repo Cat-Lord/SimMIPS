@@ -20,7 +20,7 @@ public class Adder extends BinaryComponent {
 
 	@Override
 	public void execute() {
-		output.getRight().setData(
+		output.setData(
 			inputA.getRight().getData() + inputB.getRight().getData()
 		);
 	}

@@ -9,10 +9,12 @@ import sk.catheaven.instructionEssentials.Data;
 
 /**
  * Interface defining all the necessary methods for datapath simulation.
+ * Selector is not required for use, some components ignore its value (
+ * for example simple binary component with just one output value).
  * @author catlord
  */
 interface Datapathable {
 	public abstract void execute();
-	public abstract Data getData(String selector);
-	public abstract void setData(String selector, Data data);
+	public abstract Data getOutput(String selector);
+	public abstract boolean setInput(String selector, Data data);
 }

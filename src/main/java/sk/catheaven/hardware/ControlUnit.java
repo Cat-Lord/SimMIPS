@@ -42,6 +42,8 @@ public class ControlUnit extends Component {
 	public ControlUnit(String label, JSONObject json) throws JSONException {
 		super(label);
 		
+		ControlUnit.logger = System.getLogger(this.getClass().getName());
+		
 		setupSignals(json.getJSONObject("controlCodes"));
 		
 		String debugOutput = "Signal labels:\n";
@@ -195,12 +197,13 @@ public class ControlUnit extends Component {
 	}
 
 	@Override
-	public Data getData(String selector) {
-		return output;
+	public Data getOutput(String selector) {
+		return output.duplicate();
 	}
 
 	@Override
-	public void setData(String selector, Data data) {
+	public boolean setInput(String selector, Data data) {
 		input.setData(data.getData());
+		return true;
 	}
 }

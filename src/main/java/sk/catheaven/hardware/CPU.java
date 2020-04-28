@@ -7,79 +7,92 @@ package sk.catheaven.hardware;
 
 import java.lang.System.Logger;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sk.catheaven.exceptions.SyntaxException;
-import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
-import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
-import sk.catheaven.instructionEssentials.InstructionType;
-import sk.catheaven.instructionEssentials.Field;
-import sk.catheaven.instructionEssentials.argumentTypes.DataArgumentType;
 
 /**
  * Represents the CPU itself, main working unit of the simulation.
  * @author catlord
  */
-public class CPU {
+public final class CPU {
 	private static Logger logger;
 
 	private final Assembler assembler;
-	private final List<Component> components;
+	private final Map<String, Component> components;
+	private InstructionMemory instructionMemory;			// entry point for program execution
 	private final Map<String, Instruction> instructionSet;
 	
 	public CPU(JSONObject cpuJson, Map<String, Instruction> instructionSet) throws Exception, JSONException {
 		if(cpuJson == null) throw new Exception("No CPU json file provided !");
 		
 		CPU.logger = System.getLogger(this.getClass().getName());
-		components = new ArrayList<>();
+		
 		this.instructionSet = instructionSet;
-		//parseComponents(cpuJson.getJSONObject("components"));		//TODO	
+		components = parseComponents(cpuJson.getJSONObject("components"));
+		
+		if(components.isEmpty())
+			throw new Exception("No components were added !");
+		if(instructionMemory == null)
+			throw new Exception("No Instruction Memory");
+		
+		String debugString = "CPU Components:\n";
+		for(Component c : getComponents())
+			debugString = debugString.concat("\t" + c.getLabel() + "\n");
+		logger.log(Logger.Level.DEBUG, debugString);
 		
 		this.assembler = new Assembler(instructionSet);
 	}
 	
-	private void parseComponents(JSONObject cpuJson) throws Exception {
+	private Map<String, Component> parseComponents(JSONObject cpuJson) throws Exception {
+		Map<String, Component> cpuComponents = new HashMap<>();
 		Iterator<String> componentIter = cpuJson.keys();
 		
 		while(componentIter.hasNext()){
-			String label = componentIter.next();
-			JSONObject componentJO = cpuJson.getJSONObject(label);
+			String cLabel = componentIter.next();
+			JSONObject componentJO = cpuJson.getJSONObject(cLabel);
 			String type = componentJO.getString("type");
 			
 			switch(type.toLowerCase()){
-				case "mux": components.add(new MUX(label, componentJO)); break;
-				case "pc": components.add(new PC(label, componentJO)); break;
-				case "constadder": components.add(new ConstAdder(label, componentJO)); break;
-				case "instructionmemory": components.add(new InstructionMemory(label, componentJO)); break;
-				case "latchregister": components.add(new LatchRegister(label, componentJO)); break;
+				case "mux": cpuComponents.put(cLabel, new MUX(cLabel, componentJO)); break;
+				case "pc": cpuComponents.put(cLabel, new PC(cLabel, componentJO)); break;
+				case "constadder": cpuComponents.put(cLabel, new ConstAdder(cLabel, componentJO)); break;
+				case "instructionmemory": { 
+					instructionMemory = new InstructionMemory(cLabel, componentJO);
+					cpuComponents.put(cLabel, instructionMemory); 
+					
+					break; 
+				}
+				case "latchregister": cpuComponents.put(cLabel, new LatchRegister(cLabel, componentJO)); break;
 				
-				case "controlunit": components.add(new ControlUnit(label, componentJO)); break;
-				case "constmux": components.add(new ConstMUX(label, componentJO)); break;
-				case "regbank": components.add(new RegBank(label, componentJO)); break;
-				case "signext": components.add(new SignExtend(label, componentJO)); break;
+				case "controlunit": cpuComponents.put(cLabel, new ControlUnit(cLabel, componentJO)); break;
+				case "constmux": cpuComponents.put(cLabel, new ConstMUX(cLabel, componentJO)); break;
+				case "regbank": cpuComponents.put(cLabel, new RegBank(cLabel, componentJO)); break;
+				case "signext": cpuComponents.put(cLabel, new SignExtend(cLabel, componentJO)); break;
 				
-				case "adder": components.add(new Adder(label, componentJO)); break;
-				case "alu": components.add(new ALU(label, componentJO)); break;
+				case "adder": cpuComponents.put(cLabel, new Adder(cLabel, componentJO)); break;
+				case "alu": cpuComponents.put(cLabel, new ALU(cLabel, componentJO)); break;
 				
-				case "and": components.add(new AND(label, componentJO)); break;
-				case "datamemory": components.add(new DataMemory(label, componentJO)); break;
+				case "and": cpuComponents.put(cLabel, new AND(cLabel, componentJO)); break;
+				case "datamemory": cpuComponents.put(cLabel, new DataMemory(cLabel, componentJO)); break;
 				
-				case "fork": components.add(new Fork(label, componentJO)); break;
+				case "fork": cpuComponents.put(cLabel, new Fork(cLabel, componentJO)); break;
 				
 				default: System.err.println("Unknown Type: " + type); break;
 			}
 		}
 		
-		if(components.isEmpty()) throw new Exception("No components were added !");
+		return cpuComponents;
 	}
 	
-	public List<Component> getComponents(){
-		return components;
+	public Collection<Component> getComponents(){
+		return components.values();
 	}
 	
 	public Assembler getAssembler(){
