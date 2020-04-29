@@ -39,7 +39,7 @@ public class ControlUnit extends Component {
 	 * @param label
 	 * @param json
 	 */
-	public ControlUnit(String label, JSONObject json) throws JSONException {
+	public ControlUnit(String label, JSONObject json) throws Exception, JSONException {
 		super(label);
 		
 		ControlUnit.logger = System.getLogger(this.getClass().getName());

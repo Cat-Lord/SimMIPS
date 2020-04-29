@@ -32,7 +32,7 @@ public class Fork extends Component {
 	private final Data input;
 	private final Map<String, Cutter> outputs;
 	
-	public Fork(String label, JSONObject json) throws JSONException {
+	public Fork(String label, JSONObject json) throws Exception, JSONException {
 		super(label);
 		
 		Fork.logger = System.getLogger(this.getClass().getName());

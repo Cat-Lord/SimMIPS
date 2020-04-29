@@ -23,8 +23,9 @@ public class Cutter {
    /**
 	* @param originalBitSize The original bitSize value of this class ties to. Serves to determine bit size of final output. 
 	* @param spec Specification of output value. Can be constant integer value or range.
+	* @throws java.lang.Exception If the constructor-provided data contain errors.
 	*/
-   public Cutter(int originalBitSize, String spec) throws NumberFormatException {
+   public Cutter(int originalBitSize, String spec) throws Exception, NumberFormatException {
 	   range = null;
 
 	   if(spec.contains("-"))
@@ -33,13 +34,32 @@ public class Cutter {
 		   this.data = new Data(Integer.parseInt(spec));
    }
 
-   private Data parseRangedValue(int originalBitSize, String spec) throws NumberFormatException {
+   /**
+	* Creates Data object which is known to be ranged. This object will be used to manipulate with 
+	* data given to <b>this</b> object.
+	* @param originalBitSize To be able to know, when using range, compute the size needed for the 
+	* store the data to. We avoid overflow (or possibly underflow) this way.
+	* @param spec Specification of data modification. Can be a number or a range, set by "LS-RS", 
+	* where LS means left-shift and RS right-shift (bit-wise).
+	* @return Container to store data to. Will be used in this class to cut and temporarily store data.
+	* @throws NumberFormatException 
+	* @throws Exception Basic error checking of input value is done. Errors result in Exception.
+	*/
+   private Data parseRangedValue(int originalBitSize, String spec) throws NumberFormatException, Exception {
+	   if( ! spec.contains("-")) 
+		   throw new Exception("Cutter: Expecting ranged value, but no range was specified --> `" + spec + "`");
+	   
 	   int from = Integer.parseInt(spec.substring(0, spec.indexOf("-")));
 	   int to = Integer.parseInt(spec.substring(spec.indexOf("-") + 1, spec.length()));
 	   range = new Tuple<>(from, to);
 	   return new Data(originalBitSize - to);		// original size - shift to right gives the actual data size
    }
 
+   /**
+	* If the range was set when creating this object, it will cut the provided data accordingly.
+	* If no range was set, if will possibly shrink (or don't change at all) provided data.
+	* @param origin Data to cut/shrink, or possibly only copy. The result is stored locally.
+	*/
    public void setDataToCut(Data origin){
 	   if(range == null)
 		   data.setData(origin.getData());
@@ -50,11 +70,19 @@ public class Cutter {
 	   }
    }
 
+   /**
+	* Used to reset data or test, direct data setting.
+	* @param data 
+	*/
    public void setDataToCut(int data){
 	   this.data.setData(data);
    }
 
+   /**
+	* Request of previously modified data
+	* @return 
+	*/
    public Data getCutData(){
-	   return data;
+	   return data.duplicate();
    }
 }

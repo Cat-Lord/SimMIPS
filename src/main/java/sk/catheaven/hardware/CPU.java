@@ -51,8 +51,9 @@ public final class CPU {
 		
 		String debugString = "CPU Components:\n";
 		for(Component c : getComponents())
-			debugString = debugString.concat("\t" + c.getLabel() + "\n");
+			debugString = debugString.concat("\t`" + c.getLabel() + "`\n");
 		logger.log(Logger.Level.DEBUG, debugString);
+		System.out.println(debugString);
 		
 		this.assembler = new Assembler(instructionSet);
 		connections = parseConnections(cpuJson.getJSONArray("connections"));
@@ -110,7 +111,7 @@ public final class CPU {
 			String to = c.getTo();
 			String selector = c.getSelector();
 			
-			logger.log(Logger.Level.WARNING, String.format("Set `%s` | from `%s` ==> to `%s`", selector, from, to));
+			logger.log(Logger.Level.INFO, String.format("Set `%s` | from `%s` ==> to `%s`", selector, from, to));
 			
 			components.get(to).setInput(selector, components.get(from).getOutput(selector));
 		});
@@ -153,7 +154,7 @@ public final class CPU {
 
 	/**
 	 * Private error-checking method. Tries to locate components by 
-	 * string parameters <i>from</i> and <i>to</i>. If successfull,
+	 * string parameters <i>from</i> and <i>to</i>. If successful,
 	 * tries to set dummy input using selector and checks return 
 	 * value.
 	 * @param from Source element.
@@ -163,14 +164,14 @@ public final class CPU {
 	private void testComponent(String from, String to, String selector) throws Exception {
 		// test component existence
 			if(components.get(from) == null)
-				throw new Exception("Unknown source component `" + from + "`");
+				throw new Exception("Unknown source component `" + from + "` | target is `" + to + "` | selector `" + selector + "`");
 			
 			// test component existence
 			if(components.get(to) == null)
-				throw new Exception("Unknown target component `" + from + "`");
+				throw new Exception("Source component is `" + from + "` | Unknown target component `" + from + "` | selector `" + selector + "`");
 			else {
 				if(components.get(to).setInput(selector, new Data()) == false)
-					throw new Exception("Target component `" + to + "`: -- unable to set input for selector `" + selector + "` (from " + from + ")");
+					throw new Exception("Source component is `" + from + "` | Target component `" + to + "`: -- unable to set input for selector `" + selector + "`");
 			}
 	}
 

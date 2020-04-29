@@ -33,16 +33,16 @@ public class ANDTest extends Container {
 		d1.setData(22637124);
 		d2.setData(32123);
 		
-		and.setInput("inputA", d1);
-		and.setInput("inputB", d2);
+		and.setInput("branchSignal", d1);
+		and.setInput("zeroResultSignal", d2);
 		and.execute();
 		assertEquals(0, and.getOutput("").getData());
 		
 		d1.setData(31);
 		d2.setData(63);
 		
-		and.setInput("inputA", d1);
-		and.setInput("inputB", d2);
+		and.setInput("branchSignal", d1);
+		and.setInput("zeroResultSignal", d2);
 		and.execute();
 		assertEquals(1, and.getOutput("").getData());
 	}

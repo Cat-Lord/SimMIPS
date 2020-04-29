@@ -49,12 +49,13 @@
                 "iCode": 32
             },
             "out": {
-                "newAddress": { "newAdress" : "32" },
+                "newAddress": { "newAddress" : "32" },
                 "iCode": {
+                    "iCode": "32",
                     "rs" : "6-27",
                     "rt" : "11-27",
                     "rd" : "16-27",
-                    "imm": "16-16"
+                    "immediateValue": "16-16"
                 }
             },
             "bubble": { "label": "bubble", "bitSize": 1 }, 
@@ -73,7 +74,7 @@
             
             "out": {
                 "controlSignals": { "controlSignals" : "32" },
-                "newAddress": { "newAdress" : "32" },
+                "newAddress": { "newAddress" : "32" },
                 "reg1Value": { "aluInputA" : "32" },
                 "reg2Value": { "reg2Value" : "32" },
                 "immediateValue": { "immediateValue" : "32" },
@@ -298,7 +299,7 @@
         "DEST_REG_MUX":{ 
             "type": "MUX",
             "inputA": { "label": "rt", "bitSize": 5 },
-            "inputB": { "label": "rs", "bitSize": 5 },
+            "inputB": { "label": "rd", "bitSize": 5 },
             "output": 5,
             "selector": { "label": "destRegSignal", "bitSize": 1 },
             "desc": "Chooses destination register (either rd or rt value from instruction)." 
@@ -360,8 +361,8 @@
         },        
         "BRANCH_AND" :{ 
             "type": "AND", 
-            "inputA": { "label": "inputA", "bitSize": 1 },
-            "inputB": { "label": "inputB", "bitSize": 1 },
+            "inputA": { "label": "branchSignal", "bitSize": 1 },
+            "inputB": { "label": "zeroResultSignal", "bitSize": 1 },
             "output": 1,
             "desc": "Output of this AND gate determines, if a branch will be taken or not."
         }, 
@@ -440,7 +441,7 @@
         { "from": "OFFSET_ADDER", "to": "EX_MEM", "selector": "branchAddress" },
         
         { "from": "ID_EX", "to": "ALU", "selector": "aluInputA" },
-        { "from": "ALUSrc_MUX", "to": "alu", "selector": "aluInputB" },
+        { "from": "ALUSrc_MUX", "to": "ALU", "selector": "aluInputB" },
         { "from": "ALU", "to": "EX_MEM", "selector": "aluResult" },
         { "from": "ALU", "to": "EX_MEM", "selector": "zeroResultSignal" },
         
@@ -450,7 +451,7 @@
         
         { "from": "ID_EX", "to": "DEST_REG_MUX", "selector": "rt" },
         { "from": "ID_EX", "to": "DEST_REG_MUX", "selector": "rd" },
-        { "from": "DEST_REG_MUX", "to": "EX_MEM", "selector": "rd" },
+        { "from": "DEST_REG_MUX", "to": "EX_MEM", "selector": "destReg" },
         
         
         

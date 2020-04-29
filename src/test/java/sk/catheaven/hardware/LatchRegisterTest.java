@@ -81,7 +81,7 @@ public class LatchRegisterTest extends Container {
 			assertEquals(4, tl.getOutput("rs").getData());
 			assertEquals(17, tl.getOutput("rt").getData());
 			assertEquals(13, tl.getOutput("rd").getData());
-			assertEquals(26929,tl.getOutput("imm").getData());
+			assertEquals(26929,tl.getOutput("immediateValue").getData());
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
