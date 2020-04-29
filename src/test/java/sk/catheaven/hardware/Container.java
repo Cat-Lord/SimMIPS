@@ -16,6 +16,7 @@ import sk.catheaven.run.Loader;
  * @author catlord
  */
 public class Container {
+	CPU cpu;
 	protected JSONObject cpuJson;
 	
 	protected Container() {
@@ -23,6 +24,7 @@ public class Container {
 		try {
 			l = new Loader();
 			cpuJson = new JSONObject(l.readFile("sk/catheaven/data/cpu.json")).getJSONObject("components");
+			cpu = l.getCPU();
 		} catch(Exception e) { System.out.println(e.getMessage()); }
 	}
 	

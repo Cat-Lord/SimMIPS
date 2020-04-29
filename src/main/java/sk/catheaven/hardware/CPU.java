@@ -12,10 +12,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Assembler;
+import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.utils.Connector;
+import sk.catheaven.utils.Tuple;
 
 /**
  * Represents the CPU itself, main working unit of the simulation.
@@ -23,7 +27,10 @@ import sk.catheaven.instructionEssentials.Instruction;
  */
 public final class CPU {
 	private static Logger logger;
-
+	
+	// mapping unique labels of components as a TUPLE and the signal connecting them
+	private final List<Connector> connections;
+	
 	private final Assembler assembler;
 	private final Map<String, Component> components;
 	private InstructionMemory instructionMemory;			// entry point for program execution
@@ -48,6 +55,7 @@ public final class CPU {
 		logger.log(Logger.Level.DEBUG, debugString);
 		
 		this.assembler = new Assembler(instructionSet);
+		connections = parseConnections(cpuJson.getJSONArray("connections"));
 	}
 	
 	private Map<String, Component> parseComponents(JSONObject cpuJson) throws Exception {
@@ -91,6 +99,50 @@ public final class CPU {
 		return cpuComponents;
 	}
 	
+	/**
+	 * Executing cycle means first passing output values of components to inputs of 
+	 * target components. After this step the components are ready to handle input
+	 * values and construct output values themselves, hence calling <code>execute</code>.
+	 */
+	public void executeCycle(){
+		connections.forEach((c) -> {
+			String from = c.getFrom();
+			String to = c.getTo();
+			String selector = c.getSelector();
+			
+			logger.log(Logger.Level.WARNING, String.format("Set `%s` | from `%s` ==> to `%s`", selector, from, to));
+			
+			components.get(to).setInput(selector, components.get(from).getOutput(selector));
+		});
+		
+		components.values().forEach((c) -> {
+			c.execute();
+		});
+	}
+	
+	/**
+	 * Parses connections between components and their input/output.
+	 * @param jsonArray
+	 * @return List of connections represented as Connector class.
+	 */
+	private List<Connector> parseConnections(JSONArray jsonArray) throws Exception {
+		List<Connector> wires = new ArrayList<>();
+		
+		Iterator<Object> jitter = jsonArray.iterator();
+		while(jitter.hasNext()){
+			JSONObject jo = (JSONObject) jitter.next();
+			String from = jo.getString("from");
+			String to = jo.getString("to");
+			String selector = jo.getString("selector");
+			
+			testComponent(from, to, selector);
+			
+			wires.add(new Connector(from, to, selector));
+		}
+		
+		return wires;
+	}
+	
 	public Collection<Component> getComponents(){
 		return components.values();
 	}
@@ -98,4 +150,28 @@ public final class CPU {
 	public Assembler getAssembler(){
 		return assembler;
 	}
+
+	/**
+	 * Private error-checking method. Tries to locate components by 
+	 * string parameters <i>from</i> and <i>to</i>. If successfull,
+	 * tries to set dummy input using selector and checks return 
+	 * value.
+	 * @param from Source element.
+	 * @param to Target element.
+	 * @param selector Label of this connector.
+	 */
+	private void testComponent(String from, String to, String selector) throws Exception {
+		// test component existence
+			if(components.get(from) == null)
+				throw new Exception("Unknown source component `" + from + "`");
+			
+			// test component existence
+			if(components.get(to) == null)
+				throw new Exception("Unknown target component `" + from + "`");
+			else {
+				if(components.get(to).setInput(selector, new Data()) == false)
+					throw new Exception("Target component `" + to + "`: -- unable to set input for selector `" + selector + "` (from " + from + ")");
+			}
+	}
+
 }

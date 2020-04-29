@@ -8,13 +8,11 @@
             "selector": { "label": "branchSignal", "bitSize": 1 },
             "desc": "Chooses from next address or calculated address in case of branching."
         },
-
         "PC":{ 
             "type": "PC",
             "bitSize": 32,
             "desc": "Adds 4 to the value of input A." 
         },
-
         "AF": {
             "type": "Fork",
             "in": 32,
@@ -23,15 +21,13 @@
             ],
             "desc": "Forks address from PC."
         },
-
         "CONST_ADDER" :{ 
             "type": "ConstAdder", 
             "input": { "label": "address", "bitSize": 32 },
             "output": 32,
             "const": 4,  
             "desc": "Adds 4 to the value of input A."
-        },
-        
+        },        
         "NAF": {
             "type": "Fork",
             "in": 32,
@@ -39,8 +35,7 @@
                 { "label": "newAddress", "bitSize": "32" }
             ],
             "desc": "Forks new address from constAdder to branch and latch register."
-        },
-        
+        },        
         "I_MEM" :{ 
             "type": "InstructionMemory",
             "input": 32, 
@@ -62,6 +57,7 @@
                     "imm": "16-16"
                 }
             },
+            "bubble": { "label": "bubble", "bitSize": 1 }, 
             "desc": "Latch register between Fetch and Decode phase" },
         "ID_EX"  :{ 
             "type": "LatchRegister",
@@ -70,7 +66,7 @@
                 "newAddress": 32,
                 "reg1Value": 32,
                 "reg2Value": 32,
-                "immediate": 32,
+                "immediateValue": 32,
                 "rt": 5,
                 "rd": 5
             },
@@ -80,7 +76,7 @@
                 "newAddress": { "newAdress" : "32" },
                 "reg1Value": { "aluInputA" : "32" },
                 "reg2Value": { "reg2Value" : "32" },
-                "immediate": { "immediate" : "32" },
+                "immediateValue": { "immediateValue" : "32" },
                 "rt": { "rt" : "5" },
                 "rd": { "rd" : "5" }
             },
@@ -124,7 +120,7 @@
                 "destReg": { "destReg" : "5" }
             },
             "desc": "Latch register between Memory and WriteBack phase"
-        },
+        },  
         
         "RTF": {
             "type": "Fork",
@@ -133,8 +129,7 @@
                 { "label": "rt", "bitSize": "5" }
             ],
             "desc": "Forks 'rt' part of instruction code."
-        },
-        
+        },       
         "CU" :{
             "type": "ControlUnit",
             "in" : 32,
@@ -185,8 +180,7 @@
                 {"func": 34, "operation": 2},
                 {"func": 38, "operation": 6}
             ]
-        },
-        
+        },       
         "CU_MUX" :{ 
             "type": "ConstMUX", 
             "input": 11, 
@@ -194,8 +188,7 @@
             "output": 11,
             "selector": { "label": "bubble", "bitSize": 1 },
             "desc": "Activating this MUX results in value of constant output value." 
-        },
-        
+        },       
         "REG_BANK" :{ 
             "type": "RegBank", 
             "dataBitSize": 32,
@@ -208,15 +201,13 @@
             "regCount": 32,
             "selector": { "label": "regWriteSignal", "bitSize": 1 },
             "desc": "Bank of registers of fixed size. Can be used as temporary storage."
-        },
-        
+        },      
         "SIGN_EXT" :{ 
             "type": "SignExt", 
             "input": 16,
             "output": 32,
             "desc": "Extends the output, from 16 bit to 32 bit in size."
-        },
-                
+        },                
         "F1": {
             "type": "Fork",
             "in": 11,
@@ -296,7 +287,6 @@
                 { "label": "bubble"  , "bitSize": "1" }
             ]
         },
-
         "EX_CU_MUX" :{ 
             "type": "ConstMUX",
             "input": 5,
@@ -304,8 +294,7 @@
             "output": 5,
             "selector": { "label": "bubble", "bitSize": 1 },
             "desc": "MUX that can zero out signals from control unit in EX phase." 
-        },
-        
+        },    
         "DEST_REG_MUX":{ 
             "type": "MUX",
             "inputA": { "label": "rt", "bitSize": 5 },
@@ -313,16 +302,14 @@
             "output": 5,
             "selector": { "label": "destRegSignal", "bitSize": 1 },
             "desc": "Chooses destination register (either rd or rt value from instruction)." 
-        },
-        
-        "ADDER" :{
+        },       
+        "OFFSET_ADDER" :{
             "type": "Adder",
             "inputA": { "label": "newAddress", "bitSize": 32 },
             "inputB": { "label": "immediateValue", "bitSize": 32 },
             "output": 32,
             "desc": "Computes branch address by adding offset from immediate value to the value of next address."
-        },
-            
+        },            
         "ALU" :{ 
             "type": "ALU",
             "inputA": { "label": "aluInputA", "bitSize": 32 },
@@ -346,8 +333,7 @@
                 { "code": 14, "operation": "srlv" },
                 { "code": 15, "operation":  "lui" }
             ]
-        }, 
-        
+        },         
         "RVF": {
             "type": "Fork",
             "in": 32,
@@ -363,25 +349,22 @@
                 { "label": "immediateValue"  , "bitSize": "32" }
             ],
             "desc": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
-        },
-        
-        "ALUSrc" :{ 
+        },      
+        "ALUSrc_MUX" :{ 
             "type": "MUX",
             "inputA": { "label": "immediateValue", "bitSize": 32 },
             "inputB": { "label": "reg2Value", "bitSize": 32 },
             "output": 32,
             "selector": { "label": "aluSrcSignal", "bitSize": 1 },
             "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." 
-        },
-        
+        },        
         "BRANCH_AND" :{ 
             "type": "AND", 
             "inputA": { "label": "inputA", "bitSize": 1 },
             "inputB": { "label": "inputB", "bitSize": 1 },
             "output": 1,
             "desc": "Output of this AND gate determines, if a branch will be taken or not."
-        },
-        
+        }, 
         "ARF": {
             "type": "Fork",
             "in": 32,
@@ -389,8 +372,7 @@
                 { "label": "immediateValue"  , "bitSize": "32" }
             ],
             "desc": "Forks result from ALU and forwars it to the data memory and next latch register."
-        },
-        
+        },        
         "DATA_MEM" :{ 
             "type": "DataMemory",
             "bitSize": 32,
@@ -401,7 +383,6 @@
             "capacity": 1000,
             "desc": "Saves data, extra CPU storage and typically much bigger in size than register bank."
         },
-
         "WB_MUX" :{ 
             "type": "MUX", 
             "inputA": { "label": "memData", "bitSize": 32 },
@@ -411,7 +392,99 @@
             "desc" : "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle." }
     },
     
-    "connections": {
+    "connections": [
+        { "from": "BRANCH_MUX", "to": "PC", "selector": "newAddress" },
+        { "from": "PC", "to": "AF", "selector": "address" },
+        { "from": "AF", "to": "I_MEM", "selector": "address" },
         
-    }
+        { "from": "AF", "to": "CONST_ADDER", "selector": "address" },
+        { "from": "CONST_ADDER", "to": "NAF", "selector": "newAddress" },
+        { "from": "NAF", "to": "IF_ID", "selector": "newAddress" },
+        { "from": "NAF", "to": "BRANCH_MUX", "selector": "newAddress" },
+        
+        { "from": "I_MEM", "to": "IF_ID", "selector": "iCode" },
+        { "from": "BRANCH_MUX", "to": "PC", "selector": "newAddress" },
+        
+        
+        
+        { "from": "IF_ID", "to": "CU", "selector": "iCode" },
+        { "from": "IF_ID", "to": "ID_EX", "selector": "newAddress" },
+        { "from": "IF_ID", "to": "REG_BANK", "selector": "rs" },
+        { "from": "IF_ID", "to": "RTF", "selector": "rt" },
+        { "from": "RTF", "to": "REG_BANK", "selector": "rt" },
+        { "from": "RTF", "to": "ID_EX", "selector": "rt" },
+        { "from": "IF_ID", "to": "SIGN_EXT", "selector": "immediateValue" },
+        { "from": "IF_ID", "to": "ID_EX", "selector": "rd" },
+        
+        { "from": "CU", "to": "CU_MUX", "selector": "controlSignals" },
+        { "from": "CU_MUX", "to": "ID_EX", "selector": "controlSignals" },
+        { "from": "REG_BANK", "to": "ID_EX", "selector": "reg1Value" },
+        { "from": "REG_BANK", "to": "ID_EX", "selector": "reg2Value" },
+        { "from": "SIGN_EXT", "to": "ID_EX", "selector": "immediateValue" },
+        
+        
+        
+        { "from": "ID_EX", "to": "F1", "selector": "controlSignals" },
+        { "from": "F1", "to": "F2", "selector": "controlSignals" },
+        { "from": "F1", "to": "DEST_REG_MUX", "selector": "destRegSignal" },
+        { "from": "F2", "to": "F3", "selector": "controlSignals" },
+        { "from": "F2", "to": "ALUSrc_MUX", "selector": "aluSrcSignal" },
+        { "from": "F3", "to": "EX_CU_MUX", "selector": "controlSignals" },
+        { "from": "F3", "to": "ALU", "selector": "aluOp" },
+        { "from": "EX_CU_MUX", "to": "EX_MEM", "selector": "controlSignals" },
+        
+        { "from": "ID_EX", "to": "OFFSET_ADDER", "selector": "newAddress" },
+        { "from": "ID_EX", "to": "IVF", "selector": "immediateValue" },
+        { "from": "IVF", "to": "OFFSET_ADDER", "selector": "immediateValue" },
+        { "from": "IVF", "to": "ALUSrc_MUX", "selector": "immediateValue" },
+        { "from": "OFFSET_ADDER", "to": "EX_MEM", "selector": "branchAddress" },
+        
+        { "from": "ID_EX", "to": "ALU", "selector": "aluInputA" },
+        { "from": "ALUSrc_MUX", "to": "alu", "selector": "aluInputB" },
+        { "from": "ALU", "to": "EX_MEM", "selector": "aluResult" },
+        { "from": "ALU", "to": "EX_MEM", "selector": "zeroResultSignal" },
+        
+        { "from": "ID_EX", "to": "RVF", "selector": "reg2Value" },
+        { "from": "RVF", "to": "ALUSrc_MUX", "selector": "reg2Value" },
+        { "from": "RVF", "to": "EX_MEM", "selector": "reg2Value" },
+        
+        { "from": "ID_EX", "to": "DEST_REG_MUX", "selector": "rt" },
+        { "from": "ID_EX", "to": "DEST_REG_MUX", "selector": "rd" },
+        { "from": "DEST_REG_MUX", "to": "EX_MEM", "selector": "rd" },
+        
+        
+        
+        { "from": "EX_MEM", "to": "F4", "selector": "controlSignals" },
+        { "from": "F4", "to": "F5", "selector": "controlSignals" },
+        { "from": "F4", "to": "BRANCH_AND", "selector": "branchSignal" },
+        { "from": "F5", "to": "F6", "selector": "controlSignals" },
+        { "from": "F5", "to": "DATA_MEM", "selector": "memReadSignal" },
+        { "from": "F6", "to": "MEM_WB", "selector": "controlSignals" },
+        { "from": "F6", "to": "DATA_MEM", "selector": "memWriteSignal" },
+        
+        { "from": "EX_MEM", "to": "BRANCH_AND", "selector": "zeroResultSignal" },
+        { "from": "BRANCH_AND", "to": "BF", "selector": "branchSignal" },
+        { "from": "BF", "to": "BRANCH_MUX", "selector": "branchSignal" },
+        { "from": "BF", "to": "BF1", "selector": "bubble" },
+        { "from": "BF1", "to": "BF2", "selector": "bubble" },
+        { "from": "BF1", "to": "EX_CU_MUX", "selector": "bubble" },
+        { "from": "BF2", "to": "CU_MUX", "selector": "bubble" },
+        { "from": "BF2", "to": "IF_ID", "selector": "bubble" },
+        
+        { "from": "EX_MEM", "to": "ARF", "selector": "aluResult" },
+        { "from": "ARF", "to": "DATA_MEM", "selector": "aluResult" },
+        { "from": "ARF", "to": "MEM_WB", "selector": "aluResult" },
+        
+        { "from": "EX_MEM", "to": "DATA_MEM", "selector": "reg2Value" },
+        { "from": "EX_MEM", "to": "MEM_WB", "selector": "destReg" },
+        
+        
+        { "from": "MEM_WB", "to": "F7", "selector": "controlSignals" },
+        { "from": "F7", "to": "WB_MUX", "selector": "memToRegSignal" },
+        { "from": "F7", "to": "REG_BANK", "selector": "regWriteSignal" },
+        { "from": "MEM_WB", "to": "WB_MUX", "selector": "memData" },
+        { "from": "MEM_WB", "to": "WB_MUX", "selector": "aluResult" },
+        { "from": "WB_MUX", "to": "REG_BANK", "selector": "destRegValue" },
+        { "from": "MEM_WB", "to": "REG_BANK", "selector": "destReg" }
+    ]
 }

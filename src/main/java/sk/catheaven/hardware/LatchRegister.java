@@ -13,19 +13,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Cutter;
+import sk.catheaven.utils.Tuple;
 
 /**
  * JSON description - the inputs in json are simple - one instruction as integer number.
  * Outputs are specified by intervals. Each interval is described by a number, which
  * represent by how many bits does the IF_ID latch should shift. 
  * Format goes like this: "outputLabel" : "shift_to_left-shift_to_right".
+ * It is allowed for a latch register to have an input signal, that defines its output
+ * validity. It behaves similarly to const MUX - if that signal is 0, output is .
+ * traditional but if that signal is 1 (active), output is 0. This is a simple way to  
+ * handle data hazard.
  * @author catlord
  */
 public class LatchRegister extends Component {
 	private static Logger logger;
+	
 	Map<String, Data> inputs;						// input labels -> data
 	Map<String, ArrayList<String>> iTOo;			// input -> output (only labels)
 	Map<String, Cutter> outputs;					// output labels -> output
+	private final Tuple<String, Data> bubble;
 	
 	public LatchRegister(String label, JSONObject json) throws Exception {
 		super(label);
@@ -36,6 +43,12 @@ public class LatchRegister extends Component {
 		outputs = new HashMap<>();
 		
 		setupIO(json);
+		
+		JSONObject so = (JSONObject) json.opt("bubble");
+		if(so != null)
+			bubble = new Tuple<>(so.getString("label"), new Data(so.getInt("bitSize")));
+		else
+			bubble = new Tuple<>("EMPTY_BUBBLE_SIGNAL", new Data(1));		// empty data, with the value of 0 always
 	}
 
 	/**
@@ -50,13 +63,15 @@ public class LatchRegister extends Component {
 			outputs.get(ol).setDataToCut(0);
 		});
 		
-		inputs.keySet().forEach((ins) -> {
-			Data insData = inputs.get(ins);
-			
-			iTOo.get(ins).forEach((ol) -> {
-				outputs.get(ol).setDataToCut(insData);
+		// if we skip, outputs are already cleared, so don't update them
+		if(bubble.getRight().getData() == 0)
+			inputs.keySet().forEach((ins) -> {
+				Data insData = inputs.get(ins);
+
+				iTOo.get(ins).forEach((ol) -> {
+					outputs.get(ol).setDataToCut(insData);
+				});
 			});
-		});
 		
 		inputs.keySet().forEach((il) -> {
 			inputs.get(il).setData(0);
@@ -65,13 +80,16 @@ public class LatchRegister extends Component {
 
 	@Override
 	public boolean setInput(String selector, Data data){
-		if(inputs.get(selector) == null){
-			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
-			return false;
+		if(inputs.get(selector) != null){
+			inputs.get(selector).setData(data.getData());
+			return true;
 		}
-			
-		inputs.get(selector).setData(data.getData());
-		return true;			
+		else if(selector.equals(bubble.getLeft())){
+			bubble.getRight().setData(data.getData());
+			return true;
+		}
+		logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+		return false;			
 	}
 	
 	@Override

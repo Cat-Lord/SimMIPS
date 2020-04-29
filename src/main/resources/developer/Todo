@@ -73,3 +73,6 @@ Notes: LatchRegister has (in cpu.json) input/output data defined differently. Ea
 -------------
 Todo:
     - handle bubble signal in latch registers (not all have it !)
+
+Notes:
+    - json format for connections -> from UNIQUE_COMPONENT_ID to COMPONENT, selector LABEL_OF_INPUT
