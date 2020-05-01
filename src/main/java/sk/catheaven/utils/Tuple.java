@@ -34,5 +34,5 @@ public class Tuple<A,B> {
 		return right;
 	}
 
-	
+
 }

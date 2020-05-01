@@ -5,7 +5,8 @@
  */
 package sk.catheaven.instructionEssentials;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ import sk.catheaven.instructionEssentials.argumentTypes.RegArgumentType;
  * @author catlord
  */
 public class Instruction {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final InstructionType type;				// needs to be stored because we have to know how many bits should each field have
     private final String mnemo;
@@ -34,7 +35,7 @@ public class Instruction {
 	private String description;
     
     public Instruction(String mnemo, JSONObject json, InstructionType iType){
-		Instruction.logger = System.getLogger(this.getClass().getName());
+		
 		arguments = new ArrayList<>();
 		fieldValues = new HashMap<>();
 		
@@ -54,7 +55,7 @@ public class Instruction {
 	 */
 	private void parseInstruction(JSONObject json) throws JSONException {
 		parseArgs(json.getJSONArray("args"));
-		parseFields(json.getJSONObject("fields"));		// TODO parse instruction fields
+		parseFields(json.getJSONObject("fields"));
 		this.description = json.getString("desc");
 	}
 	
@@ -68,7 +69,7 @@ public class Instruction {
 				case "int": arguments.add(new IntArgumentType());	  break;
 				case "label": arguments.add(new LabelArgumentType()); break;
 				case "data": arguments.add(new DataArgumentType());	  break;
-				default: logger.log(System.Logger.Level.WARNING, "Unknown argument " + arg); break;	
+				default: logger.log(Level.WARNING, "Unknown argument " + arg); break;	
 			}
 		}
 	}
@@ -76,7 +77,7 @@ public class Instruction {
 	/**
 	 * Finds all fields defined in instruction type in fields and stores it's value in a map.
 	 * Mapping is done like this: Field --> FieldValue.
-	 * @param json Field json object. It should be possible to search for specific fields in this jsonobject.
+	 * @param json Field json object. It should be possible to search for specific fields in this json object.
 	 */
 	private void parseFields(JSONObject json){
 		List<Field> typeArgs = type.getFields();

@@ -5,6 +5,8 @@
  */
 package sk.catheaven.instructionEssentials.argumentTypes;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
@@ -25,7 +27,7 @@ public class DataArgumentType extends ArgumentType {
 	
 	public DataArgumentType(){
 		super();
-		DataArgumentType.logger = System.getLogger(this.getClass().getName());
+		
 		regArg  = new RegArgumentType();
 		offset = new Data(16);
 	}
@@ -58,7 +60,7 @@ public class DataArgumentType extends ArgumentType {
 				return regArg.getData(reg);
 		}
 		else
-			logger.log(System.Logger.Level.WARNING, "getPart(): Returning default value, part '" + part + "' was not recognized" );
+			logger.log(Level.WARNING, "getPart(): Returning default value, part '" + part + "' was not recognized" );
 		
 		return 0;
 	}

@@ -5,10 +5,11 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +21,7 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class ALU extends BinaryComponent {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final Map<Integer, String> operations;
 	private final Tuple<String, Data> aluOp;
@@ -28,8 +29,6 @@ public class ALU extends BinaryComponent {
 	
 	public ALU(String label, JSONObject json) throws JSONException {
 		super(label, json);
-		
-		ALU.logger = System.getLogger(this.getClass().getName());
 		
 		this.operations = assignOperations(json.getJSONArray("operations"));
 		
@@ -59,7 +58,7 @@ public class ALU extends BinaryComponent {
 		for (int opCode : map.keySet()) {
 			debugString = debugString.concat(opCode + " --> " + map.get(opCode) + "\n");
 		}
-		logger.log(Logger.Level.DEBUG, debugString);
+		logger.log(Level.INFO, debugString);
 		
 		return map;
 	}
@@ -72,7 +71,7 @@ public class ALU extends BinaryComponent {
 		String operation = operations.get(aluOp.getRight().getData());
 		
 		if(operation == null){
-			logger.log(Logger.Level.WARNING, "Unknown operation code " + aluOp.getRight().getData());
+			logger.log(Level.WARNING, "Unknown operation code {0}", aluOp.getRight().getData());
 			return;
 		}
 		
@@ -84,13 +83,13 @@ public class ALU extends BinaryComponent {
 			case "nor": output.setData( ~(inputA.getRight().getData() |  inputB.getRight().getData()) ); break;
 			case "xor": output.setData(inputA.getRight().getData() ^ inputB.getRight().getData() ); break;
 			case "mul": output.setData(inputA.getRight().getData() * inputB.getRight().getData() ); break;
-			case "mulu": output.setData(inputA.getRight().getData() * inputB.getRight().getData() ); break;					// TODO - maybe just create big data containers to avoid overflow
+			case "mulu": output.setData( (int) ((long) inputA.getRight().getData() * (long) inputB.getRight().getData()) ); break;					// TODO - Check correctness.
 			case "div": {
 				if(inputB.getRight().getData() != 0) output.setData(inputA.getRight().getData() / inputB.getRight().getData() );
 				break;
 			}
-			case "divu": {																				// TODO
-				if(inputB.getRight().getData() != 0) output.setData(inputA.getRight().getData() / inputB.getRight().getData() );
+			case "divu": {																				// TODO Check correctness !
+				if(inputB.getRight().getData() != 0) output.setData( (int) ((long) inputA.getRight().getData() / (long) inputB.getRight().getData()) );
 				break;
 			}
 			case "bneq": { 
@@ -110,7 +109,7 @@ public class ALU extends BinaryComponent {
 				break;
 			}
 			
-			default: logger.log(Logger.Level.WARNING, "Unknown operation `" + operation + "`"); break;
+			default: logger.log(Level.WARNING, "Unknown operation `{0}`", operation); break;
 		}
 		
 		//DONT FORGET TO SET ZERO-RESULT OUTPUT
@@ -123,8 +122,10 @@ public class ALU extends BinaryComponent {
 
 	@Override
 	public Data getOutput(String selector) {
-		if(selector.equals(zeroResult.getLeft())) 
+		if(selector.equals(zeroResult.getLeft())) {
+			logger.log(Level.INFO, "Returning zero result signal value (selector `{0}`)", selector);
 			return zeroResult.getRight();
+		}
 		return output.duplicate();
 	}
 
@@ -138,7 +139,7 @@ public class ALU extends BinaryComponent {
 		}
 		
 		if( ! set){
-			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, "{0} --> Unknown request to set data for `{1}`", new Object[]{label, selector}); 
 			return false;
 		}
 		return true;

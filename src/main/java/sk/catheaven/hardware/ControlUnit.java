@@ -5,10 +5,11 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +21,7 @@ import sk.catheaven.utils.Cutter;
  * @author catlord
  */
 public class ControlUnit extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private String[] signalLabels;		// labels of signals
 	private Map<String, Data> signals;
@@ -42,7 +43,7 @@ public class ControlUnit extends Component {
 	public ControlUnit(String label, JSONObject json) throws Exception, JSONException {
 		super(label);
 		
-		ControlUnit.logger = System.getLogger(this.getClass().getName());
+		
 		
 		setupSignals(json.getJSONObject("controlCodes"));
 		
@@ -52,21 +53,21 @@ public class ControlUnit extends Component {
 		
 		System.out.println("\nOpcodes to Signals:");
 		for(Integer opcode : opcodeToSignals.keySet()){
-			debugOutput = debugOutput.concat(String.format("\t%2d: \n", opcode));
+			debugOutput = debugOutput.concat(String.format("\t%2d: ", opcode));
 			
 			Integer[] ints = opcodeToSignals.get(opcode);
 			for(int j = 0; j < ints.length; j++)
-				debugOutput = debugOutput.concat(String.format("%2d \n", ints[j]));
+				debugOutput = debugOutput.concat(String.format("%2d ", ints[j]));
 			debugOutput = debugOutput.concat("\n");
 		}
 		
-		logger.log(Logger.Level.DEBUG, debugOutput);
+		logger.log(Level.INFO, debugOutput);
 		funcToOp = loadFuncToOp(json.getJSONArray("funcToOperation"));
 		
 		debugOutput = "Func to operation map:\n";
 		for (int func : funcToOp.keySet())
 			debugOutput = debugOutput.concat("\t" + func + " --> " + funcToOp.get(func) + "\n");
-		logger.log(Logger.Level.DEBUG, debugOutput);
+		logger.log(Level.INFO, debugOutput);
 		
 		this.funcDependant = json.getString("funcDependant");
 		this.input  = new Data(json.getInt("in"));
@@ -141,8 +142,8 @@ public class ControlUnit extends Component {
 		opcodeParser.setDataToCut(input);
 		funcParser.setDataToCut(input);
 
-		int opCode = opcodeParser.getCutData().getData();
-		setOutput(opCode, funcParser.getCutData().getData());
+		int opCode = (int) opcodeParser.getCutData().getData();
+		setOutput(opCode, (int) funcParser.getCutData().getData());
 		
 		input.setData(0);		// clear input
 	}
@@ -156,13 +157,13 @@ public class ControlUnit extends Component {
 	 * @param opcode Opcode of instruction.
 	 */
 	private void setOutput(int opcode, int funcField){
-		logger.log(Logger.Level.DEBUG, "Setting output by opcode of " + opcode);
+		logger.log(Level.INFO, "Setting output by opcode of " + opcode);
 		
 		Integer[] signalValues = opcodeToSignals.get(opcode);
 		
 		// check existence
 		if(signalValues == null){
-			logger.log(Logger.Level.WARNING, "There is no output signal for opcode " + opcode);
+			logger.log(Level.WARNING,  "There is no output signal for opcode " + opcode);
 			return;
 		}
 		

@@ -5,7 +5,7 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Tuple;

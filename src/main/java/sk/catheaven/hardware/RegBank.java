@@ -5,7 +5,8 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
@@ -17,7 +18,7 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class RegBank extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final Data[] registers;		// storage
 	
@@ -28,7 +29,7 @@ public class RegBank extends Component {
 	public RegBank(String label, JSONObject json) throws JSONException {
 		super(label);
 		
-		RegBank.logger = System.getLogger(this.getClass().getName());
+		
 		
 		int bitSize = json.getInt("dataBitSize");										// bitSize of data in this component
 		registers = loadRegs(json.getInt("regCount"), bitSize);
@@ -74,7 +75,7 @@ public class RegBank extends Component {
 		if(selector.equals(outputA.getLeft())) return outputA.getRight().duplicate();
 		if(selector.equals(outputB.getLeft())) return outputB.getRight().duplicate();
 		
-		logger.log(Logger.Level.WARNING, "Trying to get unknown output `" + selector + "`, returning 0");
+		logger.log(Level.WARNING,  "Trying to get unknown output `" + selector + "`, returning 0");
 		
 		return new Data(inputA.getRight().getBitSize());
 	}
@@ -93,7 +94,7 @@ public class RegBank extends Component {
 		else if(selector.equals(destReg.getLeft())) destReg.getRight().setData(data.getData());
 		else if(selector.equals(destRegData.getLeft())) destRegData.getRight().setData(data.getData());
 		else{
-			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
 			return false;
 		}
 		return true;
@@ -104,7 +105,7 @@ public class RegBank extends Component {
 		for(int i = 0; i < count; i++)
 			regArray[i] = new Data(bitSize);
 		
-		logger.log(Logger.Level.DEBUG, "Created array of " + count + " data elements with bit size of " + bitSize + "b");
+		logger.log(Level.INFO, "Created array of " + count + " data elements with bit size of " + bitSize + "b");
 		
 		return regArray;
 	}

@@ -5,10 +5,11 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
@@ -27,7 +28,7 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class LatchRegister extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	Map<String, Data> inputs;						// input labels -> data
 	Map<String, ArrayList<String>> iTOo;			// input -> output (only labels)
@@ -36,7 +37,7 @@ public class LatchRegister extends Component {
 	
 	public LatchRegister(String label, JSONObject json) throws Exception {
 		super(label);
-		LatchRegister.logger = System.getLogger(this.getClass().getName());
+		
 		
 		inputs = new HashMap<>();
 		iTOo = new HashMap<>();
@@ -88,15 +89,21 @@ public class LatchRegister extends Component {
 			bubble.getRight().setData(data.getData());
 			return true;
 		}
-		logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+		logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
 		return false;			
 	}
 	
+	/**
+	 * Returns output value specified by the selector. If there is no output with 
+	 * the label specified by selector, returns empty data.
+	 * @param selector
+	 * @return 
+	 */
 	@Override
 	public Data getOutput(String selector){
 		if(outputs.get(selector) == null){
-			logger.log(Logger.Level.ERROR, "No such output: " + selector);
-			return null;
+			logger.log(Level.WARNING,  "No such output: " + selector);
+			return new Data();
 		}
 		return outputs.get(selector).getCutData().duplicate();
 	}
@@ -119,7 +126,7 @@ public class LatchRegister extends Component {
 			int inputBitSize = inJson.getInt(in);				// load its bit size
 			inputs.put(in, new Data(inputBitSize));				// store this input
 			
-			logger.log(Logger.Level.DEBUG, in + ": bitSize " + inputBitSize);
+			logger.log(Level.INFO, in + ": bitSize " + inputBitSize);
 			String debugOutput = "Output:\n";
 			
 			ArrayList<String> list = new ArrayList();
@@ -136,7 +143,7 @@ public class LatchRegister extends Component {
 			}
 			
 			iTOo.put(in, list);
-			logger.log(Logger.Level.DEBUG, debugOutput);
+			logger.log(Level.INFO, debugOutput);
 		}
 	}
 }

@@ -5,7 +5,8 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Tuple;
@@ -18,17 +19,15 @@ import sk.catheaven.utils.Tuple;
  */
 public class MUX extends BinaryComponent {
 	private final Tuple<String, Data> selector;
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	public MUX(String label, JSONObject json) {
 		super(label, json);
 		
-		MUX.logger = System.getLogger(this.getClass().getName());
-		
 		JSONObject selectorJson = json.getJSONObject("selector");
 		selector = new Tuple<>(selectorJson.getString("label"), new Data(selectorJson.getInt("bitSize")));
 		
-		logger.log(Logger.Level.DEBUG, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight() + "b");
+		logger.log(Level.INFO, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight() + "b");
 	}
 
 	@Override
@@ -47,7 +46,7 @@ public class MUX extends BinaryComponent {
 		}
 		
 		if( ! set){
-			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
 			return false;
 		}
 		return true;

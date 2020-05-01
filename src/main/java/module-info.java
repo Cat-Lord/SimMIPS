@@ -9,6 +9,7 @@ module sk.catheaven.simmips {
 	requires org.fxmisc.richtext;
 	requires flowless;
 	requires reactfx;
+	requires java.logging;
 	
 	opens sk.catheaven.run to javafx.fxml;
     exports sk.catheaven.run;

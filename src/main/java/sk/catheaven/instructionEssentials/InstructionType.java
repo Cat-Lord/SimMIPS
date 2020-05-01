@@ -32,7 +32,7 @@ public class InstructionType {
 		for(int i = 0; i < jsonFields.length(); i++){
 			JSONObject currField = jsonFields.getJSONObject(i);
 			this.fields.add(new Field(currField.getString("label"), currField.getInt("bitSize")));
-		}		//TODO: check everything from this point on
+		}
 	}
 
 	/**

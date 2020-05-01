@@ -14,21 +14,56 @@ import sk.catheaven.run.Loader;
  * @author catlord
  */
 public class CPUTest {
-	CPU cpu;
 	
 	public CPUTest() {
-		try {
-			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
-			this.cpu = l.getCPU();
-		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); System.out.println(e.getMessage()); }
+		
 	}
 	
 	@Test
 	public void test(){
-		if(cpu == null) fail("CPU IS UNDEFINED");
+		CPU cpu1, cpu2;
 		try {
-			cpu.executeCycle();
-			Thread.sleep(1000);
-		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); fail("CPU failed to execute"); return; }
+			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+			cpu1 = l.getCPU();
+		} catch(Exception e) { 
+			e.printStackTrace();
+			System.out.println(e.getMessage()); 
+			fail("FAILED TO EXECUTE CPU !"); 
+			return; 
+		}
+		
+		try {
+			cpu1.executeCycle();
+			System.out.println("------------CORRECT EXECUTION OF SINGLE CYCLE--------------------");
+		} catch( Exception e) {
+			System.out.println(e.getMessage());
+			fail("Single cycle execution failed !");
+		}
+		
+		System.out.println("\n\n\n\n");
+		
+		//
+		// CPU 2
+		//
+		try {
+			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+			cpu2 = l.getCPU();
+		} catch(Exception e) { 
+			e.printStackTrace();
+			System.out.println(e.getMessage()); 
+			fail("FAILED TO EXECUTE CPU !"); 
+			return; 
+		}
+		
+		try {
+			for(int i = 0; i < 1000; i++){
+				cpu2.executeCycle();
+				System.out.println("\n - - - - - - - - - - -");
+			}
+			System.out.println("================CORRECT EXECUTION 1000 CYCLE EXECUTION==================");
+		} catch( Exception e) {
+			System.out.println(e.getMessage());
+			fail("Single cycle execution failed !");
+		}
 	}
 }

@@ -5,8 +5,10 @@
  */
 package sk.catheaven.run;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.IOException;
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -28,21 +30,28 @@ import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
  * @author catlord
  */
 public class Loader {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private CPU cpu;
 	
 	/**
 	 * Used for debugging. Allows separate method calls.
 	 */
 	public Loader(){
-		Loader.logger = System.getLogger(this.getClass().getName());
+		
 	}
 	
 	public Loader(String layoutPath, String cpuPath) throws IOException, URISyntaxException {
+		
+		
 		try {
 			Map<String, Instruction> instructionsSet = parseLayout(new JSONObject(readFile(layoutPath)));
-			cpu = new CPU(new JSONObject(readFile(cpuPath)), instructionsSet);
-		} catch(Exception e) { e.printStackTrace(); System.err.println("Failed to create CPU -- " + e.getMessage()); }
+			this.cpu = new CPU(new JSONObject(readFile(cpuPath)), instructionsSet);
+		} catch(Exception e) {
+			e.printStackTrace(); 
+			System.out.println(e.getLocalizedMessage());
+			System.out.println(e.getClass().getCanonicalName());
+			System.err.println("Failed to create CPU -- " + e.getMessage()); 
+		}
 	}
 	
 	public CPU getCPU(){
@@ -71,7 +80,7 @@ public class Loader {
 			}
 			debugString = debugString.concat("\n");
 		}
-		logger.log(Logger.Level.DEBUG, debugString);
+		logger.log(Level.INFO, debugString);
 		
 		//	have: iTypes ============================================================================================================================
 		
@@ -118,12 +127,12 @@ public class Loader {
 			List<Field> fields = i.getInstructionType().getFields();
 			for(Field f : fields){
 				if(i.getFieldValue(f.getLabel()) == null)
-					logger.log(Logger.Level.WARNING, "Unknown field/field value relationship error !");
+					logger.log(Level.WARNING, "Unknown field/field value relationship error !");
 				else
 					debugString = debugString.concat(f.getLabel() + ": " + i.getFieldValue(f.getLabel()) + "\n");
 			}
-			logger.log(Logger.Level.DEBUG, debugString);
-			logger.log(Logger.Level.DEBUG, "Description: " + i.getDescription());
+			logger.log(Level.INFO, debugString);
+			logger.log(Level.INFO, "Description: " + i.getDescription());
 		}
 		
 		return instructions;

@@ -5,13 +5,16 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,14 +22,13 @@ import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.utils.Connector;
-import sk.catheaven.utils.Tuple;
 
 /**
  * Represents the CPU itself, main working unit of the simulation.
  * @author catlord
  */
 public final class CPU {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	// mapping unique labels of components as a TUPLE and the signal connecting them
 	private final List<Connector> connections;
@@ -39,8 +41,6 @@ public final class CPU {
 	public CPU(JSONObject cpuJson, Map<String, Instruction> instructionSet) throws Exception, JSONException {
 		if(cpuJson == null) throw new Exception("No CPU json file provided !");
 		
-		CPU.logger = System.getLogger(this.getClass().getName());
-		
 		this.instructionSet = instructionSet;
 		components = parseComponents(cpuJson.getJSONObject("components"));
 		
@@ -50,17 +50,19 @@ public final class CPU {
 			throw new Exception("No Instruction Memory");
 		
 		String debugString = "CPU Components:\n";
-		for(Component c : getComponents())
+		for(Component c : getComponents()){
+			
 			debugString = debugString.concat("\t`" + c.getLabel() + "`\n");
-		logger.log(Logger.Level.DEBUG, debugString);
-		System.out.println(debugString);
+		}
+		logger.log(Level.INFO, debugString);
 		
 		this.assembler = new Assembler(instructionSet);
 		connections = parseConnections(cpuJson.getJSONArray("connections"));
 	}
 	
 	private Map<String, Component> parseComponents(JSONObject cpuJson) throws Exception {
-		Map<String, Component> cpuComponents = new HashMap<>();
+		Map<String, Component> componentsMap = new LinkedHashMap<>();
+		ArrayList<Component> cpuComponents = new ArrayList<>();		// store the components here and traverse backwards when adding to map of components
 		Iterator<String> componentIter = cpuJson.keys();
 		
 		while(componentIter.hasNext()){
@@ -69,35 +71,39 @@ public final class CPU {
 			String type = componentJO.getString("type");
 			
 			switch(type.toLowerCase()){
-				case "mux": cpuComponents.put(cLabel, new MUX(cLabel, componentJO)); break;
-				case "pc": cpuComponents.put(cLabel, new PC(cLabel, componentJO)); break;
-				case "constadder": cpuComponents.put(cLabel, new ConstAdder(cLabel, componentJO)); break;
+				case "mux": cpuComponents.add(new MUX(cLabel, componentJO)); break;
+				case "pc": cpuComponents.add(new PC(cLabel, componentJO)); break;
+				case "constadder": cpuComponents.add(new ConstAdder(cLabel, componentJO)); break;
 				case "instructionmemory": { 
 					instructionMemory = new InstructionMemory(cLabel, componentJO);
-					cpuComponents.put(cLabel, instructionMemory); 
+					cpuComponents.add(instructionMemory); 
 					
 					break; 
 				}
-				case "latchregister": cpuComponents.put(cLabel, new LatchRegister(cLabel, componentJO)); break;
+				case "latchregister": cpuComponents.add(new LatchRegister(cLabel, componentJO)); break;
 				
-				case "controlunit": cpuComponents.put(cLabel, new ControlUnit(cLabel, componentJO)); break;
-				case "constmux": cpuComponents.put(cLabel, new ConstMUX(cLabel, componentJO)); break;
-				case "regbank": cpuComponents.put(cLabel, new RegBank(cLabel, componentJO)); break;
-				case "signext": cpuComponents.put(cLabel, new SignExtend(cLabel, componentJO)); break;
+				case "controlunit": cpuComponents.add(new ControlUnit(cLabel, componentJO)); break;
+				case "constmux": cpuComponents.add(new ConstMUX(cLabel, componentJO)); break;
+				case "regbank": cpuComponents.add(new RegBank(cLabel, componentJO)); break;
+				case "signext": cpuComponents.add(new SignExtend(cLabel, componentJO)); break;
 				
-				case "adder": cpuComponents.put(cLabel, new Adder(cLabel, componentJO)); break;
-				case "alu": cpuComponents.put(cLabel, new ALU(cLabel, componentJO)); break;
+				case "adder": cpuComponents.add(new Adder(cLabel, componentJO)); break;
+				case "alu": cpuComponents.add(new ALU(cLabel, componentJO)); break;
 				
-				case "and": cpuComponents.put(cLabel, new AND(cLabel, componentJO)); break;
-				case "datamemory": cpuComponents.put(cLabel, new DataMemory(cLabel, componentJO)); break;
+				case "and": cpuComponents.add(new AND(cLabel, componentJO)); break;
+				case "datamemory": cpuComponents.add(new DataMemory(cLabel, componentJO)); break;
 				
-				case "fork": cpuComponents.put(cLabel, new Fork(cLabel, componentJO)); break;
+				case "fork": cpuComponents.add(new Fork(cLabel, componentJO)); break;
 				
 				default: System.err.println("Unknown Type: " + type); break;
 			}
 		}
 		
-		return cpuComponents;
+		// reverse the order of components
+		for(int i = cpuComponents.size() - 1; i >= 0; i--)
+			componentsMap.put(cpuComponents.get(i).getLabel(), cpuComponents.get(i));
+		
+		return componentsMap;
 	}
 	
 	/**
@@ -106,19 +112,40 @@ public final class CPU {
 	 * values and construct output values themselves, hence calling <code>execute</code>.
 	 */
 	public void executeCycle(){
-		connections.forEach((c) -> {
+		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> ";
+		String[] toPrint = new String[connections.size()];
+		int index = 0;
+		
+		// print out connections and pass the values
+		for(Connector c : connections){
 			String from = c.getFrom();
 			String to = c.getTo();
 			String selector = c.getSelector();
 			
-			logger.log(Logger.Level.INFO, String.format("Set `%s` | from `%s` ==> to `%s`", selector, from, to));
+			toPrint[index++] = (String.format(message, 
+					from, 
+					to, 
+					selector, 
+					components.get(from).getOutput(selector).getHex())
+				);
 			
 			components.get(to).setInput(selector, components.get(from).getOutput(selector));
-		});
+		}
 		
+		// execute each component
 		components.values().forEach((c) -> {
 			c.execute();
 		});
+		
+		index = 0;
+		// print out connections and pass the values
+		for(Connector c : connections){
+			String from = c.getFrom();
+			String to = c.getTo();
+			String selector = c.getSelector();
+			
+			System.out.println(toPrint[index++] + components.get(from).getOutput(selector).getHex());
+		}
 	}
 	
 	/**

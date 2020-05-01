@@ -5,9 +5,10 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
@@ -19,7 +20,7 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class InstructionMemory extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final Data input, output;
 	private final List<AssembledInstruction> program;
@@ -27,7 +28,7 @@ public class InstructionMemory extends Component {
 	public InstructionMemory(String label, JSONObject json) {
 		super(label);
 		
-		InstructionMemory.logger = System.getLogger(this.getClass().getName());
+		
 		
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));
@@ -41,7 +42,7 @@ public class InstructionMemory extends Component {
 	 */
 	public void setProgram(List<AssembledInstruction> program){
 		if(this.program.addAll(program) == false)
-			logger.log(Logger.Level.ERROR, "Failed to load the program into instruction memoory !");
+			logger.log(Level.SEVERE, "Failed to load the program into instruction memoory !");
 	}
 	
 	/**
@@ -63,10 +64,15 @@ public class InstructionMemory extends Component {
 	public void execute() {
 		int index = Assembler.computeIndex(input);
 		
+		// TODO - consider throwing an exception or handle empty instructions list (or dont ?)
+		if(program.isEmpty()){
+			
+		}
+			
 		try {
 			output.setData(program.get(index).getIcode().getData());
 		} catch(IndexOutOfBoundsException e) {
-			logger.log(Logger.Level.WARNING, "Requesting instruction on address 0x" + input.getHex() + " (as index " + index + "), but address is OUT OF BOUNDS");
+			logger.log(Level.WARNING,  "Requesting instruction on address 0x" + input.getHex() + " (as index " + index + "), but address is OUT OF BOUNDS");
 			output.setData(0);
 		}
 	}

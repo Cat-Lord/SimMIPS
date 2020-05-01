@@ -5,15 +5,14 @@
  */
 package sk.catheaven.run;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.IOException;
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -25,12 +24,10 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import sk.catheaven.exceptions.SyntaxException;
-import sk.catheaven.hardware.CPU;
 import sk.catheaven.instructionEssentials.Assembler;
 
 /**
@@ -38,7 +35,7 @@ import sk.catheaven.instructionEssentials.Assembler;
  * @author catlord
  */
 public class CodeTab implements Initializable {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	@FXML HBox hbox;
 	@FXML ScrollPane pane;
@@ -55,7 +52,7 @@ public class CodeTab implements Initializable {
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		CodeTab.logger = System.getLogger(this.getClass().getName());
+		
 		
 		if(url == null){
 			System.out.println("URL NULL");
@@ -76,7 +73,7 @@ public class CodeTab implements Initializable {
 		try {
 			this.ca = initHbox();
 		} catch (Exception ex) {
-			logger.log(Logger.Level.WARNING, ex.getMessage());
+			logger.log(Level.WARNING, ex.getMessage());
 		}
 		
 		assembleButton.setBackground(new Background(new BackgroundFill(defaultButtonColor, CornerRadii.EMPTY, Insets.EMPTY)));

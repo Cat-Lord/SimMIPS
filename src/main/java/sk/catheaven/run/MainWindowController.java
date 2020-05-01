@@ -5,11 +5,12 @@
  */
 package sk.catheaven.run;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.IntFunction;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -37,7 +38,7 @@ import org.fxmisc.richtext.LineNumberFactory;
  * @author catlord
  */
 public class MainWindowController implements Initializable {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private Stage stage;
 	private CodeArea codeEditor;
 	private final String modifiedFileSuffix = " *";
@@ -50,8 +51,8 @@ public class MainWindowController implements Initializable {
 	@FXML private VBox asideBox;
 		
 	public MainWindowController(){		
-		MainWindowController.logger = System.getLogger(this.getClass().getName());
-		logger.log(Logger.Level.DEBUG, "MainWindowController created");
+		
+		logger.log(Level.INFO, "MainWindowController created");
 		System.out.println("MainWindowController: DONE");
 	}
 	

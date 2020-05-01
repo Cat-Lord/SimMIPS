@@ -5,7 +5,9 @@
  */
 package sk.catheaven.instructionEssentials;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,7 @@ public class Assembler {
 	private final char COMMENT_CHAR = ';';				// comment in user code
 	private final String POSITIONAL_CHAR = "#";			// denotes position (can be found in field values of instruction).
 														// Is of String type just to allow usage of contains(POSITIONAL_CHAR)
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final Map<String, Instruction> instructionSet;
 	
 	// utility declarations
@@ -33,7 +35,7 @@ public class Assembler {
 	private Map<String, Data> labelsToRemove;			// TODO: remove this list of labels (only for debugging purposes)
 	
 	public Assembler(Map<String, Instruction> instructionSet){
-		Assembler.logger = System.getLogger(this.getClass().getName());
+		
 		
 		lat = new LabelArgumentType();			// if we find a label, we need to test its format, if it's correctly written
 		dat = new DataArgumentType();			// when extracting data values from arguments from user, we have to use object, that knows how to do that
@@ -72,7 +74,7 @@ public class Assembler {
 	public AssembledInstruction assembleInstruction(String instruction, Data address, Map<String, Data> labels) throws SyntaxException {
 		if(instruction.isBlank()) throw new SyntaxException("Empty instruction !");
 		
-		logger.log(System.Logger.Level.DEBUG, "Assembling `" + instruction + "`");
+		logger.log(Level.INFO, "Assembling `" + instruction + "`");
 		
 		instruction = trimAndDecomment(instruction);
 		String args[] = getInstructionArguments(instruction);
@@ -84,7 +86,7 @@ public class Assembler {
 		
 		checkInstruction(mnemo, args, labels);
 		Data iCode = createICode(mnemo, args, address, labels);
-		logger.log(System.Logger.Level.DEBUG, String.format("%4s", mnemo) + "-- Icode created: " + iCode.getBinary());
+		logger.log(Level.INFO, String.format("%4s", mnemo) + "-- Icode created: " + iCode.getBinary());
 		
 		return new AssembledInstruction(this.instructionSet.get(mnemo), instruction, iCode, address);
 	}
@@ -126,7 +128,7 @@ public class Assembler {
 		String safeInstruction = instruction.trim();			// leading and trailing tabs, spaces, etc.
 		if(commentIndex >= 0)
 			safeInstruction = instruction.substring(0, commentIndex).trim();
-		logger.log(System.Logger.Level.DEBUG, "Instruction seems valid: " + instruction);
+		logger.log(Level.INFO, "Instruction seems valid: " + instruction);
 		return safeInstruction;
 	}
 
@@ -152,7 +154,7 @@ public class Assembler {
 			// there is no positional character
 			if( ! fieldValue.contains(POSITIONAL_CHAR)){	
 				int value = Integer.parseInt(fieldValue);
-				logger.log(Logger.Level.DEBUG, "Int value for `" + fieldValue + "` is " + value);
+				logger.log(Level.INFO, "Int value for `" + fieldValue + "` is " + value);
 				tempCode |= value;
 			}
 			else{
@@ -163,7 +165,7 @@ public class Assembler {
 					// get the argument type, because it knows how to parse the argument to get specific parts of that argument
 					// For example: Ask the data argument to get ".base" and it knows, how to get it.					
 					int value = dat.getPart(args[extractPositionalNumber(fieldValue)], fieldValue);
-					logger.log(Logger.Level.DEBUG, "Data value for `" + fieldValue + "` is " + value);
+					logger.log(Level.INFO, "Data value for `" + fieldValue + "` is " + value);
 					
 					tempCode |= value;
 				}
@@ -180,10 +182,10 @@ public class Assembler {
 						try{
 							// get the data from argument according to its type
 							int value = instruction.getArgument(seq).getData(args[seq]);
-							logger.log(Logger.Level.DEBUG, "Positional value for `" + fieldValue + "` is " + value);
+							logger.log(Level.INFO, "Positional value for `" + fieldValue + "` is " + value);
 							tempCode |= value;
 						} catch(IndexOutOfBoundsException e){
-							logger.log(System.Logger.Level.WARNING, "Argument data car: Index out of bounds ! Index: " + seq + ", number of args: " + args.length); 
+							logger.log(Level.WARNING, "Argument data car: Index out of bounds ! Index: " + seq + ", number of args: " + args.length); 
 						}
 					}
 				}
@@ -206,7 +208,7 @@ public class Assembler {
 		Map<String, Data> labels = new HashMap<>();
 		
 		for(int i = 0; i < codeLines.length; i++){
-			logger.log(Logger.Level.DEBUG, "" + (i + ": <" + codeLines[i] +">"));
+			logger.log(Level.INFO, "" + (i + ": <" + codeLines[i] +">"));
 			
 			// if there is a label, rememeber it along with the address
 			// of that instruction to allow assembling of the code.
@@ -225,7 +227,7 @@ public class Assembler {
 				
 				if(labels.get(label) == null){
 					labels.put(label, Assembler.computeAddress(i));
-					logger.log(Logger.Level.DEBUG, "Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
+					logger.log(Level.INFO, "Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
 					System.out.println("Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
 				}
 				else

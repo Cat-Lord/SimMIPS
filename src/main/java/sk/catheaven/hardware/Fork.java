@@ -5,10 +5,11 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ import sk.catheaven.utils.Cutter;
  * @author catlord
  */
 public class Fork extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final Data input;
 	private final Map<String, Cutter> outputs;
@@ -35,7 +36,7 @@ public class Fork extends Component {
 	public Fork(String label, JSONObject json) throws Exception, JSONException {
 		super(label);
 		
-		Fork.logger = System.getLogger(this.getClass().getName());
+		
 		
 		input = new Data(json.getInt("in"));
 		outputs = new HashMap<>();
@@ -53,7 +54,7 @@ public class Fork extends Component {
 			
 			Cutter ctr = new Cutter(input.getBitSize(), bitSizeRange);
 			outputs.put(oLabel, ctr);
-			logger.log(Logger.Level.DEBUG, "Output " + oLabel);
+			logger.log(Level.INFO, "Output " + oLabel);
 		}
 	}
 
@@ -62,7 +63,7 @@ public class Fork extends Component {
 	 */
 	@Override
 	public void execute() {
-		String debugOutput = "Cutting input: " + input.getHex() + "\n";
+		String debugOutput = label + ": Cutting input: " + input.getHex() + "\n";
 		
 		for(String oLabel : outputs.keySet()){
 			Cutter ctr = outputs.get(oLabel);
@@ -71,7 +72,7 @@ public class Fork extends Component {
 			debugOutput = debugOutput.concat("\t" + ctr.getCutData().getData() + "\n");
 		}
 		
-		logger.log(Logger.Level.DEBUG, debugOutput);
+		logger.log(Level.INFO, debugOutput);
 		input.setData(0);
 	}
 
@@ -80,7 +81,7 @@ public class Fork extends Component {
 		Cutter ctr = outputs.get(selector);
 		
 		if(ctr == null){
-			logger.log(Logger.Level.WARNING, "Unknown output for selector `" + selector + " ! Returning empty data");
+			logger.log(Level.WARNING,  label + ": Unknown output for selector `" + selector + "` ! Returning empty data");
 			return new Data();
 		}
 		return ctr.getCutData();

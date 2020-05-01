@@ -5,9 +5,10 @@
  */
 package sk.catheaven.hardware;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
@@ -20,7 +21,7 @@ import sk.catheaven.utils.Tuple;
  * @author catlord
  */
 public class DataMemory extends Component {
-	private static Logger logger;
+	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private final Data[] memory;
 	private final Tuple<String, Data> memRead, memWrite;
@@ -30,7 +31,7 @@ public class DataMemory extends Component {
 	public DataMemory(String label, JSONObject json) {
 		super(label);
 		
-		DataMemory.logger = System.getLogger(this.getClass().getName());
+		
 		
 		int bitSize = json.getInt("bitSize");
 		
@@ -48,7 +49,7 @@ public class DataMemory extends Component {
 		for(int i = 0; i < memory.length; i++)
 			memory[i] = new Data(bitSize);
 		
-		logger.log(Logger.Level.DEBUG, "Created memory of " + memory.length + " memory blocks of size " + bitSize + "b");
+		logger.log(Level.INFO, "Created memory of " + memory.length + " memory blocks of size " + bitSize + "b");
 	}
 
 	/**
@@ -58,27 +59,27 @@ public class DataMemory extends Component {
 	@Override
 	public void execute() {
 		if(memRead.getRight().getData() == 1  && memWrite.getRight().getData() == 1){
-			logger.log(Logger.Level.ERROR, "Inconsistent state, both control signals are active !");
+			logger.log(Level.SEVERE, "Inconsistent state, both control signals are active !");
 			output.setData(0);
 			return;
 		}
 		
 		int index = Assembler.computeIndex(inputA.getRight());
 		if(index < 0  ||  index >= memory.length){
-			logger.log(Logger.Level.WARNING, "Index out of memory bounds. Calculated index " + index 
+			logger.log(Level.WARNING,  "Index out of memory bounds. Calculated index " + index 
 					+ " from input 0x" + inputA.getRight().getHex() + " (memory limit is 0x" + Assembler.computeAddress(memory.length).getHex());
 		}
 		
 		if(memRead.getRight().getData() == 1){
 			output.setData(memory[index].getData());
-			logger.log(Logger.Level.DEBUG, "Reading from memory address 0x" + inputA.getRight().getHex() + ", got number 0x" + memory[index].getHex());
+			logger.log(Level.INFO, "Reading from memory address 0x" + inputA.getRight().getHex() + ", got number 0x" + memory[index].getHex());
 		}
 		else if(memWrite.getRight().getData() == 1){
 			memory[index].setData(inputB.getRight().getData());
-			logger.log(Logger.Level.DEBUG, "Writing to memory address 0x" + inputA.getRight().getHex() + " value of " + inputB.getRight().getData());
+			logger.log(Level.INFO, "Writing to memory address 0x" + inputA.getRight().getHex() + " value of " + inputB.getRight().getData());
 		}
 		else
-			logger.log(Logger.Level.DEBUG, "Memory inactive");
+			logger.log(Level.INFO, "Memory inactive");
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class DataMemory extends Component {
 		else if(selector.equals(memWrite.getLeft())) memWrite.getRight().setData(data.getData());
 		
 		else{
-			logger.log(System.Logger.Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
 			return false;
 		}
 		return true;

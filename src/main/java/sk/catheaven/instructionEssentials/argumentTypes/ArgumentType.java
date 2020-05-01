@@ -5,7 +5,7 @@
  */
 package sk.catheaven.instructionEssentials.argumentTypes;
 
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
