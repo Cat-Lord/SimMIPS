@@ -43,14 +43,15 @@ public class Cutter {
 	* where LS means left-shift and RS right-shift (bit-wise).
 	* @return Container to store data to. Will be used in this class to cut and temporarily store data.
 	* @throws NumberFormatException 
-	* @throws Exception Basic error checking of input value is done. Errors result in Exception.
+	* @throws Exception Basic error checking of input value is done (if the range was specified 
+	* incorrectly. Errors result in Exception.
 	*/
    private Data parseRangedValue(int originalBitSize, String spec) throws NumberFormatException, Exception {
-	   if( ! spec.contains("-")) 
-		   throw new Exception("Cutter: Expecting ranged value, but no range was specified --> `" + spec + "`");
+	   if(spec.indexOf("-") == 0  ||   spec.indexOf("-") == spec.length() - 1) 
+		   throw new Exception("Cutter: Expecting ranged value, but incorrect range was specified --> `" + spec + "`");
 	   
-	   int from = Integer.parseInt(spec.substring(0, spec.indexOf("-")));
-	   int to = Integer.parseInt(spec.substring(spec.indexOf("-") + 1, spec.length()));
+	   int from = Integer.parseInt(spec.substring(0, spec.indexOf("-")));				// left shift value
+	   int to = Integer.parseInt(spec.substring(spec.indexOf("-") + 1, spec.length()));	// right shift value
 	   range = new Tuple<>(from, to);
 	   return new Data(originalBitSize - to);		// original size - shift to right gives the actual data size
    }

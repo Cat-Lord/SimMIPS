@@ -146,4 +146,15 @@ public class LatchRegister extends Component {
 			logger.log(Level.INFO, debugOutput);
 		}
 	}
+	
+	public String getStatus(){
+		String s = "";
+		for(String ss : inputs.keySet())
+			s = s.concat(String.format(statusFormat, new Object[]{ss, inputs.get(ss).getHex()}));
+		for(String ss : outputs.keySet())
+			s = s.concat(String.format(statusFormat, new Object[]{ss, outputs.get(ss).getCutData().getHex()}));
+		
+		s = s.concat(String.format(statusFormat, new Object[]{bubble.getLeft(), bubble.getRight().getHex()}));
+		return s;
+	}
 }

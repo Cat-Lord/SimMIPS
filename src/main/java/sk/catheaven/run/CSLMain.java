@@ -44,9 +44,10 @@ public class CSLMain {
 		try {
 			while(true) {
 				cpu.executeCycle();
-				scanner.next();
+				if(scanner.next().equals("q"))
+					break;
 				Runtime.getRuntime().exec("clear");
 			}
-		} catch(Exception e) { System.out.println(e.getMessage()); }
+		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); }
     }
 }

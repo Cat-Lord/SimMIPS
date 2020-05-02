@@ -87,4 +87,11 @@ public class InstructionMemory extends Component {
 		input.setData(data.getData());
 		return true;
 	}
+	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
+		return s;
+	}
 }

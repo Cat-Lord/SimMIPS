@@ -25,7 +25,7 @@ public class ANDTest extends Container {
 	public void testExecute() {
 		AND and;
 		try {
-			and = new AND("AND+", cpuJson.getJSONObject("BRANCH_AND"));
+			and = new AND("AND+", findJsonObject("BRANCH_AND"));
 		} catch(Exception e){ System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
 		
 		Data d1 = new Data();

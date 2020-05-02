@@ -36,8 +36,6 @@ public class Fork extends Component {
 	public Fork(String label, JSONObject json) throws Exception, JSONException {
 		super(label);
 		
-		
-		
 		input = new Data(json.getInt("in"));
 		outputs = new HashMap<>();
 		
@@ -54,7 +52,7 @@ public class Fork extends Component {
 			
 			Cutter ctr = new Cutter(input.getBitSize(), bitSizeRange);
 			outputs.put(oLabel, ctr);
-			logger.log(Level.INFO, "Output " + oLabel);
+			logger.log(Level.INFO, "Output " + oLabel );
 		}
 	}
 
@@ -63,13 +61,11 @@ public class Fork extends Component {
 	 */
 	@Override
 	public void execute() {
-		String debugOutput = label + ": Cutting input: " + input.getHex() + "\n";
+		String debugOutput = "\n" + label + ": Cutting input: " + input.getHex() + "\n";
 		
 		for(String oLabel : outputs.keySet()){
-			Cutter ctr = outputs.get(oLabel);
-			ctr.setDataToCut(0);					// reset data just in case
-			ctr.setDataToCut(input);				// set data to cut
-			debugOutput = debugOutput.concat("\t" + ctr.getCutData().getData() + "\n");
+			outputs.get(oLabel).setDataToCut(input);
+			debugOutput = debugOutput.concat("\t" + oLabel + " result: " + outputs.get(oLabel).getCutData().getData() + "\n");
 		}
 		
 		logger.log(Level.INFO, debugOutput);
@@ -93,4 +89,13 @@ public class Fork extends Component {
 		return true;
 	}
 	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
+		
+		for(String ctr : outputs.keySet())
+			s = s.concat(String.format(statusFormat, new Object[]{ctr, outputs.get(ctr).getCutData().getHex()}));
+		
+		return s;
+	}
 }

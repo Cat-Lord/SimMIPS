@@ -109,4 +109,16 @@ public class RegBank extends Component {
 		
 		return regArray;
 	}
+	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{inputA.getLeft(), inputA.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{inputB.getLeft(), inputB.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{destRegData.getLeft(), destRegData.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{destReg.getLeft(), destReg.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{regWrite.getLeft(), regWrite.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{outputA.getLeft(), outputA.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{outputB.getLeft(), outputB.getRight().getHex()}));
+		return s;
+	}
 }

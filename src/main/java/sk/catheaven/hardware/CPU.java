@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,18 +21,20 @@ import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
-import sk.catheaven.utils.Connector;
+import sk.catheaven.utils.Tie;
 
 /**
  * Represents the CPU itself, main working unit of the simulation.
  * @author catlord
  */
 public final class CPU {
+	public final static int PHASE_COUNT = 5;
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	// mapping unique labels of components as a TUPLE and the signal connecting them
-	private final List<Connector> connections;
+	private final Map<String, Tie> connections;
 	
+	private final List<Component>[] phases;					// list of components for each phase
 	private final Assembler assembler;
 	private final Map<String, Component> components;
 	private InstructionMemory instructionMemory;			// entry point for program execution
@@ -42,13 +44,15 @@ public final class CPU {
 		if(cpuJson == null) throw new Exception("No CPU json file provided !");
 		
 		this.instructionSet = instructionSet;
-		components = parseComponents(cpuJson.getJSONObject("components"));
+		phases = new List[PHASE_COUNT];
+		components = parseComponents(cpuJson.getJSONArray("components"));
 		
 		if(components.isEmpty())
 			throw new Exception("No components were added !");
 		if(instructionMemory == null)
 			throw new Exception("No Instruction Memory");
 		
+		// log every component
 		String debugString = "CPU Components:\n";
 		for(Component c : getComponents()){
 			
@@ -56,52 +60,78 @@ public final class CPU {
 		}
 		logger.log(Level.INFO, debugString);
 		
+		// log components of every phase
+		for(int phase_index = 0; phase_index < PHASE_COUNT; phase_index++){
+			debugString = debugString.concat("Phase : " + phase_index + "\n");
+			for(Component c : getComponentsOfPhase(phase_index))
+				debugString = debugString.concat("\t`" + c.getLabel() + "`\n");
+			debugString = debugString.concat("- - - - - - - - - - - -\n");
+		}
+		logger.log(Level.INFO, debugString);
+		
 		this.assembler = new Assembler(instructionSet);
 		connections = parseConnections(cpuJson.getJSONArray("connections"));
 	}
 	
-	private Map<String, Component> parseComponents(JSONObject cpuJson) throws Exception {
+	private Map<String, Component> parseComponents(JSONArray cpuJson) throws Exception {
 		Map<String, Component> componentsMap = new LinkedHashMap<>();
-		ArrayList<Component> cpuComponents = new ArrayList<>();		// store the components here and traverse backwards when adding to map of components
-		Iterator<String> componentIter = cpuJson.keys();
+		Iterator<Object> componentIter = cpuJson.iterator();
+		
+		int phase_index = 0;
+		boolean phase_advance = false;
+		phases[phase_index] = new ArrayList<>();
 		
 		while(componentIter.hasNext()){
-			String cLabel = componentIter.next();
-			JSONObject componentJO = cpuJson.getJSONObject(cLabel);
+			JSONObject componentJO = (JSONObject) componentIter.next();
+			String cLabel = componentJO.getString("label");
 			String type = componentJO.getString("type");
 			
+			Component comp = null;
+			
 			switch(type.toLowerCase()){
-				case "mux": cpuComponents.add(new MUX(cLabel, componentJO)); break;
-				case "pc": cpuComponents.add(new PC(cLabel, componentJO)); break;
-				case "constadder": cpuComponents.add(new ConstAdder(cLabel, componentJO)); break;
+				case "mux": comp = new MUX(cLabel, componentJO); break;
+				case "pc": comp = new PC(cLabel, componentJO); break;
+				case "constadder": comp = new ConstAdder(cLabel, componentJO); break;
 				case "instructionmemory": { 
 					instructionMemory = new InstructionMemory(cLabel, componentJO);
-					cpuComponents.add(instructionMemory); 
-					
+					comp = instructionMemory;
 					break; 
 				}
-				case "latchregister": cpuComponents.add(new LatchRegister(cLabel, componentJO)); break;
+				case "latchregister": { 
+					comp = new LatchRegister(cLabel, componentJO);
+					phase_advance = true;
+					break; 
+				}
 				
-				case "controlunit": cpuComponents.add(new ControlUnit(cLabel, componentJO)); break;
-				case "constmux": cpuComponents.add(new ConstMUX(cLabel, componentJO)); break;
-				case "regbank": cpuComponents.add(new RegBank(cLabel, componentJO)); break;
-				case "signext": cpuComponents.add(new SignExtend(cLabel, componentJO)); break;
+				case "controlunit": comp = new ControlUnit(cLabel, componentJO); break;
+				case "constmux": comp = new ConstMUX(cLabel, componentJO); break;
+				case "regbank": comp = new RegBank(cLabel, componentJO); break;
+				case "signext": comp = new SignExtend(cLabel, componentJO); break;
 				
-				case "adder": cpuComponents.add(new Adder(cLabel, componentJO)); break;
-				case "alu": cpuComponents.add(new ALU(cLabel, componentJO)); break;
+				case "adder": comp = new Adder(cLabel, componentJO); break;
+				case "alu": comp = new ALU(cLabel, componentJO); break;
 				
-				case "and": cpuComponents.add(new AND(cLabel, componentJO)); break;
-				case "datamemory": cpuComponents.add(new DataMemory(cLabel, componentJO)); break;
+				case "and": comp = new AND(cLabel, componentJO); break;
+				case "datamemory": comp = new DataMemory(cLabel, componentJO); break;
 				
-				case "fork": cpuComponents.add(new Fork(cLabel, componentJO)); break;
+				case "fork": comp = new Fork(cLabel, componentJO); break;
 				
-				default: System.err.println("Unknown Type: " + type); break;
+				default: break;
 			}
+			if(comp == null)
+				throw new Exception("Unknown component type " + type);
+			
+			phases[phase_index].add(comp);
+			componentsMap.put(cLabel, comp);
+			if(phase_advance){
+				phase_advance = false;
+				phase_index++;
+				if(phase_index >= phases.length)
+					throw new Exception("Too many latch registers for " + PHASE_COUNT + " phases !" );
+				else
+					phases[phase_index] = new ArrayList<>();
+			}	
 		}
-		
-		// reverse the order of components
-		for(int i = cpuComponents.size() - 1; i >= 0; i--)
-			componentsMap.put(cpuComponents.get(i).getLabel(), cpuComponents.get(i));
 		
 		return componentsMap;
 	}
@@ -110,51 +140,79 @@ public final class CPU {
 	 * Executing cycle means first passing output values of components to inputs of 
 	 * target components. After this step the components are ready to handle input
 	 * values and construct output values themselves, hence calling <code>execute</code>.
+	 * 
+	 * TODO: remove throwing an exception
 	 */
-	public void executeCycle(){
+	public void executeCycle() throws Exception {
 		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> ";
-		String[] toPrint = new String[connections.size()];
+		String[] toPrint = new String[150];
+		
 		int index = 0;
 		
-		// print out connections and pass the values
-		for(Connector c : connections){
-			String from = c.getFrom();
-			String to = c.getTo();
-			String selector = c.getSelector();
+		for(int phase_index = PHASE_COUNT - 1; phase_index >= 0; phase_index--){
 			
-			toPrint[index++] = (String.format(message, 
-					from, 
-					to, 
-					selector, 
-					components.get(from).getOutput(selector).getHex())
-				);
+			// set up inputs for every component in a phase
+			for(Component c : phases[phase_index]){
+				String from = c.getLabel();
+				if(connections.get(from) == null)
+					throw new Exception("UNDEFINED ??!! " + from);
+
+				Map<String, List<String>> ties = connections.get(from).getTies();
+
+				for(String targetComponent : ties.keySet()){
+					List<String> selectorsList = ties.get(targetComponent);
+
+					for(String selector : selectorsList){
+						toPrint[index++] = (String.format(message, 
+							from, 
+							targetComponent, 
+							selector, 
+							components.get(from).getOutput(selector).getHex())
+						);
+						components.get(targetComponent).setInput(selector, components.get(from).getOutput(selector));
+					}
+				}
+				
+				components.get(from).execute();
+			}
 			
-			components.get(to).setInput(selector, components.get(from).getOutput(selector));
+			// when all inputs are ready, execute for every phase
+			for(Component c : phases[phase_index]){
+				c.execute();
+			}
+			
 		}
 		
-		// execute each component
-		components.values().forEach((c) -> {
-			c.execute();
-		});
-		
 		index = 0;
-		// print out connections and pass the values
-		for(Connector c : connections){
-			String from = c.getFrom();
-			String to = c.getTo();
-			String selector = c.getSelector();
+		// for every source component
+		for(String from : connections.keySet()){
+			Map<String, List<String>> ties = connections.get(from).getTies();
 			
-			System.out.println(toPrint[index++] + components.get(from).getOutput(selector).getHex());
+			for(String targetComponent : ties.keySet()){
+				List<String> selectorsList = ties.get(targetComponent);
+				for(String selector : selectorsList){
+					toPrint[index] = toPrint[index].concat(components.get(from).getOutput(selector).getHex());
+					index++;
+				}
+			}
+		}
+		
+		for(Component c : getComponents())
+			System.out.println(c.getLabel() + "\n" + c.getStatus() + "--------------------");
+		
+		for(int i = 0; i < toPrint.length; i++){
+			if(toPrint[i] == null || toPrint[i].isEmpty()) break;
+			System.out.println(toPrint[i]);
 		}
 	}
 	
 	/**
 	 * Parses connections between components and their input/output.
 	 * @param jsonArray
-	 * @return List of connections represented as Connector class.
+	 * @return Map of component names and ties to other components	
 	 */
-	private List<Connector> parseConnections(JSONArray jsonArray) throws Exception {
-		List<Connector> wires = new ArrayList<>();
+	private Map<String, Tie> parseConnections(JSONArray jsonArray) throws Exception {
+		Map<String, Tie> ties = new HashMap<>();
 		
 		Iterator<Object> jitter = jsonArray.iterator();
 		while(jitter.hasNext()){
@@ -165,10 +223,16 @@ public final class CPU {
 			
 			testComponent(from, to, selector);
 			
-			wires.add(new Connector(from, to, selector));
+			if(ties.get(from) == null){
+				Tie tie = new Tie();
+				tie.addTie(to, selector);
+				ties.put(from, tie);
+			}
+			else
+				ties.get(from).addTie(to, selector);
 		}
 		
-		return wires;
+		return ties;
 	}
 	
 	public Collection<Component> getComponents(){
@@ -178,7 +242,23 @@ public final class CPU {
 	public Assembler getAssembler(){
 		return assembler;
 	}
-
+	
+	/**
+	 * Return list of components for a specific pipeline phase.
+	 * @param index Index of specific pipeline phase. List of phases goes like this:
+	 * 0: Instruction Fetch (IF)
+	 * 1: Instruction Decode (ID)
+	 * 2: Execute (EX)
+	 * 3: Memory (MEM)
+	 * 4: Writeback (WB)
+	 * @return List of components of each phase
+	 */
+	public List<Component> getComponentsOfPhase(int index){
+		if(index >= 0  &&  index < phases.length)
+			return phases[index];
+		return null;
+	}
+	
 	/**
 	 * Private error-checking method. Tries to locate components by 
 	 * string parameters <i>from</i> and <i>to</i>. If successful,

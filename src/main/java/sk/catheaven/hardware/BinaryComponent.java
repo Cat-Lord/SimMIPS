@@ -46,4 +46,12 @@ public abstract class BinaryComponent extends Component implements Datapathable 
 		
 		return true;
 	}
+	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{inputA.getLeft(), inputA.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{inputB.getLeft(), inputB.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
+		return s;
+	}
 }

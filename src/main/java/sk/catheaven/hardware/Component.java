@@ -15,6 +15,7 @@ import java.util.logging.SimpleFormatter;
  * @author catlord
  */
 public abstract class Component implements Datapathable {
+	protected static String statusFormat = "%25s: %s\n";
 	protected String label;
 	
 	public Component(String label){
@@ -24,4 +25,10 @@ public abstract class Component implements Datapathable {
 	public String getLabel(){
 		return label;
 	}
+	
+	/**
+	 * Returns values of every input/output.
+	 * @return 
+	 */
+	public abstract String getStatus();
 }

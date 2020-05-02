@@ -23,7 +23,7 @@ public class RegBankTest extends Container {
 	public void test(){
 		RegBank rb;
 		try {
-			rb = new RegBank("RegBank", cpuJson.getJSONObject("REG_BANK"));
+			rb = new RegBank("RegBank", findJsonObject("REG_BANK"));
 		} catch(Exception e) { System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
 		
 		Data signal = new Data(1);

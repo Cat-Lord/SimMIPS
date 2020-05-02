@@ -25,6 +25,7 @@ public class CPUTest {
 		try {
 			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
 			cpu1 = l.getCPU();
+			
 		} catch(Exception e) { 
 			e.printStackTrace();
 			System.out.println(e.getMessage()); 
@@ -56,7 +57,7 @@ public class CPUTest {
 		}
 		
 		try {
-			for(int i = 0; i < 1000; i++){
+			for(int i = 0; i < 100; i++){
 				cpu2.executeCycle();
 				System.out.println("\n - - - - - - - - - - -");
 			}
@@ -64,6 +65,15 @@ public class CPUTest {
 		} catch( Exception e) {
 			System.out.println(e.getMessage());
 			fail("Single cycle execution failed !");
+		}
+		
+		// Display element phase association		
+		for(int i = 0; i < CPU.PHASE_COUNT; i++){
+			System.out.println("Phase " + i);
+			for(Component c : cpu1.getComponentsOfPhase(i)){
+				System.out.println("\t" + c.getLabel());
+			}
+			System.out.println();
 		}
 	}
 }

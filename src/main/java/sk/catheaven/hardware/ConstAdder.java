@@ -47,4 +47,11 @@ public class ConstAdder extends Component {
 		input.getRight().setData(data.getData());
 		return true;
 	}
+	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{input.getLeft(), input.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Const", constant.getHex()}));
+		return s;
+	}
 }

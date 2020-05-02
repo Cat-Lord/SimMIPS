@@ -38,7 +38,7 @@ public class LatchRegisterTest extends Container {
 		 * TESTING FOR MEM_WB latch
 		 */
 		try {
-			tl = new LatchRegister("1", cpuJson.getJSONObject("MEM_WB"));	
+			tl = new LatchRegister("1", findJsonObject("MEM_WB"));	
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			fail("Shouldn't have cought an exception ! ");
@@ -48,7 +48,7 @@ public class LatchRegisterTest extends Container {
 		 * TESTING FOR EX_MEM latch
 		 */
 		try {
-			tl = new LatchRegister("2", cpuJson.getJSONObject("EX_MEM"));	
+			tl = new LatchRegister("2", findJsonObject("EX_MEM"));	
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			fail("Shouldn't have cought an exception ! ");
@@ -58,7 +58,7 @@ public class LatchRegisterTest extends Container {
 		 * TESTING FOR ID_EX latch
 		 */
 		try {
-			tl = new LatchRegister("3", cpuJson.getJSONObject("ID_EX"));
+			tl = new LatchRegister("3", findJsonObject("ID_EX"));
 			d.setData(69);
 			tl.setInput("reg1Value", d);
 			tl.execute();
@@ -73,7 +73,7 @@ public class LatchRegisterTest extends Container {
 		 * TESTING FOR ID_EX latch
 		 */
 		try {
-			tl = new LatchRegister("4", cpuJson.getJSONObject("IF_ID"));
+			tl = new LatchRegister("4", findJsonObject("IF_ID"));
 			d.setData(0x20916931); // instruction is: ADDI $17,$4,6931, imm value is 26 929
 			tl.setInput("iCode", d);
 			tl.execute();

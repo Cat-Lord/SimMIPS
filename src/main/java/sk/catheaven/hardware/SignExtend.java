@@ -48,4 +48,10 @@ public class SignExtend extends Component {
 		return true;
 	}
 	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
+		return s;
+	}	
 }

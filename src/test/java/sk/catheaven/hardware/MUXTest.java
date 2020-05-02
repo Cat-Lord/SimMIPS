@@ -24,7 +24,7 @@ public class MUXTest extends Container {
 		MUX mux;
 		
 		try {
-			mux = new MUX("mux", cpuJson.getJSONObject("BRANCH_MUX"));
+			mux = new MUX("mux", findJsonObject("BRANCH_MUX"));
 		} catch(Exception e) { System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
 		
 		Data signal = new Data(1);

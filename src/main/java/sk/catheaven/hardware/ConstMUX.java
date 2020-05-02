@@ -53,4 +53,12 @@ public class ConstMUX extends Component {
 		return true;
 	}
 	
+	public String getStatus(){
+		String s = "";
+		s = s.concat(String.format(statusFormat, new Object[]{selector.getLeft(), selector.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{"Const", constant.getHex()}));
+		return s;
+	}
 }

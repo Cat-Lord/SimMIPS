@@ -7,6 +7,8 @@ package sk.catheaven.hardware;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Iterator;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import sk.catheaven.run.Loader;
 
@@ -17,15 +19,25 @@ import sk.catheaven.run.Loader;
  */
 public class Container {
 	CPU cpu;
-	protected JSONObject cpuJson;
+	protected JSONArray cpuJson;
 	
 	protected Container() {
 		Loader l;
 		try {
 			l = new Loader();
-			cpuJson = new JSONObject(l.readFile("sk/catheaven/data/cpu.json")).getJSONObject("components");
+			cpuJson = new JSONObject(l.readFile("sk/catheaven/data/cpu.json")).getJSONArray("components");
 			cpu = l.getCPU();
 		} catch(Exception e) { System.out.println(e.getMessage()); }
+	}
+	
+	protected JSONObject findJsonObject(String label){
+		Iterator<Object> jitter = cpuJson.iterator();
+		while(jitter.hasNext()){
+			JSONObject jobj = (JSONObject) jitter.next();
+			if(jobj.getString("label").equals(label))
+				return jobj;
+		}
+		return null;
 	}
 	
 }

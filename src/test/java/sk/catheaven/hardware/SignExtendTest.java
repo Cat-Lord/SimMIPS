@@ -40,7 +40,7 @@ public class SignExtendTest extends Container {
 	public void test() {
 		SignExtend se;
 		try {
-			se = new SignExtend("SE", cpuJson.getJSONObject("SIGN_EXT"));
+			se = new SignExtend("SE", findJsonObject("SIGN_EXT"));
 		} catch(Exception e) { System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
 		
 		Data d = new Data(16);

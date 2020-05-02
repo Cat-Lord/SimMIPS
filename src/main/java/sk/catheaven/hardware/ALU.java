@@ -144,4 +144,11 @@ public class ALU extends BinaryComponent {
 		}
 		return true;
 	}
+	
+	public String getStatus(){
+		String s = super.getStatus();
+		s = s.concat(String.format(statusFormat, new Object[]{aluOp.getLeft(), aluOp.getRight().getHex()}));
+		s = s.concat(String.format(statusFormat, new Object[]{zeroResult.getLeft(), zeroResult.getRight().getHex()}));
+		return s;
+	}
 }

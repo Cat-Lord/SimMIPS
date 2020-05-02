@@ -33,7 +33,7 @@ public class ControlUnitTest extends Container {
 		ControlUnit cu;
 		
 		try{
-			cu = new ControlUnit("cu", cpuJson.getJSONObject("CU"));
+			cu = new ControlUnit("cu", findJsonObject("CU"));
 		} catch(Exception e){ System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
 	}
 	
