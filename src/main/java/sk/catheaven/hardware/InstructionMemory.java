@@ -66,7 +66,7 @@ public class InstructionMemory extends Component {
 		
 		// TODO - consider throwing an exception or handle empty instructions list (or dont ?)
 		if(program.isEmpty()){
-			
+			// TODO
 		}
 			
 		try {
@@ -93,5 +93,10 @@ public class InstructionMemory extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
 		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
 		return s;
+	}
+
+	@Override
+	public Data getInput(String selector) {
+		return input.duplicate();
 	}
 }

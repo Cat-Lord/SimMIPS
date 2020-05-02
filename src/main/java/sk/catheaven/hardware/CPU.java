@@ -144,7 +144,7 @@ public final class CPU {
 	 * TODO: remove throwing an exception
 	 */
 	public void executeCycle() throws Exception {
-		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> ";
+		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> %s";
 		String[] toPrint = new String[150];
 		
 		int index = 0;
@@ -154,56 +154,48 @@ public final class CPU {
 			// set up inputs for every component in a phase
 			for(Component c : phases[phase_index]){
 				String from = c.getLabel();
+				
+				components.get(from).execute();		// execute first, to handle the input values and AFTER pass the output to other components
+
 				if(connections.get(from) == null)
 					throw new Exception("UNDEFINED ??!! " + from);
 
 				Map<String, List<String>> ties = connections.get(from).getTies();
 
+				// for every possible target component that is connected to 'from' component
 				for(String targetComponent : ties.keySet()){
-					List<String> selectorsList = ties.get(targetComponent);
+					List<String> selectorsList = ties.get(targetComponent);			// get all the selectors for one target component
 
 					for(String selector : selectorsList){
-						toPrint[index++] = (String.format(message, 
-							from, 
-							targetComponent, 
-							selector, 
-							components.get(from).getOutput(selector).getHex())
-						);
 						components.get(targetComponent).setInput(selector, components.get(from).getOutput(selector));
+
+						Data d = components.get(targetComponent).getInput(selector);
+						
+						toPrint[index++] = (String.format(message, 
+															from, 
+															targetComponent, 
+															selector, 
+															components.get(from).getOutput(selector).getHex(),
+															((d == null) ? (components.get(targetComponent).getLabel() + " ?") : d.getHex())
+														));
 					}
-				}
-				
-				components.get(from).execute();
+				}				
 			}
 			
 			// when all inputs are ready, execute for every phase
-			for(Component c : phases[phase_index]){
-				c.execute();
-			}
+		//	for(Component c : phases[phase_index]){
+			//	c.execute();
+			//}
 			
 		}
 		
-		index = 0;
-		// for every source component
-		for(String from : connections.keySet()){
-			Map<String, List<String>> ties = connections.get(from).getTies();
-			
-			for(String targetComponent : ties.keySet()){
-				List<String> selectorsList = ties.get(targetComponent);
-				for(String selector : selectorsList){
-					toPrint[index] = toPrint[index].concat(components.get(from).getOutput(selector).getHex());
-					index++;
-				}
-			}
-		}
-		
-		for(Component c : getComponents())
+		/*for(Component c : getComponents())
 			System.out.println(c.getLabel() + "\n" + c.getStatus() + "--------------------");
-		
+		System.out.println("\n");
 		for(int i = 0; i < toPrint.length; i++){
-			if(toPrint[i] == null || toPrint[i].isEmpty()) break;
-			System.out.println(toPrint[i]);
-		}
+		if(toPrint[i] == null || toPrint[i].isEmpty()) break;
+		System.out.println(toPrint[i]);
+		}*/
 	}
 	
 	/**
@@ -257,6 +249,15 @@ public final class CPU {
 		if(index >= 0  &&  index < phases.length)
 			return phases[index];
 		return null;
+	}
+	
+	/**
+	 * Returns component specified by label.
+	 * @param label Components unique label.
+	 * @return 
+	 */
+	public Component getComponent(String label){
+		return components.get(label);
 	}
 	
 	/**

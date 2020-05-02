@@ -59,11 +59,6 @@ public class LatchRegister extends Component {
 	 */
 	@Override
 	public void execute() {
-		// clearing outputs
-		outputs.keySet().forEach((ol) -> {
-			outputs.get(ol).setDataToCut(0);
-		});
-		
 		// if we skip, outputs are already cleared, so don't update them
 		if(bubble.getRight().getData() == 0)
 			inputs.keySet().forEach((ins) -> {
@@ -73,10 +68,6 @@ public class LatchRegister extends Component {
 					outputs.get(ol).setDataToCut(insData);
 				});
 			});
-		
-		inputs.keySet().forEach((il) -> {
-			inputs.get(il).setData(0);
-		});
 	}
 
 	@Override
@@ -148,13 +139,22 @@ public class LatchRegister extends Component {
 	}
 	
 	public String getStatus(){
-		String s = "";
+		String s = "Inputs:\n";
 		for(String ss : inputs.keySet())
 			s = s.concat(String.format(statusFormat, new Object[]{ss, inputs.get(ss).getHex()}));
+		
+		s = s.concat("\nOutputs:\n");
 		for(String ss : outputs.keySet())
 			s = s.concat(String.format(statusFormat, new Object[]{ss, outputs.get(ss).getCutData().getHex()}));
 		
 		s = s.concat(String.format(statusFormat, new Object[]{bubble.getLeft(), bubble.getRight().getHex()}));
 		return s;
+	}
+
+	@Override
+	public Data getInput(String selector) {
+		if(inputs.get(selector) == null)
+			return null;
+		return inputs.get(selector).duplicate();
 	}
 }

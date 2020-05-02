@@ -31,8 +31,6 @@ public class DataMemory extends Component {
 	public DataMemory(String label, JSONObject json) {
 		super(label);
 		
-		
-		
 		int bitSize = json.getInt("bitSize");
 		
 		JSONObject mr = json.getJSONObject("memRead");
@@ -109,6 +107,15 @@ public class DataMemory extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{memWrite.getLeft(), memWrite.getRight().getHex()}));
 		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
 		return s;
+	}
+
+	@Override
+	public Data getInput(String selector) {
+		if(selector.equals(inputA.getLeft()))			return inputA.getRight().duplicate();
+		else if(selector.equals(inputB.getLeft()))		return inputB.getRight().duplicate();
+		else if(selector.equals(memRead.getLeft()))		return memRead.getRight().duplicate();
+		else if(selector.equals(memWrite.getLeft()))	return memWrite.getRight().duplicate();
+		return null;
 	}
 	
 }

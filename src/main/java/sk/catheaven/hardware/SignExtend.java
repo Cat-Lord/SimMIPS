@@ -54,4 +54,8 @@ public class SignExtend extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
 		return s;
 	}	
+	
+	public Data getInput(String selector){
+		return input.duplicate();
+	}
 }

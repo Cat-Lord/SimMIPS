@@ -99,6 +99,43 @@ public class ForkTest extends Container {
 		assertEquals(testData.getData(), cutf.getOutput("address").getData());
 		assertEquals(15, cutf.getOutput("extra").getData());
 		assertEquals(1, cutf.getOutput("signal").getData());
+		
+		
+		
+		// 
+		// 'Descending' fork
+		//
+		
+		JSONObject fork4json = createTestFor(11, new Tuple[] {
+			new Tuple("left", "10"),
+			new Tuple("signal", "0-10")
+		});
+		
+		Fork descFork;
+		try {
+			descFork = new Fork("descendant", fork4json);
+		} catch(Exception e) { System.out.println(e.getMessage()); fail("AF not created"); return; }
+		
+		testData.setData(1027);
+		descFork.setInput("", testData);
+		descFork.execute();
+		
+		assertEquals(3, descFork.getOutput("left").getData());
+		assertEquals(1, descFork.getOutput("signal").getData());
+		
+		testData.setData(1859);
+		descFork.setInput("", testData);
+		descFork.execute();
+		
+		assertEquals(835, descFork.getOutput("left").getData());
+		assertEquals(1, descFork.getOutput("signal").getData());
+		
+		testData.setData(835);
+		descFork.setInput("", testData);
+		descFork.execute();
+		
+		assertEquals(835, descFork.getOutput("left").getData());
+		assertEquals(0, descFork.getOutput("signal").getData());
 	}
 	
 	

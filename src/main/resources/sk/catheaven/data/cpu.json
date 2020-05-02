@@ -194,7 +194,7 @@
             "type": "Fork",
             "in": 9,
             "out":  [
-                { "label": "controlSignals"  , "bitSize": "5" },
+                { "label": "controlSignals"  , "bitSize": "4" },
                 { "label": "aluOp"  , "bitSize": "0-5" }
             ]
         },

@@ -37,6 +37,14 @@ public class MUX extends BinaryComponent {
 		);
 	}
 	
+	public Data getInput(String selector){
+		Data d = super.getInput(selector);
+		if(d != null) return d;
+		
+		if(selector.equals(this.selector.getLeft())) return this.selector.getRight().duplicate();
+		return null;
+	}
+	
 	@Override
 	public boolean setInput(String selector, Data data) {
 		boolean set = super.setInput(selector, data);

@@ -65,7 +65,6 @@ public class ALU extends BinaryComponent {
 
 	@Override
 	public void execute() {
-		output.setData(0);
 		zeroResult.getRight().setData(0);
 		
 		String operation = operations.get(aluOp.getRight().getData());
@@ -115,9 +114,6 @@ public class ALU extends BinaryComponent {
 		//DONT FORGET TO SET ZERO-RESULT OUTPUT
 		if( ! operation.equals("bneq")  &&  output.getData() == 0)
 			zeroResult.getRight().setData(1);
-		
-		inputA.getRight().setData(0);
-		inputB.getRight().setData(0);
 	}
 
 	@Override
@@ -129,6 +125,13 @@ public class ALU extends BinaryComponent {
 		return output.duplicate();
 	}
 
+	public Data getInput(String selector){
+		Data d = super.getInput(selector);
+		if(d != null) return d;
+		if(selector.equals(aluOp.getLeft())) return aluOp.getRight().duplicate();
+		return null;
+	}
+	
 	@Override
 	public boolean setInput(String selector, Data data) {
 		boolean set = super.setInput(selector, data);

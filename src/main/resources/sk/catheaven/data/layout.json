@@ -30,7 +30,7 @@
         "sub":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "34"}, "desc": "$t1 = $t2 - $t3"},
         "xor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#3", "rt": "#3", "rd": "#1", "shamt": "0", "func": "38"}, "desc": "$t1 = $t2 ^ $t3"},
         
-        "nop":  {"type": "I", "args": [], "fields": {"op": "0",  "rs": "0", "rt": "0", "imm": "0"}, "desc": "No operation"},
+        "nop":  {"type": "I", "args": [], "fields": {"op": "0",  "rs": "0", "rt": "0", "imm": "0"}, "desc": "No operation."},
         "addi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "8",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 + 23"},
         "subi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "9",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 - 23"},
         "andi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "12", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "$t1 = $t2 & 53"},

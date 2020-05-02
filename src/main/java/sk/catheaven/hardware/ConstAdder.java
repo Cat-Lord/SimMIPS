@@ -30,6 +30,14 @@ public class ConstAdder extends Component {
 		constant.setData(json.getInt("const"));
 	}
 	
+	public Data getInput(String selector){
+		if(selector.equals(input.getLeft()))
+			return input.getRight().duplicate();
+		
+		System.out.println(label + ": Returning default (constant) !");
+		return constant.duplicate();
+	}
+	
 	@Override
 	public void execute() {
 		output.setData(

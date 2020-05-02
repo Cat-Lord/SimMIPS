@@ -6,6 +6,7 @@
 package sk.catheaven.run;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import java.util.logging.LogManager;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.Logger;
 import sk.catheaven.hardware.CPU;
+import sk.catheaven.hardware.Component;
 
 /**
  * Temporary console-main
@@ -42,12 +44,38 @@ public class CSLMain {
 		
 		Scanner scanner = new Scanner(System.in);
 		try {
+			String c;
+			int phase;
+			
 			while(true) {
-				cpu.executeCycle();
-				if(scanner.next().equals("q"))
+				c = scanner.next();
+				if(c.equals("q"))
 					break;
-				Runtime.getRuntime().exec("clear");
+				
+				phase = Integer.parseInt(c);
+				System.out.println("before");
+				printComps(cpu, phase);
+				
+				cpu.executeCycle();
+				
+				System.out.println("------------------\nafter");
+				printComps(cpu, phase);
 			}
 		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); }
     }
+	
+	public static void printComps(CPU cpu, int index){
+		if(index > CPU.PHASE_COUNT){
+			for(int i = 0; i < CPU.PHASE_COUNT; i++){
+				printComps(cpu, i);
+			}
+			return;
+		}
+		
+		List<Component> cmps = cpu.getComponentsOfPhase(index);
+		cmps.forEach((component) -> {
+			System.out.println(component.getLabel());
+			System.out.println(component.getStatus());
+		});
+	}
 }

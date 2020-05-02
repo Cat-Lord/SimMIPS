@@ -61,4 +61,11 @@ public class ConstMUX extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{"Const", constant.getHex()}));
 		return s;
 	}
+
+	@Override
+	public Data getInput(String selector) {
+		if(selector.equals(this.selector.getLeft()))
+			return this.selector.getRight().duplicate();
+		return input.duplicate();
+	}
 }

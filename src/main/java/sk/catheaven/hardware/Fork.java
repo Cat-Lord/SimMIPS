@@ -69,7 +69,6 @@ public class Fork extends Component {
 		}
 		
 		logger.log(Level.INFO, debugOutput);
-		input.setData(0);
 	}
 
 	@Override
@@ -94,8 +93,12 @@ public class Fork extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
 		
 		for(String ctr : outputs.keySet())
-			s = s.concat(String.format(statusFormat, new Object[]{ctr, outputs.get(ctr).getCutData().getHex()}));
+			s = s.concat(String.format(statusFormat, new Object[]{ctr, outputs.get(ctr).getCutData().getBinary()}));
 		
 		return s;
+	}
+	
+	public Data getInput(String selector){
+		return input.duplicate();
 	}
 }

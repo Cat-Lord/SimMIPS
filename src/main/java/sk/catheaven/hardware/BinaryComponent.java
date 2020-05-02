@@ -30,6 +30,19 @@ public abstract class BinaryComponent extends Component implements Datapathable 
 		this.output = new Data(json.getInt("output"));
 	}
 	
+	/**
+	 * Allows investigating value of input.
+	 * @param inputLabel
+	 * @return 
+	 */
+	public Data getInput(String inputLabel){
+		if(inputA.getLeft().equals(inputLabel))
+			return inputA.getRight().duplicate();
+		else if(inputB.getLeft().equals(inputLabel))
+			inputB.getRight().duplicate();
+		return null;
+	}
+	
 	@Override
 	public Data getOutput(String outputLabel) {
 		return output.duplicate();

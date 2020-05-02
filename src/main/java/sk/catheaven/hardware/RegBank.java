@@ -121,4 +121,13 @@ public class RegBank extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{outputB.getLeft(), outputB.getRight().getHex()}));
 		return s;
 	}
+	
+	public Data getInput(String selector){
+		if     (selector.equals(regWrite.getLeft()))		return regWrite.getRight().duplicate();
+		else if(selector.equals(inputA.getLeft()))			return inputA.getRight().duplicate();
+		else if(selector.equals(inputB.getLeft()))			return inputB.getRight().duplicate();
+		else if(selector.equals(destReg.getLeft()))			return destReg.getRight().duplicate();
+		else if(selector.equals(destRegData.getLeft()))		return destRegData.getRight().duplicate();
+		return null;
+	}
 }

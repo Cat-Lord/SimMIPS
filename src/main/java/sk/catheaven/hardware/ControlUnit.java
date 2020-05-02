@@ -143,9 +143,7 @@ public class ControlUnit extends Component {
 		funcParser.setDataToCut(input);
 
 		int opCode = (int) opcodeParser.getCutData().getData();
-		setOutput(opCode, (int) funcParser.getCutData().getData());
-		
-		input.setData(0);		// clear input
+		setOutput(opCode, (int) funcParser.getCutData().getData());		
 	}
 	
 	/**
@@ -213,5 +211,10 @@ public class ControlUnit extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
 		s = s.concat(String.format(statusFormat, new Object[]{"Output (binary)", output.getBinary()}));
 		return s;
+	}
+
+	@Override
+	public Data getInput(String selector) {
+		return input.duplicate();
 	}
 }

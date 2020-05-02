@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import sk.catheaven.hardware.ControlUnit;
+import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.run.Loader;
 
 /**
@@ -35,6 +36,12 @@ public class ControlUnitTest extends Container {
 		try{
 			cu = new ControlUnit("cu", findJsonObject("CU"));
 		} catch(Exception e){ System.out.println(e.getMessage()); fail("Shouldn't have cought an exception"); return; }
+		
+		Data data = new Data(); // initiate empty data
+		cu.setInput("this is ignored, because CU has only one input", data);
+		cu.execute();
+		
+		assertEquals("100 0000 0011", cu.getOutput("this is ignored as well, because CU has only one output").getBinary());
 	}
 	
 }
