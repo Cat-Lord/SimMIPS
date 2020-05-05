@@ -27,7 +27,7 @@ public class MUX extends BinaryComponent {
 		JSONObject selectorJson = json.getJSONObject("selector");
 		selector = new Tuple<>(selectorJson.getString("label"), new Data(selectorJson.getInt("bitSize")));
 		
-		logger.log(Level.INFO, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight() + "b");
+		logger.log(Level.INFO, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight().getHex() + "b");
 	}
 
 	@Override

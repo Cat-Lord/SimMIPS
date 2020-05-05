@@ -36,7 +36,7 @@ public class LatchRegister extends Component {
 	private final Tuple<String, Data> bubble;
 	
 	public LatchRegister(String label, JSONObject json) throws Exception {
-		super(label);
+		super(label, json);
 		
 		
 		inputs = new HashMap<>();

@@ -19,7 +19,7 @@ public abstract class BinaryComponent extends Component implements Datapathable 
 	protected final Data output;
 	
 	public BinaryComponent(String label, JSONObject json) {
-		super(label);
+		super(label, json);
 		
 		JSONObject iA = json.getJSONObject("inputA");
 		this.inputA = new Tuple<>(iA.getString("label"), new Data(iA.getInt("bitSize")));

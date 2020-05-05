@@ -26,9 +26,7 @@ public class InstructionMemory extends Component {
 	private final List<AssembledInstruction> program;
 	
 	public InstructionMemory(String label, JSONObject json) {
-		super(label);
-		
-		
+		super(label, json);
 		
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));
@@ -43,6 +41,8 @@ public class InstructionMemory extends Component {
 	public void setProgram(List<AssembledInstruction> program){
 		if(this.program.addAll(program) == false)
 			logger.log(Level.SEVERE, "Failed to load the program into instruction memoory !");
+		else
+			logger.log(Level.INFO, "Program has been set (" + program.size() + " compiled instructions)");
 	}
 	
 	/**
@@ -66,11 +66,12 @@ public class InstructionMemory extends Component {
 		
 		// TODO - consider throwing an exception or handle empty instructions list (or dont ?)
 		if(program.isEmpty()){
-			// TODO
+			logger.log(Level.WARNING, "Executing instruction memory with NO program specified ! Returning empty data");
 		}
 			
 		try {
 			output.setData(program.get(index).getIcode().getData());
+			logger.log(Level.INFO, "Setting output iCode, address of 0x" + input.getHex() + " resulting in index " + index);
 		} catch(IndexOutOfBoundsException e) {
 			logger.log(Level.WARNING,  "Requesting instruction on address 0x" + input.getHex() + " (as index " + index + "), but address is OUT OF BOUNDS");
 			output.setData(0);

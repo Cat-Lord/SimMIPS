@@ -15,13 +15,14 @@ public class Adder extends BinaryComponent {
 
 	public Adder(String label, JSONObject json) {
 		super(label, json);
-		
 	}
 
 	@Override
 	public void execute() {
+		System.out.print("Executing Adder: " + inputA.getRight().getData() + " + " + inputB.getRight().getData());
 		output.setData(
-			inputA.getRight().getData() + inputB.getRight().getData()
+			(inputA.getRight().getData() + inputB.getRight().getData())
 		);
+		System.out.print(" == " + output.getData() + "\n");
 	}
 }

@@ -27,9 +27,7 @@ public class RegBank extends Component {
 	private final Tuple<String, Data> outputA, outputB;							// two outputs
 	
 	public RegBank(String label, JSONObject json) throws JSONException {
-		super(label);
-		
-		
+		super(label, json);
 		
 		int bitSize = json.getInt("dataBitSize");										// bitSize of data in this component
 		registers = loadRegs(json.getInt("regCount"), bitSize);
@@ -129,5 +127,17 @@ public class RegBank extends Component {
 		else if(selector.equals(destReg.getLeft()))			return destReg.getRight().duplicate();
 		else if(selector.equals(destRegData.getLeft()))		return destRegData.getRight().duplicate();
 		return null;
+	}
+	
+	/**
+	 * Returns array of all registers. All of the values are duplicates, that means they are
+	 * safe to change anytime.
+	 * @return Array of all registers duplicated.
+	 */
+	public Data[] getRegisters(){
+		Data[] dupRegs = new Data[registers.length];
+		for(int i = 0; i < dupRegs.length; i++)
+			dupRegs[i] = registers[i].duplicate();
+		return dupRegs;
 	}
 }

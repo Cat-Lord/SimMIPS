@@ -34,7 +34,7 @@ public class Fork extends Component {
 	private final Map<String, Cutter> outputs;
 	
 	public Fork(String label, JSONObject json) throws Exception, JSONException {
-		super(label);
+		super(label, json);
 		
 		input = new Data(json.getInt("in"));
 		outputs = new HashMap<>();

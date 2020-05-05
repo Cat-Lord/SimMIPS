@@ -13,11 +13,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import sk.catheaven.exceptions.SyntaxException;
+import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
@@ -121,7 +122,6 @@ public final class CPU {
 			if(comp == null)
 				throw new Exception("Unknown component type " + type);
 			
-			phases[phase_index].add(comp);
 			componentsMap.put(cLabel, comp);
 			if(phase_advance){
 				phase_advance = false;
@@ -131,6 +131,7 @@ public final class CPU {
 				else
 					phases[phase_index] = new ArrayList<>();
 			}	
+			phases[phase_index].add(comp);
 		}
 		
 		return componentsMap;
@@ -181,21 +182,7 @@ public final class CPU {
 					}
 				}				
 			}
-			
-			// when all inputs are ready, execute for every phase
-		//	for(Component c : phases[phase_index]){
-			//	c.execute();
-			//}
-			
 		}
-		
-		/*for(Component c : getComponents())
-			System.out.println(c.getLabel() + "\n" + c.getStatus() + "--------------------");
-		System.out.println("\n");
-		for(int i = 0; i < toPrint.length; i++){
-		if(toPrint[i] == null || toPrint[i].isEmpty()) break;
-		System.out.println(toPrint[i]);
-		}*/
 	}
 	
 	/**
@@ -225,6 +212,13 @@ public final class CPU {
 		}
 		
 		return ties;
+	}
+	
+	public void assembleCode(String code) {
+		try {
+			List<AssembledInstruction> program = assembler.assembleCode(code);
+			instructionMemory.setProgram(program);
+		} catch(SyntaxException e ) { System.out.println(e.getMessage()); }
 	}
 	
 	public Collection<Component> getComponents(){

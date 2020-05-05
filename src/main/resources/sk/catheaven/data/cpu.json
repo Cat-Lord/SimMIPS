@@ -1,11 +1,23 @@
 {
     "components" : [
         { "label": "PC",
+            "gui": {
+               "x": 15,
+               "y": 95,
+               "width": 25,
+               "height": 30
+            },
             "type": "PC",
             "bitSize": 32,
             "desc": "Adds 4 to the value of input A." 
         },
         { "label": "AF",
+            "gui": {
+               "x": 25,
+               "y": 110,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 32,
             "out": [
@@ -13,7 +25,13 @@
             ],
             "desc": "Forks address from PC."
         },
-        { "label": "CONST_ADDER", 
+        { "label": "CONST_ADDER",
+            "gui": {
+               "x": 40,
+               "y": 120,
+               "width": 10,
+               "height": 45
+            },
             "type": "ConstAdder", 
             "input": { "label": "address", "bitSize": 32 },
             "output": 32,
@@ -21,6 +39,12 @@
             "desc": "Adds 4 to the value of input A."
         },
         { "label": "NAF",
+            "gui": {
+               "x": 55,
+               "y": 142,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 32,
             "out": [
@@ -28,7 +52,13 @@
             ],
             "desc": "Forks new address from constAdder to branch and latch register."
         },  
-        { "label": "BRANCH_MUX", 
+        { "label": "BRANCH_MUX",
+            "gui": {
+               "x": 275,
+               "y": 170,
+               "width": 5,
+               "height": 20
+            },
             "type": "MUX", 
             "inputA": { "label": "newAddress", "bitSize": 32 },
             "inputB": { "label": "branchAddress", "bitSize": 32 },
@@ -37,6 +67,12 @@
             "desc": "Chooses from next address or calculated address in case of branching."
         },      
         { "label": "I_MEM",
+            "gui": {
+               "x": 35,
+               "y": 87,
+               "width": 20,
+               "height": 40
+            },
             "type": "InstructionMemory",
             "input": 32, 
             "output": 32
@@ -45,6 +81,12 @@
        
         
         { "label": "IF_ID",
+            "gui": {
+               "x": 60,
+               "y": 35,
+               "width": 10,
+               "height": 130
+            },
             "type": "LatchRegister",
             "in": {
                 "newAddress": 32,
@@ -64,6 +106,12 @@
             "desc": "Latch register between Fetch and Decode phase" 
         },  
         { "label": "CU",
+            "gui": {
+               "x": 110,
+               "y": 145,
+               "width": 15,
+               "height": 30
+            },
             "type": "ControlUnit",
             "in" : 32,
             "opCodeCut": "0-26",
@@ -115,6 +163,12 @@
             ]
         },       
         { "label": "CU_MUX", 
+            "gui": {
+               "x": 145,
+               "y": 150,
+               "width": 5,
+               "height": 20
+            },
             "type": "ConstMUX", 
             "input": 11, 
             "const": 0,
@@ -123,6 +177,12 @@
             "desc": "Activating this MUX results in value of constant output value." 
         },
         { "label": "RTF",
+            "gui": {
+               "x": 90,
+               "y": 110,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 5,
             "out": [
@@ -130,7 +190,13 @@
             ],
             "desc": "Forks 'rt' part of instruction code."
         },       
-        { "label": "REG_BANK", 
+        { "label": "REG_BANK",
+            "gui": {
+               "x": 115,
+               "y": 87,
+               "width": 30,
+               "height": 35
+            },
             "type": "RegBank", 
             "dataBitSize": 32,
             "inputA" : { "label": "rs", "bitSize": 5 },
@@ -144,6 +210,12 @@
             "desc": "Bank of registers of fixed size. Can be used as temporary storage."
         },      
         { "label": "SIGN_EXT", 
+            "gui": {
+               "x": 135,
+               "y": 60,
+               "width": 8,
+               "height": 15
+            },
             "type": "SignExt", 
             "input": 16,
             "output": 32,
@@ -153,6 +225,12 @@
         
         
         { "label": "ID_EX", 
+            "gui": {
+               "x": 160,
+               "y": 35,
+               "width": 10,
+               "height": 130
+            },
             "type": "LatchRegister",
             "in": {
                 "controlSignals": 32,
@@ -175,6 +253,12 @@
             "desc": "Latch register between Decode and Execute phase"
         },
         { "label": "F1",
+            "gui": {
+               "x": 180,
+               "y": 143,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 11,
             "out": [
@@ -183,6 +267,12 @@
             ]
         },
         { "label": "F2",
+            "gui": {
+               "x": 198,
+               "y": 165,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 10,
             "out": [
@@ -191,14 +281,26 @@
             ]
         },
         { "label": "F3",
+            "gui": {
+               "x": 216,
+               "y": 165,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 9,
             "out":  [
-                { "label": "controlSignals"  , "bitSize": "4" },
+                { "label": "controlSignals"  , "bitSize": "5" },
                 { "label": "aluOp"  , "bitSize": "0-5" }
             ]
         },
         { "label": "EX_CU_MUX", 
+            "gui": {
+               "x": 230,
+               "y": 145,
+               "width": 5,
+               "height": 20
+            },
             "type": "ConstMUX",
             "input": 5,
             "const": 0,
@@ -206,14 +308,14 @@
             "selector": { "label": "bubble", "bitSize": 1 },
             "desc": "MUX that can zero out signals from control unit in EX phase." 
         }, 
-        { "label": "OFFSET_ADDER",
-            "type": "Adder",
-            "inputA": { "label": "newAddress", "bitSize": 32 },
-            "inputB": { "label": "immediateValue", "bitSize": 32 },
-            "output": 32,
-            "desc": "Computes branch address by adding offset from immediate value to the value of next address."
-        },
+        
         { "label": "RVF",
+            "gui": {
+               "x": 175,
+               "y": 78,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 32,
             "out": [
@@ -222,14 +324,39 @@
             "desc": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
         },
         { "label": "IVF",
+            "gui": {
+               "x": 190,
+               "y": 72,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 32,
             "out": [
                 { "label": "immediateValue"  , "bitSize": "32" }
             ],
             "desc": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
-        }, 
+        },
+        { "label": "OFFSET_ADDER",
+            "gui": {
+               "x": 200,
+               "y": 110,
+               "width": 10,
+               "height": 30
+            },
+            "type": "Adder",
+            "inputA": { "label": "newAddress", "bitSize": 32 },
+            "inputB": { "label": "immediateValue", "bitSize": 32 },
+            "output": 32,
+            "desc": "Computes branch address by adding offset from immediate value to the value of next address."
+        },
         { "label": "ALUSrc_MUX", 
+            "gui": {
+               "x": 195,
+               "y": 80,
+               "width": 5,
+               "height": 20
+            },
             "type": "MUX",
             "inputA": { "label": "reg2Value", "bitSize": 32 },
             "inputB": { "label": "immediateValue", "bitSize": 32 },
@@ -238,6 +365,12 @@
             "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." 
         },          
         { "label": "ALU", 
+            "gui": {
+               "x": 210,
+               "y": 65,
+               "width": 13,
+               "height": 40
+            },
             "type": "ALU",
             "inputA": { "label": "aluInputA", "bitSize": 32 },
             "inputB": { "label": "aluInputB", "bitSize": 32 },
@@ -263,6 +396,12 @@
             ]
         },
         { "label": "DEST_REG_MUX", 
+            "gui": {
+               "x": 175,
+               "y": 40,
+               "width": 5,
+               "height": 20
+            },
             "type": "MUX",
             "inputA": { "label": "rt", "bitSize": 5 },
             "inputB": { "label": "rd", "bitSize": 5 },
@@ -274,6 +413,12 @@
         
         
         { "label": "EX_MEM",
+            "gui": {
+               "x": 240,
+               "y": 35,
+               "width": 10,
+               "height": 130
+            },
             "type": "LatchRegister",
             "in": {
                 "controlSignals": 32,
@@ -295,30 +440,54 @@
             "desc": "Latch register between Execute and Memory phase" 
         },
         { "label": "F4",
+            "gui": {
+               "x": 257,
+               "y": 140,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 5,
             "out": [
                 { "label": "controlSignals"  , "bitSize": "4" },
-                { "label": "branchSignal"  , "bitSize": "0-1" }
+                { "label": "branchSignal"  , "bitSize": "0-4" }
             ]
         },
         { "label": "F5",
+            "gui": {
+               "x": 275,
+               "y": 140,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 4,
             "out": [
                 { "label": "controlSignals"  , "bitSize": "3" },
-                { "label": "memReadSignal"  , "bitSize": "0-1" }
+                { "label": "memReadSignal"  , "bitSize": "0-3" }
             ]
         },
         { "label": "F6",
+            "gui": {
+               "x": 295,
+               "y": 140,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 3,
             "out": [
                 { "label": "controlSignals"  , "bitSize": "2" },
-                { "label": "memWriteSignal"  , "bitSize": "0-1" }
+                { "label": "memWriteSignal"  , "bitSize": "0-2" }
             ]
         },
         { "label": "BRANCH_AND", 
+            "gui": {
+               "x": 260,
+               "y": 110,
+               "width": 15,
+               "height": 10
+            },
             "type": "AND", 
             "inputA": { "label": "branchSignal", "bitSize": 1 },
             "inputB": { "label": "zeroResultSignal", "bitSize": 1 },
@@ -326,6 +495,12 @@
             "desc": "Output of this AND gate determines, if a branch will be taken or not."
         },
         { "label": "BF",
+            "gui": {
+               "x": 270,
+               "y": 165,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 1,
             "out": [
@@ -335,6 +510,12 @@
             "desc": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
         },
         { "label": "BF1",
+            "gui": {
+               "x": 232,
+               "y": 165,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 1,
             "out": [
@@ -342,6 +523,12 @@
             ]
         },
         { "label": "BF2",
+            "gui": {
+               "x": 145,
+               "y": 165,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 1,
             "out": [
@@ -349,6 +536,12 @@
             ]
         },
         { "label": "ARF",
+            "gui": {
+               "x": 250,
+               "y": 90,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 32,
             "out": [
@@ -357,6 +550,12 @@
             "desc": "Forks result from ALU and forwars it to the data memory and next latch register."
         },
         { "label": "DATA_MEM", 
+            "gui": {
+               "x": 265,
+               "y": 70,
+               "width": 20,
+               "height": 30
+            },
             "type": "DataMemory",
             "bitSize": 32,
             "inputA": "aluResult",
@@ -370,6 +569,12 @@
         
         
         { "label": "MEM_WB",
+            "gui": {
+               "x": 300,
+               "y": 35,
+               "width": 10,
+               "height": 130
+            },
             "type": "LatchRegister",
              "in": {
                 "controlSignals": 32,
@@ -388,6 +593,12 @@
         },  
         
         { "label": "F7",
+            "gui": {
+               "x": 325,
+               "y": 140,
+               "width": 3,
+               "height": 3
+            },
             "type": "Fork",
             "in": 2,
             "out": [
@@ -396,6 +607,12 @@
             ]
         },
         { "label": "WB_MUX", 
+            "gui": {
+               "x": 320,
+               "y": 90,
+               "width": 5,
+               "height": 20
+            },
             "type": "MUX", 
             "inputA": { "label": "memData", "bitSize": 32 },
             "inputB": { "label": "aluResult", "bitSize": 32 },
@@ -468,6 +685,7 @@
         
         { "from": "EX_MEM", "to": "F4", "selector": "controlSignals" },
         { "from": "EX_MEM", "to": "BRANCH_AND", "selector": "zeroResultSignal" },
+        { "from": "EX_MEM", "to": "BRANCH_MUX", "selector": "branchAddress" },
         { "from": "EX_MEM", "to": "ARF", "selector": "aluResult" },
         { "from": "EX_MEM", "to": "DATA_MEM", "selector": "reg2Value" },
         { "from": "EX_MEM", "to": "MEM_WB", "selector": "destReg" },

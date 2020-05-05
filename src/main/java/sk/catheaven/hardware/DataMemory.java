@@ -29,7 +29,7 @@ public class DataMemory extends Component {
 	private final Data output;
 	
 	public DataMemory(String label, JSONObject json) {
-		super(label);
+		super(label, json);
 		
 		int bitSize = json.getInt("bitSize");
 		

@@ -20,7 +20,7 @@ public class ConstMUX extends Component {
 	private final Data constant;
 	
 	public ConstMUX(String label, JSONObject json) {
-		super(label);
+		super(label, json);
 		
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));

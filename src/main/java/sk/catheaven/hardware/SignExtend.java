@@ -17,7 +17,7 @@ public class SignExtend extends Component {
 	private final int bitDiff;			// difference in bit size, used in shifting when execute() method is called
 	
 	public SignExtend(String label, JSONObject json) throws Exception {
-		super(label);
+		super(label, json);
 		
 		int iSize = json.getInt("input");
 		int oSize = json.getInt("output");

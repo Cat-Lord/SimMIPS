@@ -5,10 +5,8 @@
  */
 package sk.catheaven.hardware;
 
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 
@@ -17,18 +15,11 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class PC extends Component {
-	private static final Logger logger = Logger.getLogger("PC");
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final Data input, output;
 	
 	public PC(String label, JSONObject json) {
-		super(label);
-		logger.setLevel(Level.OFF);
-		try {
-			FileHandler fh = new FileHandler("log_PC");
-			SimpleFormatter sf = new SimpleFormatter();
-			fh.setFormatter(sf);
-			logger.addHandler(fh);
-		} catch (Exception e) { System.out.println(e.getMessage()); }
+		super(label, json);
 		
 		int bitSize = json.getInt("bitSize");
 		

@@ -5,12 +5,17 @@
  */
 package sk.catheaven.run;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.IntFunction;
+import java.util.logging.FileHandler;
+import java.util.logging.LogManager;
+import java.util.logging.SimpleFormatter;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -19,6 +24,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -27,11 +33,16 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import sk.catheaven.hardware.CPU;
+import sk.catheaven.hardware.Component;
+import sk.catheaven.utils.Tuple;
 
 /**
  *
@@ -49,9 +60,27 @@ public class MainWindowController implements Initializable {
 	@FXML private AnchorPane codeTabAP;
 	@FXML private Tab cpuTab;
 	@FXML private VBox asideBox;
+	@FXML private AnchorPane datapathPane;
+	
+	private CPU cpu;
+	
+	
+	public MainWindowController(){
+		try {
+			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+			cpu = l.getCPU();
+		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); return; }
 		
-	public MainWindowController(){		
-		
+		try {
+			LogManager lm = LogManager.getLogManager();
+			Logger lgr = lm.getLogger(Logger.GLOBAL_LOGGER_NAME);
+			//lgr.setLevel(Level.OFF);
+
+			FileHandler fh = new FileHandler("log");
+			SimpleFormatter sf = new SimpleFormatter();
+			fh.setFormatter(sf);
+			lgr.addHandler(fh);
+		} catch(IOException e) { System.out.println(e.getMessage()); }
 		logger.log(Level.INFO, "MainWindowController created");
 		System.out.println("MainWindowController: DONE");
 	}
@@ -62,6 +91,19 @@ public class MainWindowController implements Initializable {
 		codeEditor = initCodeEditor();
 		
 		asideBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));				// TODO - this was set only for debugging
+		
+		System.out.println(datapathPane.getPrefWidth()+ " | " + datapathPane.getPrefHeight());
+		
+		datapathPane.setOnMouseMoved((MouseEvent evt) -> {
+			System.out.println("Mouse: " + evt.getX() + " | " + evt.getY());
+		});
+		
+		for(Component c : cpu.getComponents()){
+			Tuple<Integer, Integer> pos = c.getComponentPosition();
+			Tuple<Integer, Integer> size = c.getComponentSize();
+			Rectangle rect = new Rectangle(pos.getLeft(), (datapathPane.getPrefHeight() - pos.getRight()), size.getLeft(), size.getRight());
+			datapathPane.getChildren().add(rect);
+		}
 	}
 	
 	public void setStage(Stage stage){

@@ -20,7 +20,7 @@ public class ConstAdder extends Component {
 	private final Data output;
 	
 	public ConstAdder(String label, JSONObject json) {
-		super(label);
+		super(label, json);
 		
 		JSONObject inJson = json.getJSONObject("input");
 		input = new Tuple<>(inJson.getString("label"), new Data(inJson.getInt("bitSize")));

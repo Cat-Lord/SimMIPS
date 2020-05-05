@@ -41,9 +41,7 @@ public class ControlUnit extends Component {
 	 * @param json
 	 */
 	public ControlUnit(String label, JSONObject json) throws Exception, JSONException {
-		super(label);
-		
-		
+		super(label, json);
 		
 		setupSignals(json.getJSONObject("controlCodes"));
 		
