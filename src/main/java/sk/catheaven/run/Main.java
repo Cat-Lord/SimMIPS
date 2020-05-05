@@ -27,9 +27,12 @@ public class Main extends Application {
 	
 		// load fxml and pass stage into the controller class
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/Primer.fxml"));
-		Parent mainPane = (Parent)loader.load();
-		loader.<MainWindowController>getController().setStage(stage);
+		MainWindowController mwc = new MainWindowController();
+		mwc.setStage(stage);
+		loader.setController(mwc);
 
+		Parent mainPane = loader.load();
+		
 		Scene scene = new Scene(mainPane);
 		
 		// set up and launch stage

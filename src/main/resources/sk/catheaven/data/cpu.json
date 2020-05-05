@@ -2,8 +2,8 @@
     "components" : [
         { "label": "PC",
             "gui": {
-               "x": 15,
-               "y": 95,
+               "x": 70,
+               "y": 296,
                "width": 25,
                "height": 30
             },
