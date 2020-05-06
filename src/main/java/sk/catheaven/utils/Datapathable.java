@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.hardware;
+package sk.catheaven.utils;
 
 import sk.catheaven.instructionEssentials.Data;
 
@@ -13,7 +13,7 @@ import sk.catheaven.instructionEssentials.Data;
  * for example simple binary component with just one output value).
  * @author catlord
  */
-interface Datapathable {
+public interface Datapathable {
 	public abstract void execute();
 	public abstract Data getOutput(String selector);
 	public abstract boolean setInput(String selector, Data data);

@@ -11,6 +11,7 @@ module sk.catheaven.simmips {
 	requires reactfx;
 	requires java.logging;
 	
+	opens sk.catheaven.instructionEssentials to javafx.base;
 	opens sk.catheaven.run to javafx.fxml;
     exports sk.catheaven.run;
 }

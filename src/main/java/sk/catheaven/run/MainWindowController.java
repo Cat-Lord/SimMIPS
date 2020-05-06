@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.IntFunction;
 import java.util.logging.FileHandler;
@@ -19,11 +20,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -33,12 +39,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import sk.catheaven.hardware.CPU;
+import sk.catheaven.hardware.Component;
+import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
+import sk.catheaven.utils.Connector;
+import sk.catheaven.utils.Tuple;
 /**
  *
  * @author catlord
@@ -54,10 +69,11 @@ public class MainWindowController implements Initializable {
 		
 	// ASIDE BOX
 	@FXML private VBox asideBox;
+	
 	@FXML private VBox instructionVbox;
-	@FXML private TableView instructionsTable;
-	@FXML private TableColumn mnemoColumn;
-	@FXML private TableColumn formatColumn;
+	@FXML private TableView<Instruction> instructionsTable;
+	@FXML private TableColumn<Instruction, String> mnemoColumn;
+	@FXML private TableColumn<Instruction, String> formatColumn;
 	
 	@FXML private TableView registersTable;
 	@FXML private TableColumn regIndexColumn;
@@ -68,6 +84,7 @@ public class MainWindowController implements Initializable {
 	@FXML private TabPane tabPane;
 	@FXML private Tab codeTab;
 	@FXML private Pane cpuPane;
+	@FXML private Pane datapathPane;
 	@FXML private AnchorPane codeTabAnchor;
 
 	
@@ -105,19 +122,9 @@ public class MainWindowController implements Initializable {
 		instructionsTable.setVisible(true);
 		registersTable.setVisible(false);
 		
-		//datapathPane.setOnMouseMoved((MouseEvent evt) -> {
-		//	System.out.println("Mouse: " + evt.getX() + " | " + evt.getY());
-	//	});
+		drawDatapath();
 		
-		/*for(Component c : cpu.getComponents()){
-			Tuple<Integer, Integer> pos = c.getComponentPosition();
-			Tuple<Integer, Integer> size = c.getComponentSize();
-			
-			System.out.println(String.format(("%d %d %d %d\n"), pos.getLeft(), (int) (pos.getRight()), size.getLeft(), size.getRight()));
-			
-			Rectangle rect = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
-			datapathPane.getChildren().add(rect);
-		}*/
+		setUpInstructionSetTable();
 	}
 	
 	public void setStage(Stage stage){
@@ -223,6 +230,11 @@ public class MainWindowController implements Initializable {
 		markCodeChange(false);
 	}
 	
+	/**
+	 * When changing tabs from code tab to the 
+	 * datapath tab, we need to hide instructionset 
+	 * and reveal registers.
+	 */
 	public void changeTabToCode(){
 		registersTable.setVisible(false);
 		instructionVbox.setVisible(true);
@@ -231,5 +243,56 @@ public class MainWindowController implements Initializable {
 	public void changeTabToCPU(){
 		instructionVbox.setVisible(false);
 		registersTable.setVisible(true);
+	}
+	
+	/**
+	 * Initial setup of Instruction-set table. Settings are set up and instruction set 
+	 * is loaded into the table.
+	 */
+	private void setUpInstructionSetTable(){
+		instructionsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);		// single value selection
+		instructionsTable.setPlaceholder(new Label("\tInstruction set is \n\tnot properly loaded !"));
+		
+		mnemoColumn.setCellValueFactory(new PropertyValueFactory<>("mnemo"));
+		formatColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+		
+		// first put all the known information there
+		Map<String, Instruction> iSet = cpu.getInstructionSet();
+		for(String mnemo : iSet.keySet())
+			instructionsTable.getItems().add(iSet.get(mnemo));
+				
+		// and after that define row factory event to display 
+		// closer information about selected instruction
+		// Thanks for the help from James_D: https://stackoverflow.com/questions/30191264/javafx-tableview-how-to-get-the-row-i-clicked
+		instructionsTable.setRowFactory(cb -> {
+			TableRow<Instruction> row = new TableRow();
+			row.setOnMouseClicked( (event) -> {
+				if( ! row.isEmpty()  &&  event.getButton() == MouseButton.PRIMARY  &&  event.getClickCount() == 2){
+					System.out.println("INSTRUCTION : " + row.getItem().getMnemo());		// TODO - popup window
+				}
+			});
+			return row;
+		});
+	}
+	
+	private void drawDatapath(){
+		
+		for(Connector c : cpu.getWires()){
+			datapathPane.getChildren().add(c.getLine());
+		}
+		
+		for(Component c : cpu.getComponents()){
+			Tuple<Integer, Integer> pos = c.getComponentPosition();
+			Tuple<Integer, Integer> size = c.getComponentSize();
+			
+			Shape shape;
+			if(c.getComponentType().equals("ControlUnit") ||  c.getComponentType().equals("SignExt"))
+				shape = new Ellipse(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			else
+				shape = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			shape.setStroke(Paint.valueOf("black"));
+			shape.setFill(Paint.valueOf(c.getColour()));
+			datapathPane.getChildren().add(shape);
+		}
 	}
 }

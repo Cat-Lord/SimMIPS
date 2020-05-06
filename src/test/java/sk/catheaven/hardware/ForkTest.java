@@ -144,10 +144,12 @@ public class ForkTest extends Container {
 	 * Creates fork json object with given output values. Good for testing.
 	 * @param specs
 	 * @return 
+	 * 
 	 */
 	private JSONObject createTestFor(int inputSize, Tuple<String,String>[] specs){
 		String json = "{ \"label\": \"F1\",\n" +
-"            \"type\": \"Fork\",\n" +
+"            \"type\": \"Fork\",\n" + 
+			 "\"gui\": { \"x\":1, \"y\":1, \"width\":1, \"height\":1 }," +
 "            \"in\": " + inputSize + ",\n" +
 "            \"out\": [\n";
 		

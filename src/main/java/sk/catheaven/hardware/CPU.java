@@ -22,6 +22,7 @@ import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.utils.Connector;
 import sk.catheaven.utils.Tie;
 
 /**
@@ -34,6 +35,7 @@ public final class CPU {
 	
 	// mapping unique labels of components as a TUPLE and the signal connecting them
 	private final Map<String, Tie> connections;
+	private List<Connector> wires;
 	
 	private final List<Component>[] phases;					// list of components for each phase
 	private final Assembler assembler;
@@ -71,6 +73,7 @@ public final class CPU {
 		logger.log(Level.INFO, debugString);
 		
 		this.assembler = new Assembler(instructionSet);
+		wires = new ArrayList<>();
 		connections = parseConnections(cpuJson.getJSONArray("connections"));
 	}
 	
@@ -186,7 +189,10 @@ public final class CPU {
 	}
 	
 	/**
-	 * Parses connections between components and their input/output.
+	 * Parses connections between components and their input/output. Mainly creates
+	 * a map of component names to a Tie (ties to other components). Also creates List 
+	 * of Connectors, which represents separate wiring mechanism in CPU to interconnect
+	 * devices.
 	 * @param jsonArray
 	 * @return Map of component names and ties to other components	
 	 */
@@ -200,7 +206,16 @@ public final class CPU {
 			String to = jo.getString("to");
 			String selector = jo.getString("selector");
 			
-			testComponent(from, to, selector);
+			testComponent(from, to, selector);		// test for anomalies
+			
+			JSONArray nodes = jo.optJSONArray("nodes");			// TODO - all wires will be displayed
+			if(nodes != null)
+				wires.add(
+					new Connector(components.get(from), 
+								  selector, 
+								  nodes
+					)
+				);
 			
 			if(ties.get(from) == null){
 				Tie tie = new Tie();
@@ -225,8 +240,16 @@ public final class CPU {
 		return components.values();
 	}
 	
+	public List<Connector> getWires(){
+		return wires;
+	}
+	
 	public Assembler getAssembler(){
 		return assembler;
+	}
+	
+	public Map<String, Instruction> getInstructionSet(){
+		return instructionSet;
 	}
 	
 	/**
