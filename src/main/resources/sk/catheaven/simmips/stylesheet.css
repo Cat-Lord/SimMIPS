@@ -1,0 +1,21 @@
+.button{
+    -fx-background-color: #e8ebe9;
+}
+
+#centralVbox{
+    -fx-background-color: black;
+}
+
+.code_label {
+    -fx-fill: #747474;
+    -fx-font-weight: lighter;
+}
+
+.comment {
+    -fx-fill: #0fa810;
+}
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}

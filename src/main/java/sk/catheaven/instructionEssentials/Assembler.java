@@ -21,9 +21,9 @@ import sk.catheaven.instructionEssentials.argumentTypes.LabelArgumentType;
  * @author catlord
  */
 public class Assembler {
-	private final String DATA_CHAR = ".";				// if present, the string containing this symbol is a data reference (.base or .offset)
-	private final char COMMENT_CHAR = ';';				// comment in user code
-	private final String POSITIONAL_CHAR = "#";			// denotes position (can be found in field values of instruction).
+	public final static String DATA_CHAR = ".";				// if present, the string containing this symbol is a data reference (.base or .offset)
+	public final static char COMMENT_CHAR = ';';				// comment in user code
+	public final static String POSITIONAL_CHAR = "#";			// denotes position (can be found in field values of instruction).
 														// Is of String type just to allow usage of contains(POSITIONAL_CHAR)
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final Map<String, Instruction> instructionSet;
@@ -35,8 +35,6 @@ public class Assembler {
 	private Map<String, Data> labelsToRemove;			// TODO: remove this list of labels (only for debugging purposes)
 	
 	public Assembler(Map<String, Instruction> instructionSet){
-		
-		
 		lat = new LabelArgumentType();			// if we find a label, we need to test its format, if it's correctly written
 		dat = new DataArgumentType();			// when extracting data values from arguments from user, we have to use object, that knows how to do that
 		this.instructionSet = instructionSet;
@@ -49,32 +47,51 @@ public class Assembler {
 	 * @throws SyntaxException
 	 */
 	public List<AssembledInstruction> assembleCode(String code) throws SyntaxException {
-		code = adjustCode(code);									// remove redundancies
-		String codeLines[] = code.split("\n");
-		Map<String, Data> labels = getLabels(codeLines);			// get all labels with their respective addresses
+		String codeLines[] = adjustCode(code);					// remove redundancies
+		
+		Map<String, Data> labels = getLabels(codeLines);						// get all labels with their respective addresses
+		
+		String debugString = "";
+		for(String key: labels.keySet())
+			debugString += "Label `" + key + "` | Address: " + labels.get(key).getHex() + "\n";
+		
+		logger.log(Level.INFO, debugString);
+		System.out.println(debugString);
 		
 		this.labelsToRemove = labels;		// TODO: remove
 		
+		SyntaxException errors = new SyntaxException();
+		
 		List<AssembledInstruction> assembled = new ArrayList<>();
-		for(int i = 0; i < codeLines.length; i++){
-			assembled.add(assembleInstruction(codeLines[i], computeAddress(i), labels));
+		int addressIndex = 0;		// since we are skipping line, we need to keep track of current line
+		for(int line = 0; line < codeLines.length; line++){
+			if(! codeLines[line].isEmpty()){
+				try {
+					assembled.add(assembleInstruction(addressIndex, codeLines[line], computeAddress(addressIndex), labels));
+					addressIndex++;
+				} catch(SyntaxException e){ 
+					errors.addError(line, e.getMessage());
+				} 
+			}
 		}
+		
+		if( ! errors.getErrors().isEmpty())
+			throw errors;
 		
 		return assembled;
 	}
 	
 	/**
 	 * Assembles the instruction to machine code.
+	 * @param lineIndex The index (number) of line this instruction is from.
 	 * @param instruction Instruction to parse (as entered by user).
 	 * @param address Instruction of that address calculated beforehand.
 	 * @param labels List of labels and their respective instruction addresses. 
 	 * @return Assembled instruction in the form AssembledInstruction class.
 	 * @throws SyntaxException In case of user error.
 	 */
-	public AssembledInstruction assembleInstruction(String instruction, Data address, Map<String, Data> labels) throws SyntaxException {
-		if(instruction.isBlank()) throw new SyntaxException("Empty instruction !");
-		
-		logger.log(Level.INFO, "Assembling `" + instruction + "`");
+	public AssembledInstruction assembleInstruction(int lineIndex, String instruction, Data address, Map<String, Data> labels) throws SyntaxException {
+		logger.log(Level.INFO, "Assembling `{0}`", instruction);
 		
 		instruction = trimAndDecomment(instruction);
 		String args[] = getInstructionArguments(instruction);
@@ -86,9 +103,9 @@ public class Assembler {
 		
 		checkInstruction(mnemo, args, labels);
 		Data iCode = createICode(mnemo, args, address, labels);
-		logger.log(Level.INFO, String.format("%4s", mnemo) + "-- Icode created: " + iCode.getBinary());
+		logger.log(Level.INFO, "{0}-- Icode created: {1}", new Object[]{String.format("%4s", mnemo), iCode.getBinary()});
 		
-		return new AssembledInstruction(this.instructionSet.get(mnemo), instruction, iCode, address);
+		return new AssembledInstruction(lineIndex, this.instructionSet.get(mnemo), instruction, iCode, address);
 	}
 	
 	/**
@@ -154,7 +171,7 @@ public class Assembler {
 			// there is no positional character
 			if( ! fieldValue.contains(POSITIONAL_CHAR)){	
 				int value = Integer.parseInt(fieldValue);
-				logger.log(Level.INFO, "Int value for `" + fieldValue + "` is " + value);
+				logger.log(Level.INFO, "Int value for `{0}` is {1}", new Object[]{fieldValue, value});
 				tempCode |= value;
 			}
 			else{
@@ -165,7 +182,7 @@ public class Assembler {
 					// get the argument type, because it knows how to parse the argument to get specific parts of that argument
 					// For example: Ask the data argument to get ".base" and it knows, how to get it.					
 					int value = dat.getPart(args[extractPositionalNumber(fieldValue)], fieldValue);
-					logger.log(Level.INFO, "Data value for `" + fieldValue + "` is " + value);
+					logger.log(Level.INFO, "Data value for `{0}` is {1}", new Object[]{fieldValue, value});
 					
 					tempCode |= value;
 				}
@@ -182,10 +199,10 @@ public class Assembler {
 						try{
 							// get the data from argument according to its type
 							int value = instruction.getArgument(seq).getData(args[seq]);
-							logger.log(Level.INFO, "Positional value for `" + fieldValue + "` is " + value);
+							logger.log(Level.INFO, "Positional value for `{0}` is {1}", new Object[]{fieldValue, value});
 							tempCode |= value;
 						} catch(IndexOutOfBoundsException e){
-							logger.log(Level.WARNING, "Argument data car: Index out of bounds ! Index: " + seq + ", number of args: " + args.length); 
+							logger.log(Level.WARNING, "Argument data car: Index out of bounds ! Index: {0}, number of args: {1}", new Object[]{seq, args.length}); 
 						}
 					}
 				}
@@ -206,9 +223,14 @@ public class Assembler {
 	 */
 	private Map<String, Data> getLabels(String codeLines[]) throws SyntaxException {
 		Map<String, Data> labels = new HashMap<>();
+		SyntaxException e = new SyntaxException();
 		
+		int addressIndex = 0;
 		for(int i = 0; i < codeLines.length; i++){
-			logger.log(Level.INFO, "" + (i + ": <" + codeLines[i] +">"));
+			if(codeLines[i].isEmpty())
+				continue;
+				
+			logger.log(Level.INFO, "{0}: <{1}>", new Object[]{i, codeLines[i]});
 			
 			// if there is a label, rememeber it along with the address
 			// of that instruction to allow assembling of the code.
@@ -219,21 +241,31 @@ public class Assembler {
 				lat.parse(label);										// check if the label is correctly formated
 				
 				// throw an exception if there is a label without any instruction following it
-				if(coli+1 >= codeLines[i].length())
-					throw new SyntaxException("Label `" + label + "` doesn't bind to any instruction");
+				if(coli+1 >= codeLines[i].length()){
+					e.addError(i, "Label `" + label + "` doesn't bind to any instruction");
+					continue;
+				}
 				
 				// extract the label from the code line
 				codeLines[i] = codeLines[i].substring(coli+1);
 				
 				if(labels.get(label) == null){
-					labels.put(label, Assembler.computeAddress(i));
-					logger.log(Level.INFO, "Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
-					System.out.println("Created label `" + label + "` (address " + Assembler.computeAddress(i).getHex() + ") from codeline `" + codeLines[i] + "`");
+					labels.put(label, Assembler.computeAddress(addressIndex));
+					logger.log(Level.INFO, "Created label `{0}` (address {1}) from codeline `{2}`", new Object[]{label, Assembler.computeAddress(addressIndex - 1).getHex(), codeLines[i]});
 				}
-				else
-					throw new SyntaxException("Duplicate label declaration `" + label + "` !");
+				else{
+					e.addError(i, "Duplicate label declaration `" + label + "` !");
+					continue;
+				}
 			}
+			
+			addressIndex++;		// increase address with each instruction !
 		}
+		
+		// if we found errors, throw exception
+		if( ! e.getErrors().isEmpty())
+			throw e;
+		
 		return labels;
 	}
 	
@@ -262,22 +294,24 @@ public class Assembler {
 	/**
 	 * Prepares code for assembling by removing redundant spaces, empty lines and comments.
 	 * @param code Input code as entered by user.
-	 * @return Code without redundant spaces, empty lines and comments.
+	 * @return Code without redundant spaces and comments.
 	 */
-	private String adjustCode(String code){
+	private String[] adjustCode(String code){
 		// need to manually add newline character, otherwise following replacement wouldn't work (commentary)
 		code = code + "\n";
 		
+		System.out.println("code before:\n"+ code);
+		
 		code = code.replaceAll(COMMENT_CHAR + ".*\n", "");			// erase comments
-		code = code.replaceAll("\n+", "\n");						// merge multiple empty lines
+		//code = code.replaceAll("\n+", "\n");						// merge multiple empty lines
 		code = code.replaceAll("[ \t]+", " ");						// and merge multiple tabs and spaces
 		code = code.replaceAll("\n +", "\n");						// remove emty characters at the begining of each line
 		code = code.replaceAll("[ \t]*:\\s*", ":");					// connect label with instruction closest to it (\s  is whitespace character)
 		code = code.trim();											// and finally trim any leading/traling newlines/spaces in code
 
-		System.out.println("CODE after adjusment:\n" + code + "\n");
-		
-		return code;
+		logger.log(Level.INFO, "CODE after adjusment:\n{0}\n", code);
+		System.out.println("code after:\n"+ code);
+		return code.split("\n");
 	}
 	
 	/**
@@ -313,7 +347,7 @@ public class Assembler {
 		// cut off the positional part, so from "#3.offset" get just "#3"
 		if(fieldValue.contains(DATA_CHAR))
 			seqString = fieldValue.substring(fieldValue.indexOf(POSITIONAL_CHAR) + 1, fieldValue.indexOf(DATA_CHAR)); 
-		// only positional value, i.e. "#3"
+		// only positional value, line.e. "#3"
 		else if(fieldValue.contains(POSITIONAL_CHAR))
 			seqString = fieldValue.substring(fieldValue.indexOf(POSITIONAL_CHAR) + 1, fieldValue.length());
 

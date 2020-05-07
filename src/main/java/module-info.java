@@ -10,7 +10,9 @@ module sk.catheaven.simmips {
 	requires flowless;
 	requires reactfx;
 	requires java.logging;
+	requires org.controlsfx.controls;
 	
+	opens sk.catheaven.utils to javafx.base;
 	opens sk.catheaven.instructionEssentials to javafx.base;
 	opens sk.catheaven.run to javafx.fxml;
     exports sk.catheaven.run;

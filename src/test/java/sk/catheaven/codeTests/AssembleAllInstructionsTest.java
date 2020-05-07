@@ -48,6 +48,7 @@ public class AssembleAllInstructionsTest {
 		} catch(SyntaxException e){ System.out.println(e.getMessage()); fail("Exception shouldn't have been cought !"); return; }
 
 		for(int i = 0; i < isList.size(); i++){
+			System.out.println(i + " : " + expectedICodes.get(i));
 			assertEquals(expectedICodes.get(i), isList.get(i).getIcode().getHex());
 		}
 	}

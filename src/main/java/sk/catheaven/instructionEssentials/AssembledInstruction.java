@@ -14,8 +14,10 @@ public class AssembledInstruction {
 	private final String originalInstruction;		// original instruction as entered by user (without comments)
 	private final Data iCode;
 	private final Data address;
+	private final int lineCodeIndex;
 	
-	public AssembledInstruction(Instruction instruction, String originalInstruction, Data iCode, Data address){
+	public AssembledInstruction(int lineCodeIndex, Instruction instruction, String originalInstruction, Data iCode, Data address){
+		this.lineCodeIndex = lineCodeIndex;
 		this.instruction = instruction;
 		this.originalInstruction = originalInstruction;
 		this.iCode = iCode;
@@ -46,5 +48,9 @@ public class AssembledInstruction {
 	
 	public Data getIcode(){
 		return iCode;
+	}
+	
+	public int getLineCodeIndex(){
+		return lineCodeIndex;
 	}
 }

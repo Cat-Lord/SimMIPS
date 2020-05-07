@@ -10,7 +10,6 @@ import java.util.List;
 import sk.catheaven.utils.Datapathable;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.utils.Connector;
 import sk.catheaven.utils.Observable;
 import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;

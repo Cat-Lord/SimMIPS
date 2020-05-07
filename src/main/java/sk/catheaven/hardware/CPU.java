@@ -32,6 +32,7 @@ import sk.catheaven.utils.Tie;
 public final class CPU {
 	public final static int PHASE_COUNT = 5;
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private RegBank regBank;
 	
 	// mapping unique labels of components as a TUPLE and the signal connecting them
 	private final Map<String, Tie> connections;
@@ -109,7 +110,11 @@ public final class CPU {
 				
 				case "controlunit": comp = new ControlUnit(cLabel, componentJO); break;
 				case "constmux": comp = new ConstMUX(cLabel, componentJO); break;
-				case "regbank": comp = new RegBank(cLabel, componentJO); break;
+				case "regbank": { 
+					regBank = new RegBank(cLabel, componentJO); 
+					comp = regBank;
+					break; 
+				}
 				case "signext": comp = new SignExtend(cLabel, componentJO); break;
 				
 				case "adder": comp = new Adder(cLabel, componentJO); break;
@@ -229,11 +234,13 @@ public final class CPU {
 		return ties;
 	}
 	
-	public void assembleCode(String code) {
-		try {
-			List<AssembledInstruction> program = assembler.assembleCode(code);
-			instructionMemory.setProgram(program);
-		} catch(SyntaxException e ) { System.out.println(e.getMessage()); }
+	public Data[] getRegisters(){
+		return regBank.getRegisters();
+	}
+	
+	public void assembleCode(String code) throws SyntaxException {
+		List<AssembledInstruction> program = assembler.assembleCode(code);
+		instructionMemory.setProgram(program);		
 	}
 	
 	public Collection<Component> getComponents(){

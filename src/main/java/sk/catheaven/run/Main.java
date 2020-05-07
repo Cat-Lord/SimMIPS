@@ -34,6 +34,7 @@ public class Main extends Application {
 		Parent mainPane = loader.load();
 		
 		Scene scene = new Scene(mainPane);
+		scene.getStylesheets().add(getClass().getResource("/sk/catheaven/simmips/stylesheet.css").toExternalForm());
 		
 		// set up and launch stage
 		stage.setTitle("SimMIPS");
