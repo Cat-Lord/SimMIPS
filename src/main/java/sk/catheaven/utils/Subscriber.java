@@ -10,5 +10,6 @@ package sk.catheaven.utils;
  * @author catlord
  */
 public interface Subscriber {
+	public void prepareSub();
 	public void updateSub();
 }

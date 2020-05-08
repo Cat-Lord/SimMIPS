@@ -36,8 +36,7 @@ public class LatchRegister extends Component {
 	private final Tuple<String, Data> bubble;
 	
 	public LatchRegister(String label, JSONObject json) throws Exception {
-		super(label, json);
-		
+		super(label, json);		
 		
 		inputs = new HashMap<>();
 		iTOo = new HashMap<>();
@@ -68,6 +67,12 @@ public class LatchRegister extends Component {
 					outputs.get(ol).setDataToCut(insData);
 				});
 			});
+		else
+			// bubble is set to 1, so we need to clear the output
+			for(String out : outputs.keySet())
+				outputs.get(out).setDataToCut(0);
+		
+		notifySubs();
 	}
 
 	@Override
@@ -156,5 +161,16 @@ public class LatchRegister extends Component {
 		if(inputs.get(selector) == null)
 			return null;
 		return inputs.get(selector).duplicate();
+	}
+
+	@Override
+	public void reset() {
+		for(String in : inputs.keySet()){
+			inputs.get(in).setData(0);
+		}
+		
+		for(String in : outputs.keySet()){
+			outputs.get(in).setDataToCut(0);
+		}
 	}
 }

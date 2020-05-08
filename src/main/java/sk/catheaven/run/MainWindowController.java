@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -73,10 +75,11 @@ import org.reactfx.Subscription;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
 import sk.catheaven.hardware.Component;
+import sk.catheaven.hardware.LatchRegister;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
-import sk.catheaven.utils.Connector;
+import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
 
 /**
@@ -86,7 +89,7 @@ import sk.catheaven.utils.Tuple;
 public class MainWindowController implements Initializable {
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final String modifiedFileSuffix = " *";
-	
+		
 	private FileOperator fileOperator;
 	private Stage stage;
 	private CodeArea codeEditor;
@@ -109,17 +112,17 @@ public class MainWindowController implements Initializable {
 	@FXML private TabPane tabPane;
 	@FXML private Tab codeTab;
 	@FXML private Pane cpuPane;
-	@FXML private Pane datapathPane;
+	@FXML private AnchorPane datapathPane;
 	@FXML private AnchorPane codeTabAnchor;
 
 	@FXML private Button assembleButton;
 
 	// LABELS
-	@FXML private Label IFI;		// instruction-fetch instruction
-	@FXML private Label IDI;		// instruction-decode instruction
-	@FXML private Label EXI;		// ..etc
-	@FXML private Label MEMI;
-	@FXML private Label WBI;
+	@FXML protected Label IFI;		// instruction-fetch instruction
+	@FXML protected Label IDI;		// instruction-decode instruction
+	@FXML protected Label EXI;		// ..etc
+	@FXML protected Label MEMI;
+	@FXML protected Label WBI;
 			
 	private ExecutorService executor;		// enables code highlighting
 	private static String KEYWORD_PATTERN; 
@@ -128,15 +131,22 @@ public class MainWindowController implements Initializable {
 	private static final String LABEL_PATTERN = "[a-zA-Z]\\w*";
     private static Pattern PATTERN;
 	
-	private double datapathScaleProperty = 0.8;
 	private CPU cpu;
-	private PopOver popOver;
 	
-	private Timer defaultButtonTimer;		// timer, that sets button background back to default
+	private static List<String> colors;				// colors of wires
+	private final List<Subscriber> datapathNodes;	// notification-receiving gui elements of datapath
+	
+	private int currentPhaseLimit = 1;				// phase of execution (IF, ID, EXE, ...)
+	private double datapathScaleProperty = 0.75;	// graphical scaling of the datapath section
+	
+	private Timer defaultButtonTimer;				// timer, that sets button background back to default
 	private TimerTask defButtonTask;
 	
 	public MainWindowController(){
 		fileOperator = new FileOperator();
+		colors = initColors();
+		datapathNodes = new ArrayList<>();
+		
 		try {
 			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
 			cpu = l.getCPU();
@@ -155,6 +165,8 @@ public class MainWindowController implements Initializable {
 		logger.log(Level.INFO, "MainWindowController created");
 		System.out.println("MainWindowController: DONE");
 	}
+	
+
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -179,13 +191,11 @@ public class MainWindowController implements Initializable {
 		MEMI.setText("");
 		WBI.setText("");
 		
-		datapathPane.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		asideBox.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		instructionsTable.setVisible(true);
 		registersTable.setVisible(false);
 		
-		drawDatapath();
 		
 		setUpInstructionSetTable();
 		setUpRegistersTable();
@@ -196,9 +206,10 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void run() {
 				assembleButton.setStyle("-fx-background-color: #e8ebe9;");
-				System.out.println("color reset");
 			}			
 		};
+		
+		drawDatapath();
 	}
 	
 	public void setStage(Stage stage){
@@ -209,18 +220,23 @@ public class MainWindowController implements Initializable {
 	private CodeArea initCodeEditor(){
 		CodeArea editor = new CodeArea();
 		IntFunction<Node> numberFactory = LineNumberFactory.get(editor);
-		IntFunction<Node> arrowFactory = new ArrowFactory(editor.currentParagraphProperty());
+		//IntFunction<Node> arrowFactory = new ArrowFactory(editor.currentParagraphProperty());
 		IntFunction<Node> graphicFactory = line -> {
 			HBox innerHbox = new HBox(
-				numberFactory.apply(line),
-				arrowFactory.apply(line)
+				numberFactory.apply(line)
+				//,arrowFactory.apply(line)
 			);
 			innerHbox.setSpacing(4);
 			innerHbox.setAlignment(Pos.CENTER_LEFT);
 			return innerHbox;
 		};
         editor.setParagraphGraphicFactory(graphicFactory);
-        editor.replaceText(this.getClass().toGenericString() + "\n" + this.getClass().toString());
+        editor.replaceText( "li r1, 15\n" +
+							"li r8, 36\n" +
+							"\n" +
+							"add r1, r1, r8\n" +
+							"\n" +
+							"sw r1, 0(r0)");
         editor.moveTo(0, 0);
 		
 		VirtualizedScrollPane sp = new VirtualizedScrollPane(editor);
@@ -324,7 +340,7 @@ public class MainWindowController implements Initializable {
 	
 	/**
 	 * When changing tabs from code tab to the 
-	 * datapath tab, we need to hide instructionset 
+	 * datapath tab, we need to hide instruction set 
 	 * and reveal registers.
 	 */
 	public void changeTabToCode(){
@@ -386,72 +402,6 @@ public class MainWindowController implements Initializable {
 		registersTable.sort();
 	}
 	
-	private void drawDatapath(){
-		
-		for(Connector c : cpu.getWires()){
-			datapathPane.getChildren().add(c.getLine());
-		}
-		
-		for(Component c : cpu.getComponents()){
-			Tuple<Integer, Integer> pos = c.getComponentPosition();
-			Tuple<Integer, Integer> size = c.getComponentSize();
-			
-			Shape shape;
-			if(c.getComponentType().equals("ControlUnit") ||  c.getComponentType().equals("SignExt"))
-				shape = new Ellipse(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
-			else
-				shape = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
-			shape.setStroke(Paint.valueOf("black"));
-			shape.setFill(Paint.valueOf(c.getColour()));
-			
-			shape.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent evt) {
-                if (popOver != null && !popOver.isDetached()) {
-                    popOver.hide();
-                }
-				
-				if (popOver != null && popOver.isShowing()) {
-					popOver.hide();
-				}
-
-				double targetX = evt.getScreenX();
-				double targetY = evt.getScreenY();
-
-				System.out.println("Creating a new POPOVER");
-				popOver = createPopOver();
-				popOver.setTitle(c.getComponentType() +":: " + c.getLabel());
-				popOver.setContentNode(new Label(c.getStatus()));
-				popOver.show(shape, targetX, targetY);
-            }
-        });
-			
-			datapathPane.getChildren().add(shape);
-		}
-		
-		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
-		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
-		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
-	}
-	
-	/**
-	 * Create a basic PopOver from the controlsfx library.
-	 * @return 
-	 */
-	private PopOver createPopOver() {
-        PopOver popOver = new PopOver();
-        popOver.setDetachable(false);
-        popOver.setDetached(false);
-        popOver.arrowSizeProperty().bind(new SimpleDoubleProperty(12));
-        popOver.arrowIndentProperty().bind(new SimpleDoubleProperty(12));
-        popOver.arrowLocationProperty().bind(new SimpleObjectProperty<>(ArrowLocation.LEFT_TOP));
-        popOver.cornerRadiusProperty().bind(new SimpleDoubleProperty(6));
-        popOver.headerAlwaysVisibleProperty().bind(new SimpleBooleanProperty(false));
-        popOver.setAnimated(true);
-        popOver.closeButtonEnabledProperty().bind(new SimpleBooleanProperty(true));
-        return popOver;
-    }
-	
 	// Method origin here: https://github.com/FXMisc/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywordsAsyncDemo.java
 	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = codeEditor.getText();
@@ -512,5 +462,107 @@ public class MainWindowController implements Initializable {
 		errors.forEach(e -> {
 			System.out.println("Line " + e.getLeft() + ": " + e.getRight());
 		});
+	}
+	
+	/**
+	 * Starts the simulation and plays until the user pauses the simulation
+	 * or the program quits.
+	 */
+	public  void playSimulation(){
+		
+	}
+	
+	/**
+	 * Execute one cycle. If the simulation is paused, continues with
+	 * next step.
+	 */
+	public void stepSimulation(){
+		// TODO first prepare the simulation
+		
+		try {
+			cpu.executeCycle();
+		} catch(Exception e) { System.out.println(e.getMessage()); }
+				
+		String previousLatch = "";
+		int phaseIndex = 0;
+		int colorIndex = 0;
+		
+		for(Connector wire : cpu.getWires()){
+			Component sc = wire.getSourceComponent();
+			if(sc instanceof LatchRegister  &&   ! previousLatch.equals(sc.getLabel())){
+				if(++phaseIndex >= currentPhaseLimit){
+					// dont paint the phase after this !
+					// increase the number of phases you will have to
+					// paint next time and finish for now
+					currentPhaseLimit++;		
+					break;
+				}
+				colorIndex++;
+				previousLatch = sc.getLabel();
+			}
+						
+			wire.setColor(colors.get(colorIndex));
+		}
+		colors.add(0, colors.remove(colors.size()-1));	// remove last and add it to the first place (new color)
+	}
+	
+	/**
+	 * Pauses simulation. After that, the simulation can be played again, 
+	 * but will continue from the point it paused in.
+	 */
+	public void pauseSimulation(){
+		// TODO first prepare the simulation
+		
+		
+	}
+	
+	private void drawDatapath(){;
+		for(Connector c : cpu.getWires()){
+			c.prepareSub();			// create popover and listener for mouse-press
+			datapathPane.getChildren().addAll(c.getLine(), c.getClickLine());
+			datapathNodes.add(c);
+		}
+		
+		for(Component c : cpu.getComponents()){
+			Tuple<Integer, Integer> pos = c.getComponentPosition();
+			Tuple<Integer, Integer> size = c.getComponentSize();
+			
+			Shape shape;
+			if(c.getComponentType().equals("ControlUnit") ||  c.getComponentType().equals("SignExt"))
+				shape = new Ellipse(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			else
+				shape = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			shape.setStroke(Paint.valueOf("black"));
+			shape.setFill(Paint.valueOf(c.getColour()));
+			
+			ComponentShape cs = new ComponentShape(c, shape);
+			cs.prepareSub();
+			
+			datapathPane.getChildren().add(shape);
+			datapathNodes.add(cs);
+		}
+		
+		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
+		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
+		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
+	}
+	
+	/**
+	 * Generates colors for simulation highlights.
+	 * @return List of colors.
+	 */
+	private ArrayList<String> initColors(){
+		ArrayList<String> colorsQ = new ArrayList();
+		colorsQ.add("#eb4034");
+		colorsQ.add("#eb34b1");
+		colorsQ.add("#217eff");
+		colorsQ.add("#21ffec");
+		colorsQ.add("#21ff30");
+		colorsQ.add("#d6ff21");
+		colorsQ.add("#5a9e80");
+		colorsQ.add("#6a00a3");
+		colorsQ.add("#ba667d");
+		colorsQ.add("#edb200");
+		return colorsQ;
 	}
 }

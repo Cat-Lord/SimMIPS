@@ -9,7 +9,7 @@ import sk.catheaven.utils.Datapathable;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.utils.Connector;
+import sk.catheaven.run.Connector;
 import sk.catheaven.utils.Observable;
 import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
@@ -71,19 +71,11 @@ public abstract class BinaryComponent extends Component implements Datapathable,
 		s = s.concat(String.format(statusFormat, new Object[]{"Output", output.getHex()}));
 		return s;
 	}
-
-	@Override
-	public void registerSub(Subscriber sub) {
-		super.registerSub(sub);
-	}
-
-	@Override
-	public void unregisterSub(Subscriber sub) {
-		super.unregisterSub(sub);
-	}
 	
 	@Override
-	public void notifySubs(){
-		super.notifySubs();
+	public void reset(){
+		inputA.getRight().setData(0);
+		inputB.getRight().setData(0);
+		output.setData(0);
 	}
 }

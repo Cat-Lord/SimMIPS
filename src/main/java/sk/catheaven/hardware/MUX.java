@@ -35,6 +35,8 @@ public class MUX extends BinaryComponent {
 		output.setData(
 			(selector.getRight().getData() == 0) ? inputA.getRight().getData() : inputB.getRight().getData()
 		);
+		
+		notifySubs();
 	}
 	
 	public Data getInput(String selector){
@@ -64,5 +66,11 @@ public class MUX extends BinaryComponent {
 		String s = super.getStatus();
 		s = s.concat(String.format(statusFormat, new Object[]{selector.getLeft(), selector.getRight().getHex()}));
 		return s;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		selector.getRight().setData(0);
 	}
 }

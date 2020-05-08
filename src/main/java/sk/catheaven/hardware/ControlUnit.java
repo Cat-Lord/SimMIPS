@@ -142,6 +142,8 @@ public class ControlUnit extends Component {
 
 		int opCode = (int) opcodeParser.getCutData().getData();
 		setOutput(opCode, (int) funcParser.getCutData().getData());		
+		
+		notifySubs();
 	}
 	
 	/**
@@ -214,5 +216,11 @@ public class ControlUnit extends Component {
 	@Override
 	public Data getInput(String selector) {
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		input.setData(0);
+		output.setData(0);
 	}
 }

@@ -59,6 +59,8 @@ public abstract class Component implements Datapathable, Observable {
 	
 	public abstract Data getInput(String selector);
 	
+	public abstract void reset();	
+	
 	public Tuple<Integer, Integer> getComponentPosition(){
 		return compPosition;
 	}

@@ -64,17 +64,18 @@ public class DataMemory extends Component {
 		
 		int index = Assembler.computeIndex(inputA.getRight());
 		if(index < 0  ||  index >= memory.length){
-			logger.log(Level.WARNING,  "Index out of memory bounds. Calculated index " + index 
-					+ " from input 0x" + inputA.getRight().getHex() + " (memory limit is 0x" + Assembler.computeAddress(memory.length).getHex());
+			logger.log(Level.WARNING, "Index out of memory bounds. Calculated index {0} from input 0x{1} (memory limit is 0x{2}", new Object[]{index, inputA.getRight().getHex(), Assembler.computeAddress(memory.length).getHex()});
 		}
 		
 		if(memRead.getRight().getData() == 1){
 			output.setData(memory[index].getData());
-			logger.log(Level.INFO, "Reading from memory address 0x" + inputA.getRight().getHex() + ", got number 0x" + memory[index].getHex());
+			logger.log(Level.INFO, "Reading from memory address 0x{0}, got number 0x{1}", new Object[]{inputA.getRight().getHex(), memory[index].getHex()});
+			notifySubs();
 		}
 		else if(memWrite.getRight().getData() == 1){
 			memory[index].setData(inputB.getRight().getData());
-			logger.log(Level.INFO, "Writing to memory address 0x" + inputA.getRight().getHex() + " value of " + inputB.getRight().getData());
+			logger.log(Level.INFO, "Writing to memory address 0x{0} value of {1}", new Object[]{inputA.getRight().getHex(), inputB.getRight().getData()});
+			notifySubs();
 		}
 		else
 			logger.log(Level.INFO, "Memory inactive");
@@ -93,7 +94,7 @@ public class DataMemory extends Component {
 		else if(selector.equals(memWrite.getLeft())) memWrite.getRight().setData(data.getData());
 		
 		else{
-			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, "{0} --> Unknown request to set data for `{1}`", new Object[]{label, selector}); 
 			return false;
 		}
 		return true;
@@ -116,6 +117,22 @@ public class DataMemory extends Component {
 		else if(selector.equals(memRead.getLeft()))		return memRead.getRight().duplicate();
 		else if(selector.equals(memWrite.getLeft()))	return memWrite.getRight().duplicate();
 		return null;
+	}
+	
+	public void clearMemory(){
+		for(int i = 0; i < memory.length; i++)
+			memory[i].setData(0);
+	}
+
+	@Override
+	public void reset() {
+		clearMemory();
+		
+		inputA.getRight().setData(0);
+		inputB.getRight().setData(0);
+		memRead.getRight().setData(0);
+		memWrite.getRight().setData(0);
+		output.setData(0);
 	}
 	
 }

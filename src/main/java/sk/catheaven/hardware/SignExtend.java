@@ -35,6 +35,8 @@ public class SignExtend extends Component {
 		output.setData(
 			((input.getData() << bitDiff) >> bitDiff)		// first shift to left and then sign-shift to the right to preserve the sign
 		);
+		
+		notifySubs();
 	}
 
 	@Override
@@ -57,5 +59,11 @@ public class SignExtend extends Component {
 	
 	public Data getInput(String selector){
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		input.setData(0);
+		output.setData(0);
 	}
 }

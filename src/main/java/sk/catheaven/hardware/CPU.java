@@ -22,7 +22,7 @@ import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
-import sk.catheaven.utils.Connector;
+import sk.catheaven.run.Connector;
 import sk.catheaven.utils.Tie;
 
 /**
@@ -154,9 +154,6 @@ public final class CPU {
 	 */
 	public void executeCycle() throws Exception {
 		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> %s";
-		String[] toPrint = new String[150];
-		
-		int index = 0;
 		
 		for(int phase_index = PHASE_COUNT - 1; phase_index >= 0; phase_index--){
 			
@@ -164,30 +161,21 @@ public final class CPU {
 			for(Component c : phases[phase_index]){
 				String from = c.getLabel();
 				
-				components.get(from).execute();		// execute first, to handle the input values and AFTER pass the output to other components
+				Component sourceComponent = components.get(from); // execute first, to handle the input values and AFTER pass the output to other components
 
-				if(connections.get(from) == null)
+				if(sourceComponent == null)
 					throw new Exception("UNDEFINED ??!! " + from);
-
+				
+				sourceComponent.execute();
+				
 				Map<String, List<String>> ties = connections.get(from).getTies();
 
 				// for every possible target component that is connected to 'from' component
 				for(String targetComponent : ties.keySet()){
 					List<String> selectorsList = ties.get(targetComponent);			// get all the selectors for one target component
 
-					for(String selector : selectorsList){
-						components.get(targetComponent).setInput(selector, components.get(from).getOutput(selector));
-
-						Data d = components.get(targetComponent).getInput(selector);
-						
-						toPrint[index++] = (String.format(message, 
-															from, 
-															targetComponent, 
-															selector, 
-															components.get(from).getOutput(selector).getHex(),
-															((d == null) ? (components.get(targetComponent).getLabel() + " ?") : d.getHex())
-														));
-					}
+					for(String selector : selectorsList)
+						components.get(targetComponent).setInput(selector, sourceComponent.getOutput(selector));
 				}				
 			}
 		}
@@ -214,11 +202,14 @@ public final class CPU {
 			testComponent(from, to, selector);		// test for anomalies
 			
 			JSONArray nodes = jo.optJSONArray("nodes");			// TODO - all wires will be displayed
+			String wireType = jo.optString("wireType");			// wire thickness, 3 possible values of thin, normal, thick
+			
 			if(nodes != null)
 				wires.add(
 					new Connector(components.get(from), 
 								  selector, 
-								  nodes
+								  nodes,
+								  wireType
 					)
 				);
 			

@@ -43,6 +43,8 @@ public class ConstAdder extends Component {
 		output.setData(
 			input.getRight().getData() + constant.getData()
 		);
+		
+		notifySubs();
 	}
 
 	@Override
@@ -61,5 +63,11 @@ public class ConstAdder extends Component {
 		s = s.concat(String.format(statusFormat, new Object[]{input.getLeft(), input.getRight().getHex()}));
 		s = s.concat(String.format(statusFormat, new Object[]{"Const", constant.getHex()}));
 		return s;
+	}
+
+	@Override
+	public void reset() {
+		input.getRight().setData(0);
+		output.setData(0);
 	}
 }

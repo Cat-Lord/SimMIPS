@@ -21,5 +21,7 @@ public class AND extends BinaryComponent {
 		output.setData(
 				inputA.getRight().getData() & inputB.getRight().getData()
 		);
+		
+		notifySubs();
 	}
 }

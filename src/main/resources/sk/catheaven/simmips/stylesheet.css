@@ -1,9 +1,18 @@
 .button{
     -fx-background-color: #e8ebe9;
+    -fx-border-insets: 0;
 }
 
-#centralVbox{
-    -fx-background-color: black;
+.rightVbox {
+    -fx-border-color: black;
+    -fx-border-insets: 5;
+    -fx-border-width: 3;
+}
+
+.centralVbox {
+    -fx-border-color: gray;
+    -fx-border-insets: 0;
+    -fx-border-width: 3;
 }
 
 .code_label {
@@ -18,4 +27,8 @@
 .keyword {
     -fx-fill: purple;
     -fx-font-weight: bold;
+}
+
+.menuPanel {
+    -fx-font-size: 19;
 }

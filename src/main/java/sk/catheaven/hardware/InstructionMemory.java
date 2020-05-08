@@ -71,11 +71,13 @@ public class InstructionMemory extends Component {
 			
 		try {
 			output.setData(program.get(index).getIcode().getData());
-			logger.log(Level.INFO, "Setting output iCode, address of 0x" + input.getHex() + " resulting in index " + index);
+			logger.log(Level.INFO, "Setting output iCode, address of 0x{0} resulting in index {1}", new Object[]{input.getHex(), index});
 		} catch(IndexOutOfBoundsException e) {
-			logger.log(Level.WARNING,  "Requesting instruction on address 0x" + input.getHex() + " (as index " + index + "), but address is OUT OF BOUNDS");
+			logger.log(Level.WARNING, "Requesting instruction on address 0x{0} (as index {1}), but address is OUT OF BOUNDS", new Object[]{input.getHex(), index});
 			output.setData(0);
 		}
+		
+		notifySubs();
 	}
 
 	@Override
@@ -99,5 +101,12 @@ public class InstructionMemory extends Component {
 	@Override
 	public Data getInput(String selector) {
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		clearProgram();
+		input.setData(0);
+		output.setData(0);
 	}
 }

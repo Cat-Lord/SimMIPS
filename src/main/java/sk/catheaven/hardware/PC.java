@@ -33,6 +33,7 @@ public class PC extends Component {
 	public void execute() {
 		//logger.log(Level.INFO, "Input {0} | Output {1}\n", new Object[]{input.getHex(), output.getHex()});
 		output.setData(input.getData());
+		notifySubs();
 	}
 
 	@Override
@@ -57,5 +58,11 @@ public class PC extends Component {
 	
 	public Data getInput(String selector){
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		input.setData(0);
+		output.setData(0);
 	}
 }

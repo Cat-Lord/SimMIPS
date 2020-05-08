@@ -60,6 +60,8 @@ public class RegBank extends Component {
 		// pass register values pointed to by input to the output
 		outputA.getRight().setData(registers[inputA.getRight().getData()].getData());
 		outputB.getRight().setData(registers[inputB.getRight().getData()].getData());
+		
+		notifySubs();
 	}
 
 	/**
@@ -139,5 +141,10 @@ public class RegBank extends Component {
 		for(int i = 0; i < dupRegs.length; i++)
 			dupRegs[i] = registers[i].duplicate();
 		return dupRegs;
+	}
+
+	@Override
+	public void reset() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }

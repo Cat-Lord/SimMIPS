@@ -37,6 +37,8 @@ public class ConstMUX extends Component {
 		output.setData(
 			(selector.getRight().getData() == 0) ? input.getData() : constant.getData()
 		);
+		
+		notifySubs();
 	}
 
 	@Override
@@ -67,5 +69,12 @@ public class ConstMUX extends Component {
 		if(selector.equals(this.selector.getLeft()))
 			return this.selector.getRight().duplicate();
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		input.setData(0);
+		output.setData(0);
+		selector.getRight().setData(0);
 	}
 }

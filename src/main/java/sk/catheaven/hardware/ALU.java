@@ -114,6 +114,8 @@ public class ALU extends BinaryComponent {
 		//DONT FORGET TO SET ZERO-RESULT OUTPUT
 		if( ! operation.equals("bneq")  &&  output.getData() == 0)
 			zeroResult.getRight().setData(1);
+		
+		notifySubs();
 	}
 
 	@Override
@@ -153,5 +155,12 @@ public class ALU extends BinaryComponent {
 		s = s.concat(String.format(statusFormat, new Object[]{aluOp.getLeft(), aluOp.getRight().getHex()}));
 		s = s.concat(String.format(statusFormat, new Object[]{zeroResult.getLeft(), zeroResult.getRight().getHex()}));
 		return s;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		aluOp.getRight().setData(0);
+		zeroResult.getRight().setData(0);
 	}
 }

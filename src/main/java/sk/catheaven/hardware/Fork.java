@@ -69,6 +69,7 @@ public class Fork extends Component {
 		}
 		
 		logger.log(Level.INFO, debugOutput);
+		notifySubs();
 	}
 
 	@Override
@@ -100,5 +101,12 @@ public class Fork extends Component {
 	
 	public Data getInput(String selector){
 		return input.duplicate();
+	}
+
+	@Override
+	public void reset() {
+		input.setData(0);
+		for(String out : outputs.keySet())
+			outputs.get(out).setDataToCut(0);
 	}
 }
