@@ -145,6 +145,17 @@ public class RegBank extends Component {
 
 	@Override
 	public void reset() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		inputA.getRight().setData(0);
+		inputB.getRight().setData(0);
+		regWrite.getRight().setData(0);
+		destReg.getRight().setData(0);
+		destRegData.getRight().setData(0);
+		
+		for(Data register : registers) {
+			register.setData(0);
+		}
+		
+		outputA.getRight().setData(0);
+		outputB.getRight().setData(0);
 	}
 }

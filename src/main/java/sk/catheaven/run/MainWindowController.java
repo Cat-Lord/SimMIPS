@@ -15,28 +15,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.IntFunction;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -48,7 +47,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -64,8 +62,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.controlsfx.control.PopOver;
-import org.controlsfx.control.PopOver.ArrowLocation;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -76,9 +72,11 @@ import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
 import sk.catheaven.hardware.Component;
 import sk.catheaven.hardware.LatchRegister;
+import sk.catheaven.hardware.RegBank;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.utils.RegTable;
 import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
 
@@ -116,6 +114,12 @@ public class MainWindowController implements Initializable {
 	@FXML private AnchorPane codeTabAnchor;
 
 	@FXML private Button assembleButton;
+	@FXML Button playSimulationButton;
+	@FXML Button stepSimulationButton;
+	@FXML Button playFastSimulationButton;
+	@FXML Button pauseSimulationButton;
+	@FXML Button stopSimulationButton;
+
 
 	// LABELS
 	@FXML protected Label IFI;		// instruction-fetch instruction
@@ -141,6 +145,15 @@ public class MainWindowController implements Initializable {
 	
 	private Timer defaultButtonTimer;				// timer, that sets button background back to default
 	private TimerTask defButtonTask;
+
+	private ScheduledExecutorService simulationThread;
+	private long normalSimulationPeriod = 3000;
+	private long quickSimulationPeriod = 1000;
+	
+	private RegTable regTable;						// handles register table updates 
+	
+	private Subscription cleanupWhenDone;			// code highlight
+	
 	
 	public MainWindowController(){
 		fileOperator = new FileOperator();
@@ -198,7 +211,6 @@ public class MainWindowController implements Initializable {
 		
 		
 		setUpInstructionSetTable();
-		setUpRegistersTable();
 		
 		// init timer
 		defaultButtonTimer = new Timer();
@@ -252,11 +264,11 @@ public class MainWindowController implements Initializable {
 		
 		editor.setOnKeyPressed((KeyEvent e) -> markCodeChange(true));
 		
-		editor.setStyle("-fx-font: 27 arial;");
+		editor.setStyle("-fx-font: 24 arial;");
 		
 		// Following part of code was taken from https://github.com/FXMisc/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywordsAsyncDemo.java
 		executor = Executors.newSingleThreadExecutor();	
-		Subscription cleanupWhenDone = editor.multiPlainChanges()
+		cleanupWhenDone = editor.multiPlainChanges()
                 .successionEnds(java.time.Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(editor.multiPlainChanges())
@@ -296,6 +308,10 @@ public class MainWindowController implements Initializable {
 			// check if user saved the code
 			// and if user really wants to quit
 			System.out.println("WindowEvent: " + event.toString());
+			if(simulationThread != null)
+				simulationThread.shutdown();
+			
+			cleanupWhenDone.unsubscribe();
 		});
 	}
 
@@ -386,22 +402,6 @@ public class MainWindowController implements Initializable {
 		instructionsTable.sort();
 	}
 	
-	private void setUpRegistersTable(){
-		registersTable.setPlaceholder(new Label("\tRegister Bank not working !"));
-		
-		regIndexColumn.setCellValueFactory(new PropertyValueFactory<>("left"));
-		regValueColumn.setCellValueFactory(new PropertyValueFactory<>("right"));
-		
-		Data[] regs = cpu.getRegisters();
-		for(int i = 0; i < regs.length; i++){
-			Tuple<Integer, String> t = new Tuple<>(i, regs[i].getHex());
-			registersTable.getItems().add(t);
-		}
-		
-		//registersTable.getSortOrder().add(regIndexColumn);
-		registersTable.sort();
-	}
-	
 	// Method origin here: https://github.com/FXMisc/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywordsAsyncDemo.java
 	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = codeEditor.getText();
@@ -458,27 +458,170 @@ public class MainWindowController implements Initializable {
 		defaultButtonTimer.schedule(defButtonTask, 2000);
 	}
 	
-	private void displayErrors(List<Tuple<Integer, String>> errors){
-		errors.forEach(e -> {
-			System.out.println("Line " + e.getLeft() + ": " + e.getRight());
-		});
+	/**
+	 * Creates a new popup window, which will display set of errors
+	 * for user.
+	 * @param errors 
+	 */
+	private void displayErrors(List<Tuple<Integer, String>> errors) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/ErrorList.fxml"));
+      
+		Parent root;
+		
+		try {
+			root = loader.load();
+			loader.<ErrorWindowController>getController().setData(errors);
+		} catch(IOException e) { 
+			logger.log(Level.SEVERE, "Failed to create Error Window !\n{0}", e.getMessage()); 
+			return; 
+		}
+		
+        Scene scene = new Scene(root);
+		Stage nstage = new Stage();
+		nstage.setTitle("Errors");
+        nstage.setScene(scene);
+        nstage.show();
 	}
 	
 	/**
 	 * Starts the simulation and plays until the user pauses the simulation
 	 * or the program quits.
 	 */
-	public  void playSimulation(){
+	public void playSimulation(){
+		simulationThread = Executors.newScheduledThreadPool(1);
+
+		simulationThread.execute(() -> {
+			while(true){
+				System.out.println("playSimulation step!");
+				executeStep();
+				try {
+					Thread.sleep(normalSimulationPeriod);
+				} catch (InterruptedException ex) { System.out.println(ex.getMessage()); }
+			}
+		});
 		
+		playSimulationButton.setDisable(true);
+		playFastSimulationButton.setDisable(false);
+		pauseSimulationButton.setDisable(false);
+		stopSimulationButton.setDisable(false);
+		stepSimulationButton.setDisable(true);
+	}
+	
+	public void playFastSimulation(){
+		simulationThread.shutdown();
+		simulationThread.execute(() -> {
+			while(true){
+				System.out.println("fast simulation step!");
+				executeStep();
+				try {
+					Thread.sleep(quickSimulationPeriod);
+				} catch (InterruptedException ex) { System.out.println(ex.getMessage()); }
+			}
+		});
+		/*		simulationThread.scheduleAtFixedRate(() -> {
+		System.out.println("RUNNING !");
+		executeStep();
+		},
+		100,
+		quickSimulationPeriod,
+		TimeUnit.MILLISECONDS);*/
+		
+		playSimulationButton.setDisable(false);
+		playFastSimulationButton.setDisable(true);
+		pauseSimulationButton.setDisable(false);
+		stopSimulationButton.setDisable(false);
+		stepSimulationButton.setDisable(true);
 	}
 	
 	/**
 	 * Execute one cycle. If the simulation is paused, continues with
-	 * next step.
+	 * next step. This method is not available, if there is simulation
+	 * aleready running in the background.
 	 */
 	public void stepSimulation(){
-		// TODO first prepare the simulation
 		
+		System.out.println("one step simulation");
+		executeStep();
+		
+		playSimulationButton.setDisable(false);
+		playFastSimulationButton.setDisable(false);
+		pauseSimulationButton.setDisable(true);
+		stopSimulationButton.setDisable(false);
+		stepSimulationButton.setDisable(false);
+	}
+	
+	/**
+	 * Pauses simulation. After that, the simulation can be played again, 
+	 * but will continue from the point it paused in.
+	 */
+	public void pauseSimulation(){
+		simulationThread.shutdown();
+		simulationThread = null;
+		
+		playSimulationButton.setDisable(false);
+		playFastSimulationButton.setDisable(false);
+		pauseSimulationButton.setDisable(true);
+		stopSimulationButton.setDisable(false);		// we can reset whole datapath
+		stepSimulationButton.setDisable(false);
+	}
+	
+	public void stopSimulation(){
+		simulationThread.shutdown();
+		simulationThread = null;
+		
+		for(Component c : cpu.getComponents()){
+			c.reset();
+			c.notifySubs();
+		}
+		
+		for(Connector c : cpu.getWires()){
+			c.setColor(null);
+		}
+		
+		playSimulationButton.setDisable(false);
+		playFastSimulationButton.setDisable(false);
+		pauseSimulationButton.setDisable(true);
+		stopSimulationButton.setDisable(true);
+		stepSimulationButton.setDisable(false);
+	}
+	
+	private void drawDatapath(){;
+		for(Connector c : cpu.getWires()){
+			c.prepareSub();			// create popover and listener for mouse-press
+			datapathPane.getChildren().addAll(c.getLine(), c.getClickLine());
+			datapathNodes.add(c);
+		}
+		
+		for(Component c : cpu.getComponents()){
+			Tuple<Integer, Integer> pos = c.getComponentPosition();
+			Tuple<Integer, Integer> size = c.getComponentSize();
+			
+			Shape shape;
+			if(c.getComponentType().equals("ControlUnit") ||  c.getComponentType().equals("SignExt"))
+				shape = new Ellipse(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			else
+				shape = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
+			shape.setStroke(Paint.valueOf("black"));
+			shape.setFill(Paint.valueOf(c.getColour()));
+			
+			ComponentShape cs = new ComponentShape(c, shape);
+			cs.prepareSub();
+			
+			datapathPane.getChildren().add(shape);
+			datapathNodes.add(cs);
+			
+			if(c instanceof RegBank){
+				regTable = new RegTable(registersTable, regIndexColumn, regValueColumn, (RegBank) c);
+				c.registerSub(regTable);
+			}
+		}
+		
+		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
+		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
+		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
+	}
+	
+	private void executeStep(){
 		try {
 			cpu.executeCycle();
 		} catch(Exception e) { System.out.println(e.getMessage()); }
@@ -507,53 +650,12 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Pauses simulation. After that, the simulation can be played again, 
-	 * but will continue from the point it paused in.
-	 */
-	public void pauseSimulation(){
-		// TODO first prepare the simulation
-		
-		
-	}
-	
-	private void drawDatapath(){;
-		for(Connector c : cpu.getWires()){
-			c.prepareSub();			// create popover and listener for mouse-press
-			datapathPane.getChildren().addAll(c.getLine(), c.getClickLine());
-			datapathNodes.add(c);
-		}
-		
-		for(Component c : cpu.getComponents()){
-			Tuple<Integer, Integer> pos = c.getComponentPosition();
-			Tuple<Integer, Integer> size = c.getComponentSize();
-			
-			Shape shape;
-			if(c.getComponentType().equals("ControlUnit") ||  c.getComponentType().equals("SignExt"))
-				shape = new Ellipse(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
-			else
-				shape = new Rectangle(pos.getLeft(), (pos.getRight()), size.getLeft(), size.getRight());
-			shape.setStroke(Paint.valueOf("black"));
-			shape.setFill(Paint.valueOf(c.getColour()));
-			
-			ComponentShape cs = new ComponentShape(c, shape);
-			cs.prepareSub();
-			
-			datapathPane.getChildren().add(shape);
-			datapathNodes.add(cs);
-		}
-		
-		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
-		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
-		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
-	}
-	
-	/**
 	 * Generates colors for simulation highlights.
 	 * @return List of colors.
 	 */
 	private ArrayList<String> initColors(){
 		ArrayList<String> colorsQ = new ArrayList();
-		colorsQ.add("#eb4034");
+		/*colorsQ.add("#eb4034");
 		colorsQ.add("#eb34b1");
 		colorsQ.add("#217eff");
 		colorsQ.add("#21ffec");
@@ -562,7 +664,15 @@ public class MainWindowController implements Initializable {
 		colorsQ.add("#5a9e80");
 		colorsQ.add("#6a00a3");
 		colorsQ.add("#ba667d");
-		colorsQ.add("#edb200");
+		colorsQ.add("#edb200");*/
+		
+		colorsQ.add("red");
+		colorsQ.add("green");
+		colorsQ.add("black");
+		colorsQ.add("blue");
+		colorsQ.add("grey");
+		colorsQ.add("brown");
+		
 		return colorsQ;
 	}
 }

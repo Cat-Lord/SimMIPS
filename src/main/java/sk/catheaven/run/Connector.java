@@ -28,6 +28,8 @@ import sk.catheaven.utils.Subscriber;
  * @author catlord
  */
 public class Connector implements Subscriber {
+	private static final String DEFAULT_COLOR = "#b8cccc";
+	
 	private final Polyline line;
 	private Polyline clickLine;		// this is the copy of the original line, but thicker, to allow easier clicking
 	
@@ -88,7 +90,9 @@ public class Connector implements Subscriber {
 	}
 	
 	public void setColor(String color){
-		line.setStroke(Paint.valueOf(color));
+		try {
+			line.setStroke(Paint.valueOf(color));
+		} catch(Exception e) { line.setStyle(DEFAULT_COLOR); }
 	}
 	
 	/**

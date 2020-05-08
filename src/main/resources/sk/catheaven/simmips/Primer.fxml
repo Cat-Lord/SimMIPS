@@ -101,9 +101,11 @@
             </MenuBar>
             <HBox fx:id="datapathControl" prefHeight="38.0" prefWidth="1920.0" spacing="35.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#playSimulation" prefHeight="16.0" prefWidth="20.0" text="&gt;" />
-                  <Button mnemonicParsing="false" onAction="#pauseSimulation" text="=" />
-                  <Button mnemonicParsing="false" onAction="#stepSimulation" text="&gt;&gt;|" />
+                  <Button fx:id="playSimulationButton" mnemonicParsing="false" onAction="#playSimulation" prefHeight="26.0" prefWidth="73.0" text="&gt; Play" />
+                  <Button fx:id="stepSimulationButton" mnemonicParsing="false" onAction="#stepSimulation" text="&gt;| Step" />
+                  <Button fx:id="playFastSimulationButton" mnemonicParsing="false" onAction="#playFastSimulation" text="&gt;&gt; Play Fast" />
+                  <Button fx:id="pauseSimulationButton" disable="true" mnemonicParsing="false" onAction="#pauseSimulation" text="= Pause" />
+                  <Button fx:id="stopSimulationButton" disable="true" mnemonicParsing="false" onAction="#stopSimulation" prefHeight="26.0" prefWidth="70.0" text="X Stop" />
                </children>
                <VBox.margin>
                   <Insets left="20.0" top="10.0" />
@@ -128,7 +130,7 @@
                <tabs>
                   <Tab fx:id="codeTab" onSelectionChanged="#changeTabToCode" text="Code">
                      <content>
-                        <AnchorPane fx:id="codeTabAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1613.0" />
+                        <AnchorPane fx:id="codeTabAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1613.0" style="-fx-background-color: #cfcfcf;" />
                      </content>
                   </Tab>
                   <Tab fx:id="cpuTab" onSelectionChanged="#changeTabToCPU" text="CPU">
