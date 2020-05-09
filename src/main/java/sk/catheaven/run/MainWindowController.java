@@ -27,6 +27,7 @@ import java.util.logging.LogManager;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -317,6 +318,9 @@ public class MainWindowController implements Initializable {
 				simulationThread.shutdown();
 			
 			cleanupWhenDone.unsubscribe();
+			
+			System.out.println("GOODBYE !");
+			Platform.exit();
 		});
 	}
 
@@ -547,7 +551,7 @@ public class MainWindowController implements Initializable {
 	/**
 	 * Execute one cycle. If the simulation is paused, continues with
 	 * next step. This method is not available, if there is simulation
-	 * aleready running in the background.
+	 * already running in the background.
 	 */
 	public void stepSimulation(){
 		tabPane.getSelectionModel().select(cpuPane);
@@ -658,7 +662,6 @@ public class MainWindowController implements Initializable {
 				c.registerSub(regTable);
 			}
 			if(c instanceof DataMemory){
-				
 				shape.setOnMousePressed( (MouseEvent eh) -> {
 					if(eh.isPrimaryButtonDown()  &&  eh.getClickCount() != 2)
 						return;
@@ -666,7 +669,7 @@ public class MainWindowController implements Initializable {
 					FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/DataMemory.fxml"));
 					DataTable dt = new DataTable((DataMemory) c);
 					loader.setController(dt);
-					c.registerSub(loader.<DataTable>getController());
+					c.registerSub(dt);
 					
 					Parent root;
 					try {

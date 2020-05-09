@@ -23,7 +23,8 @@ import sk.catheaven.utils.Tuple;
 public class DataMemory extends Component {
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
-	private final Data[] memory;
+	private final Map<Integer, Data> memory;					// maps addresses represented as data to data values
+	private final Data memoryBlock;							// to avoid overflows, this will be container, which will manage input/output from memory
 	private final Tuple<String, Data> memRead, memWrite;
 	private final Tuple<String, Data> inputA, inputB;
 	private final Data output;
@@ -42,12 +43,11 @@ public class DataMemory extends Component {
 		inputA = new Tuple<>(json.getString("inputA"), new Data(bitSize));
 		inputB = new Tuple<>(json.getString("inputB"), new Data(bitSize));
 		output = new Data(bitSize);
+	
+		memory = new HashMap<>();
+		memoryBlock = new Data(json.getInt("bitSize"));
 		
-		memory = new Data[json.getInt("capacity")];
-		for(int i = 0; i < memory.length; i++)
-			memory[i] = new Data(bitSize);
-		
-		logger.log(Level.INFO, "Created memory of " + memory.length + " memory blocks of size " + bitSize + "b");
+		logger.log(Level.INFO, "Created memory blocks of size {0}b", new Object[]{bitSize});
 	}
 
 	/**
@@ -62,19 +62,22 @@ public class DataMemory extends Component {
 			return;
 		}
 		
-		int index = Assembler.computeIndex(inputA.getRight());
-		if(index < 0  ||  index >= memory.length){
-			logger.log(Level.WARNING, "Index out of memory bounds. Calculated index {0} from input 0x{1} (memory limit is 0x{2}", new Object[]{index, inputA.getRight().getHex(), Assembler.computeAddress(memory.length).getHex()});
-		}
+		Data address = inputA.getRight();
 		
 		if(memRead.getRight().getData() == 1){
-			output.setData(memory[index].getData());
-			logger.log(Level.INFO, "Reading from memory address 0x{0}, got number 0x{1}", new Object[]{inputA.getRight().getHex(), memory[index].getHex()});
+			Data memBlock = memory.get(address.getData());
+			if(memBlock == null)
+				output.setData(0);
+			else
+				output.setData(memBlock.getData());
+			logger.log(Level.INFO, "Reading from memory address 0x{0}, got number 0x{1}", new Object[]{address.getHex(), output.getHex()});
 			notifySubs();
 		}
 		else if(memWrite.getRight().getData() == 1){
-			memory[index].setData(inputB.getRight().getData());
-			logger.log(Level.INFO, "Writing to memory address 0x{0} value of {1}", new Object[]{inputA.getRight().getHex(), inputB.getRight().getData()});
+			memoryBlock.setData(inputB.getRight().getData());			// first perform possible bit size adjustment of the input
+			memory.put(address.getData(), memoryBlock.duplicate());
+			memoryBlock.setData(0);
+			logger.log(Level.INFO, "Writing to memory address 0x{0} value of {1}", new Object[]{address.getHex(), inputB.getRight().getData()});
 			notifySubs();
 		}
 		else
@@ -100,6 +103,7 @@ public class DataMemory extends Component {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{inputA.getLeft(), inputA.getRight().getHex()}));
@@ -119,9 +123,11 @@ public class DataMemory extends Component {
 		return null;
 	}
 	
+	/**
+	 * Removes every known value.
+	 */
 	public void clearMemory(){
-		for(int i = 0; i < memory.length; i++)
-			memory[i].setData(0);
+		memory.clear();
 	}
 
 	@Override
@@ -135,8 +141,19 @@ public class DataMemory extends Component {
 		output.setData(0);
 	}
 	
-	public Data[] getMemory(){
-		return memory;
+	/**
+	 * Returns memory block value by a set address. If such block doesn't exist,
+	 * returns empty data.
+	 * @param address Address of desired block.
+	 * @return Data object with value of desired block.
+	 */
+	public Data getMemBlock(int address){
+		if(memory.get(address) == null)
+			return memoryBlock.duplicate();		// memory block always has value of 0 and corresponds correctly to memory block bit size
+		return memory.get(address).duplicate();
 	}
 	
+	public Map<Integer, Data> getMemory(){
+		return memory;
+	}
 }

@@ -580,7 +580,6 @@
             "inputB": "reg2Value",
             "memRead": { "label": "memReadSignal", "bitSize": 1 },
             "memWrite": { "label": "memWriteSignal", "bitSize": 1 },
-            "capacity": 1000,
             "desc": "Saves data, extra CPU storage and typically much bigger in size than register bank."
         },
         
