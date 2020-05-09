@@ -337,6 +337,15 @@ public class Assembler {
 	}
 	
 	/**
+	 * Allows computation of addres by a given integer value.
+	 * @param address
+	 * @return 
+	 */
+	public static int computeIndex(int address){
+		return address / (Data.MAX_BIT_SIZE/8);
+	}
+	
+	/**
 	 * Extracts positional number from field value.
 	 * @param fieldValue Field value as defined in layout, for example "#2" or "#3.base".
 	 * @return 

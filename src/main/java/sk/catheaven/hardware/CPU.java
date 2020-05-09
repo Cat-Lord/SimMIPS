@@ -298,4 +298,12 @@ public final class CPU {
 			}
 	}
 
+	/**
+	 * Returns label of the last executed memory from instruction memory component.
+	 * For more detailed info, see the <i>InstructionMemory</i> component.
+	 * @return 
+	 */
+	public String getLastInstructionLabel(){
+		return instructionMemory.getLastInstruction().getOriginalInstruction();
+	}
 }

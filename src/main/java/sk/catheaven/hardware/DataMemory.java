@@ -135,4 +135,8 @@ public class DataMemory extends Component {
 		output.setData(0);
 	}
 	
+	public Data[] getMemory(){
+		return memory;
+	}
+	
 }

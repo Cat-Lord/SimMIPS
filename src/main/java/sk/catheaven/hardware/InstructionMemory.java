@@ -24,13 +24,14 @@ public class InstructionMemory extends Component {
 	
 	private final Data input, output;
 	private final List<AssembledInstruction> program;
+	private int lastInstructionIndex;
 	
 	public InstructionMemory(String label, JSONObject json) {
 		super(label, json);
 		
 		input = new Data(json.getInt("input"));
 		output = new Data(json.getInt("output"));
-		
+
 		program = new ArrayList<>();			// ready to receive copied instructions, not the original list
 	}
 	
@@ -39,6 +40,8 @@ public class InstructionMemory extends Component {
 	 * @param program 
 	 */
 	public void setProgram(List<AssembledInstruction> program){
+		clearProgram();
+		
 		if(this.program.addAll(program) == false)
 			logger.log(Level.SEVERE, "Failed to load the program into instruction memoory !");
 		else
@@ -63,6 +66,7 @@ public class InstructionMemory extends Component {
 	@Override
 	public void execute() {
 		int index = Assembler.computeIndex(input);
+		lastInstructionIndex = index;
 		
 		// TODO - consider throwing an exception or handle empty instructions list (or dont ?)
 		if(program.isEmpty()){
@@ -80,6 +84,21 @@ public class InstructionMemory extends Component {
 		notifySubs();
 	}
 
+	/**
+	 * Allows to ask for the assembled instruction , which was set by last <code>execute</code>
+	 * call. If there is no such instruction (either program is not set or instruction 
+	 * address is out of bounds), returns null.
+	 * @return 
+	 */
+	public AssembledInstruction getLastInstruction(){
+		try {
+			AssembledInstruction ai = program.get(lastInstructionIndex);
+			return ai;
+		} catch(IndexOutOfBoundsException e) {
+			return createNop();
+		}
+	}
+	
 	@Override
 	public Data getOutput(String selector) {
 		return output.duplicate();
@@ -105,8 +124,13 @@ public class InstructionMemory extends Component {
 
 	@Override
 	public void reset() {
-		clearProgram();
 		input.setData(0);
 		output.setData(0);
+	}
+	
+	private AssembledInstruction createNop(){
+		Data out = output.duplicate();
+		out.setData(0);
+		return new AssembledInstruction(0, null, "Nop", out, out);
 	}
 }

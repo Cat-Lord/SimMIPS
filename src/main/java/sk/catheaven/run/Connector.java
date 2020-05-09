@@ -30,6 +30,7 @@ import sk.catheaven.utils.Subscriber;
 public class Connector implements Subscriber {
 	private static final String DEFAULT_COLOR = "#b8cccc";
 	
+	private Label popoverContent;
 	private final Polyline line;
 	private Polyline clickLine;		// this is the copy of the original line, but thicker, to allow easier clicking
 	
@@ -66,7 +67,6 @@ public class Connector implements Subscriber {
 	@Override
 	public void updateSub(){
 		if(popOver == null  ||  popOver.getContentNode() == null){
-			System.out.println("NULL popover or its content");
 			return;		// TODO - dont do anything, used for testing, where the gui wasnt yet implemented
 		}
 		
@@ -89,10 +89,15 @@ public class Connector implements Subscriber {
 		return selector;
 	}
 	
+	/**
+	 * Sets specified color. If there is a need to use default color,
+	 * it is possible to pass in null parameter for example.
+	 * @param color 
+	 */
 	public void setColor(String color){
 		try {
 			line.setStroke(Paint.valueOf(color));
-		} catch(Exception e) { line.setStyle(DEFAULT_COLOR); }
+		} catch(Exception e) { line.setStroke(Paint.valueOf(DEFAULT_COLOR)); }
 	}
 	
 	/**
@@ -132,15 +137,18 @@ public class Connector implements Subscriber {
 	}
 	
 	public void prepareSub(){
+		this.popoverContent = new Label("");
+		
 		this.popOver = new PopOver();
 		popOver.arrowSizeProperty().bind(new SimpleDoubleProperty(0));
-		popOver.setContentNode(new Label());
-        popOver.setDetachable(false);
-        popOver.setDetached(false);
+		popOver.setContentNode(popoverContent);
+        popOver.setDetachable(true);
+        popOver.setDetached(true);
         popOver.setAnimated(false);
         popOver.cornerRadiusProperty().bind(new SimpleDoubleProperty(1));
         popOver.headerAlwaysVisibleProperty().bind(new SimpleBooleanProperty(false));
-        popOver.closeButtonEnabledProperty().bind(new SimpleBooleanProperty(false));
+        popOver.closeButtonEnabledProperty().bind(new SimpleBooleanProperty(true));
+		popOver.setTitle("");
 		
 		this.clickLine.setOnMouseClicked((MouseEvent evt) -> {
 			if(popOver.isShowing())
@@ -149,5 +157,14 @@ public class Connector implements Subscriber {
 				popOver.show(line, evt.getScreenX(), evt.getScreenY());
 			}
 		});
+	}
+	
+	/**
+	 * Hides popover.
+	 */
+	@Override
+	public void clear(){
+		if(popOver != null  &&  popOver.isShowing())
+			popOver.hide(Duration.ZERO);
 	}
 }

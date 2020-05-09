@@ -26,9 +26,17 @@
 
 .keyword {
     -fx-fill: purple;
-    -fx-font-weight: bold;
+    -fx-font-weight: bolder;
 }
 
 .menuPanel {
     -fx-font-size: 19;
+}
+
+.popover > .header {
+    -fx-padding: 0 0 0 12px;
+}
+
+#clear_labels:hover{
+    -fx-text-fill: blue;
 }

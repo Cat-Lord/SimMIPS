@@ -28,6 +28,7 @@ import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -45,8 +46,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -71,11 +76,13 @@ import org.reactfx.Subscription;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
 import sk.catheaven.hardware.Component;
+import sk.catheaven.hardware.DataMemory;
 import sk.catheaven.hardware.LatchRegister;
 import sk.catheaven.hardware.RegBank;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
+import sk.catheaven.utils.DataTable;
 import sk.catheaven.utils.RegTable;
 import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
@@ -109,7 +116,7 @@ public class MainWindowController implements Initializable {
 	// TAB PANES
 	@FXML private TabPane tabPane;
 	@FXML private Tab codeTab;
-	@FXML private Pane cpuPane;
+	@FXML private Tab cpuPane;
 	@FXML private AnchorPane datapathPane;
 	@FXML private AnchorPane codeTabAnchor;
 
@@ -144,14 +151,13 @@ public class MainWindowController implements Initializable {
 	private double datapathScaleProperty = 0.75;	// graphical scaling of the datapath section
 	
 	private Timer defaultButtonTimer;				// timer, that sets button background back to default
-	private TimerTask defButtonTask;
 
 	private ScheduledExecutorService simulationThread;
 	private long normalSimulationPeriod = 3000;
 	private long quickSimulationPeriod = 1000;
 	
 	private RegTable regTable;						// handles register table updates 
-	
+	private DataTable dataTable;					// displays memory to user on request
 	private Subscription cleanupWhenDone;			// code highlight
 	
 	
@@ -212,16 +218,10 @@ public class MainWindowController implements Initializable {
 		
 		setUpInstructionSetTable();
 		
-		// init timer
-		defaultButtonTimer = new Timer();
-		defButtonTask = new TimerTask(){
-			@Override
-			public void run() {
-				assembleButton.setStyle("-fx-background-color: #e8ebe9;");
-			}			
-		};
 		
-		drawDatapath();
+		defaultButtonTimer = new Timer();
+		
+		initDatapath();
 	}
 	
 	public void setStage(Stage stage){
@@ -289,11 +289,15 @@ public class MainWindowController implements Initializable {
 	 * useful features.
 	 */
 	private void configureStage() {
-		stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-			System.out.println("KeyEvent: " + event.toString());
+		stage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			final KeyCombination save = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
+			final KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PLUS, KeyCombination.CONTROL_ANY);
+			final KeyCombination zoomOut = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
+			final KeyCombination assemble = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_ANY);
 			
-			// TODO
-			
+			public void handle(KeyEvent kevent){
+				
+			}
 			
 			/*codeTabAnchor.setScaleX(codeEditorScaleProperty);
 			codeTabAnchor.setScaleY(codeEditorScaleProperty);
@@ -302,6 +306,7 @@ public class MainWindowController implements Initializable {
 		
 		stage.addEventHandler(ZoomEvent.ANY, (ZoomEvent event) -> {
 			System.out.println("ZoomEvent: " + event.toString());
+//			if(event.isControlDown()  &&  ZoomEvent.)
 		});
 		
 		stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent event) -> {
@@ -449,13 +454,19 @@ public class MainWindowController implements Initializable {
 		try {
 			cpu.assembleCode(code);
 			assembleButton.setStyle("-fx-background-color: #80ff80");
-			// datapathControl.setDisable(false);		// i I really wanted to display errors
+			stopSimulation();	// reset simulation to its original state
 		}
 		catch(SyntaxException errors){
 			assembleButton.setStyle("-fx-background-color: #ff9980");
 			displayErrors(errors.getErrors());
 		}
-		defaultButtonTimer.schedule(defButtonTask, 2000);
+		
+		defaultButtonTimer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				assembleButton.setStyle("-fx-background-color: #e8ebe9;");
+			}			
+		}, 2000);
 	}
 	
 	/**
@@ -488,6 +499,7 @@ public class MainWindowController implements Initializable {
 	 * or the program quits.
 	 */
 	public void playSimulation(){
+		tabPane.getSelectionModel().select(cpuPane);
 		simulationThread = Executors.newScheduledThreadPool(1);
 
 		simulationThread.execute(() -> {
@@ -508,7 +520,13 @@ public class MainWindowController implements Initializable {
 	}
 	
 	public void playFastSimulation(){
-		simulationThread.shutdown();
+		tabPane.getSelectionModel().select(cpuPane);
+		
+		if(simulationThread != null){
+			simulationThread.shutdown();
+			simulationThread = null;
+		}
+		
 		simulationThread.execute(() -> {
 			while(true){
 				System.out.println("fast simulation step!");
@@ -518,13 +536,6 @@ public class MainWindowController implements Initializable {
 				} catch (InterruptedException ex) { System.out.println(ex.getMessage()); }
 			}
 		});
-		/*		simulationThread.scheduleAtFixedRate(() -> {
-		System.out.println("RUNNING !");
-		executeStep();
-		},
-		100,
-		quickSimulationPeriod,
-		TimeUnit.MILLISECONDS);*/
 		
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(true);
@@ -539,6 +550,12 @@ public class MainWindowController implements Initializable {
 	 * aleready running in the background.
 	 */
 	public void stepSimulation(){
+		tabPane.getSelectionModel().select(cpuPane);
+		
+		if(simulationThread != null){
+			simulationThread.shutdown();
+			simulationThread = null;
+		}
 		
 		System.out.println("one step simulation");
 		executeStep();
@@ -555,8 +572,10 @@ public class MainWindowController implements Initializable {
 	 * but will continue from the point it paused in.
 	 */
 	public void pauseSimulation(){
-		simulationThread.shutdown();
-		simulationThread = null;
+		if(simulationThread != null){
+			simulationThread.shutdown();
+			simulationThread = null;
+		}
 		
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
@@ -565,9 +584,19 @@ public class MainWindowController implements Initializable {
 		stepSimulationButton.setDisable(false);
 	}
 	
-	public void stopSimulation(){
-		simulationThread.shutdown();
-		simulationThread = null;
+	/**
+	 * Stops any simulation currently running. Possible to use even
+	 * when no simulation is running, because it will reset data of 
+	 * every componen to the original state (before the simulation).
+	 * <b>Does not</b> clear the program loaded by assembling.
+	 */
+	public void stopSimulation(){		
+		currentPhaseLimit = 1;
+		
+		if(simulationThread != null){
+			simulationThread.shutdown();
+			simulationThread = null;
+		}
 		
 		for(Component c : cpu.getComponents()){
 			c.reset();
@@ -583,9 +612,20 @@ public class MainWindowController implements Initializable {
 		pauseSimulationButton.setDisable(true);
 		stopSimulationButton.setDisable(true);
 		stepSimulationButton.setDisable(false);
+		
+		WBI.setText("");
+		MEMI.setText("");
+		EXI.setText("");
+		IDI.setText("");
+		IFI.setText("");
 	}
 	
-	private void drawDatapath(){;
+	/**
+	 * Initializes graphical datapath by adding every graphical component
+	 * and setting up event listeners. Graphical components added are
+	 * wires (Connector objects) and components (ComponentShape objects).
+	 */
+	private void initDatapath(){
 		for(Connector c : cpu.getWires()){
 			c.prepareSub();			// create popover and listener for mouse-press
 			datapathPane.getChildren().addAll(c.getLine(), c.getClickLine());
@@ -605,7 +645,10 @@ public class MainWindowController implements Initializable {
 			shape.setFill(Paint.valueOf(c.getColour()));
 			
 			ComponentShape cs = new ComponentShape(c, shape);
-			cs.prepareSub();
+			
+			// data memory has its own window, popover is not necessary
+			if( ! (c instanceof DataMemory))
+				cs.prepareSub();		// creates a popover
 			
 			datapathPane.getChildren().add(shape);
 			datapathNodes.add(cs);
@@ -614,13 +657,53 @@ public class MainWindowController implements Initializable {
 				regTable = new RegTable(registersTable, regIndexColumn, regValueColumn, (RegBank) c);
 				c.registerSub(regTable);
 			}
+			if(c instanceof DataMemory){
+				
+				shape.setOnMousePressed( (MouseEvent eh) -> {
+					if(eh.isPrimaryButtonDown()  &&  eh.getClickCount() != 2)
+						return;
+					
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/DataMemory.fxml"));
+					DataTable dt = new DataTable((DataMemory) c);
+					loader.setController(dt);
+					c.registerSub(loader.<DataTable>getController());
+					
+					Parent root;
+					try {
+						//loader.<DataTable>getController().setData((DataMemory) c);
+						root = loader.load();
+					} catch(IOException e) { 
+						e.printStackTrace();
+						System.out.println(e.getMessage());
+						logger.log(Level.SEVERE, "Failed to create Data Memory Window !\n{0}", e.getMessage()); 
+						return; 
+					}
+
+					Scene scene = new Scene(root);
+					Stage nstage = new Stage();
+					nstage.setTitle("Data Memory");
+					nstage.setScene(scene);
+					nstage.show();
+				});
+			}	
 		}
+		
+		// finaly adjust datapath
+		datapathControl.setTranslateX(-20);
+		datapathControl.setTranslateX(-10);
 		
 		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
 		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
 		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
 	}
 	
+	/**
+	 * Executes one single step in cpu. Servers as a helper method
+	 * to not call separate methods bound to buttons, since they
+	 * behave in relationship to each other. For example calling
+	 * <code>stepSimulation()</code> from <code>playSimulation()</code>
+	 * would stop the simulation.
+	 */
 	private void executeStep(){
 		try {
 			cpu.executeCycle();
@@ -633,20 +716,40 @@ public class MainWindowController implements Initializable {
 		for(Connector wire : cpu.getWires()){
 			Component sc = wire.getSourceComponent();
 			if(sc instanceof LatchRegister  &&   ! previousLatch.equals(sc.getLabel())){
+				// dont paint the phase after this !
+				// increase the number of phases you will have to
+				// paint next time and finish for now
 				if(++phaseIndex >= currentPhaseLimit){
-					// dont paint the phase after this !
-					// increase the number of phases you will have to
-					// paint next time and finish for now
 					currentPhaseLimit++;		
 					break;
 				}
-				colorIndex++;
+				
+				// at this point we know, that this is a new phase we will paint,
+				// so change the wire color 
 				previousLatch = sc.getLabel();
+				colorIndex++;
 			}
-						
-			wire.setColor(colors.get(colorIndex));
+			
+			wire.setColor(colors.get(colorIndex%colors.size()));
 		}
 		colors.add(0, colors.remove(colors.size()-1));	// remove last and add it to the first place (new color)
+		
+		// update datapath labels when executing next instruction
+		WBI.setText(MEMI.getText());
+		MEMI.setText(EXI.getText());
+		EXI.setText(IDI.getText());
+		IDI.setText(IFI.getText());
+		IFI.setText(cpu.getLastInstructionLabel());
+	}
+	
+	/**
+	 * Calls every datapath node to clear. Every node, which 
+	 * displays content in form of a popover will hide it (if
+	 * its not already hidden).
+	 */
+	public void clearAllPopovers(){
+		for(Subscriber sub : datapathNodes)
+			sub.clear();
 	}
 	
 	/**

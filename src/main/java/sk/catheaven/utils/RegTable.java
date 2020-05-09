@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import sk.catheaven.hardware.Component;
 import sk.catheaven.hardware.RegBank;
 import sk.catheaven.instructionEssentials.Data;
 
@@ -18,10 +17,10 @@ import sk.catheaven.instructionEssentials.Data;
  * @author catlord
  */
 public class RegTable implements Subscriber {
-	private TableView<Tuple<Integer, String>> registersTable;
-	private TableColumn<Data, Integer> regIndexColumn;
-	private TableColumn<Data, String> regValueColumn;
-	private RegBank sourceComponent;
+	private final TableView<Tuple<Integer, String>> registersTable;
+	private final TableColumn<Data, Integer> regIndexColumn;
+	private final TableColumn<Data, String> regValueColumn;
+	private final RegBank sourceComponent;
 	
 	public RegTable(
 			TableView<Tuple<Integer, String>> registersTable, 
@@ -46,12 +45,11 @@ public class RegTable implements Subscriber {
 	
 	@Override
 	public void prepareSub() {
-		
+		// nothing to prepare for this subscriber
 	}
 
 	@Override
 	public void updateSub() {
-		System.out.println("Updating table !");
 		registersTable.getItems().clear();
 		
 		Data[] regs = sourceComponent.getRegisters();
@@ -62,6 +60,11 @@ public class RegTable implements Subscriber {
 		
 		//registersTable.getSortOrder().add(regIndexColumn);
 		registersTable.sort();
+	}
+	
+	@Override
+	public void clear(){
+		// doesnt have anything to clear
 	}
 	
 }

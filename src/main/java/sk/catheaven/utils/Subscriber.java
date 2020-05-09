@@ -12,4 +12,5 @@ package sk.catheaven.utils;
 public interface Subscriber {
 	public void prepareSub();
 	public void updateSub();
+	public void clear();
 }

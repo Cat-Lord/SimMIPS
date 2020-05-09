@@ -12,7 +12,7 @@ module sk.catheaven.simmips {
 	requires java.logging;
 	requires org.controlsfx.controls;
 	
-	opens sk.catheaven.utils to javafx.base;
+	opens sk.catheaven.utils to javafx.fxml;
 	opens sk.catheaven.instructionEssentials to javafx.base;
 	opens sk.catheaven.run to javafx.fxml;
     exports sk.catheaven.run;

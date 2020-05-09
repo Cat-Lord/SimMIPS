@@ -673,7 +673,7 @@
         
         
         { "from": "ID_EX", "to": "F1", "selector": "controlSignals", "wireType": "normal", "nodes": [{"x": 820, "y": 280}, {"x": 870, "y": 280}] },
-        { "from": "ID_EX", "to": "OFFSET_ADDER", "selector": "newAddress", "wireType": "normal", "nodes": [{"x": 390, "y": 415}, {"x": 980, "y": 415}] },
+        { "from": "ID_EX", "to": "OFFSET_ADDER", "selector": "newAddress", "wireType": "normal", "nodes": [{"x": 820, "y": 415}, {"x": 980, "y": 415}] },
         { "from": "ID_EX", "to": "IVF", "selector": "immediateValue", "wireType": "normal", "nodes": [{"x": 820, "y": 750}, {"x": 892, "y": 750}, {"x": 892, "y": 675} ] },
         { "from": "ID_EX", "to": "ALU", "selector": "aluInputA", "wireType": "normal", "nodes": [{"x": 820, "y": 520}, {"x": 1010, "y": 520}] },
         { "from": "ID_EX", "to": "RVF", "selector": "reg2Value", "wireType": "normal", "nodes": [{"x": 820, "y": 580}, {"x": 857, "y": 580}, {"x": 857, "y": 642}]},
@@ -697,8 +697,8 @@
         { "from": "OFFSET_ADDER", "to": "EX_MEM", "selector": "branchAddress", "wireType": "normal", "nodes": [{"x": 1015, "y": 400}, {"x": 1160, "y": 400} ] },
         
         { "from": "ALUSrc_MUX", "to": "ALU", "selector": "aluInputB", "wireType": "normal", "nodes": [{"x": 970, "y": 665}, {"x": 1010, "y": 665}] },
-        { "from": "ALU", "to": "EX_MEM", "selector": "aluResult", "wireType": "normal", "nodes": [{"x": 1110, "y": 565}, {"x": 1165, "y": 565} ]},
-        { "from": "ALU", "to": "EX_MEM", "selector": "zeroResultSignal", "wireType": "thin", "nodes": [{"x": 1110, "y": 600}, {"x": 1165, "y": 600} ] },
+        { "from": "ALU", "to": "EX_MEM", "selector": "aluResult", "wireType": "normal", "nodes": [{"x": 1110, "y": 600}, {"x": 1165, "y": 600} ] },
+        { "from": "ALU", "to": "EX_MEM", "selector": "zeroResultSignal", "wireType": "thin", "nodes": [{"x": 1110, "y": 565}, {"x": 1165, "y": 565} ] },
 
         
         

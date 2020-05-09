@@ -24,6 +24,7 @@ import sk.catheaven.utils.Subscriber;
  * @author catlord
  */
 public class ComponentShape implements Subscriber {
+	private Label popoverContent;
 	private final Component sourceComponent;
 	private final Shape shape;
 	private PopOver popOver;
@@ -33,19 +34,18 @@ public class ComponentShape implements Subscriber {
 		this.shape = shape;
 		sourceComponent.registerSub(this);
 	}
-	
-	// TODO - add listener to connector
 
 	@Override
 	public void updateSub() {
-		((Label) (popOver.getContentNode())).setText(sourceComponent.getStatus());
+		if(this.popOver != null)
+			popoverContent.setText(sourceComponent.getStatus());
 	}
 
 	@Override
 	public void prepareSub() {
-		this.popOver = new PopOver();
-		popOver.setContentNode(new Label());
-		popOver.setTitle(sourceComponent.getComponentType() + ":: " + sourceComponent.getLabel());
+		this.popoverContent = new Label("");
+		this.popOver = new PopOver(popoverContent);
+		popOver.setTitle("\t" + sourceComponent.getComponentType() + ":: " + sourceComponent.getLabel());
         popOver.setDetachable(true);
         popOver.setDetached(true);
         popOver.setAnimated(true);
@@ -59,7 +59,14 @@ public class ComponentShape implements Subscriber {
 			else
 				popOver.show(shape, evt.getScreenX(), evt.getScreenY());
 		});
-		
-		popOver.getRoot().setStyle("-fx-padding: 10 5 5 5;");
+	}
+	
+	/**
+	 * Hides popover.
+	 */
+	@Override
+	public void clear(){
+		if(popOver != null  &&  popOver.isShowing())
+			popOver.hide(Duration.ZERO);
 	}
 }
