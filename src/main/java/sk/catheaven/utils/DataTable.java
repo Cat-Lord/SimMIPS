@@ -137,9 +137,6 @@ public class DataTable implements Initializable, Subscriber {
 	 */
 	private void fillTable(int startingAddress){
 		dataTable.getItems().clear();
-		
-		int startingIndex = Assembler.computeIndex(startingAddress);
-		
 		int limit = startingAddress + TABLE_LIMIT;
 		
 		for(int i = startingAddress; i < limit; i++){
