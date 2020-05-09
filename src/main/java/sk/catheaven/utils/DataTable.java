@@ -41,7 +41,7 @@ public class DataTable implements Initializable, Subscriber {
 	
 	private static final int TABLE_LIMIT = 100;			// limits number of elements in table
 	
-	@FXML private TableView<Tuple<Integer, String>> dataTable;
+	@FXML private TableView<Tuple<String, String>> dataTable;
 	@FXML private TableColumn<Data, Integer> addressColumn;
 	@FXML private TableColumn<Data, String> valueColumn;
 	
@@ -98,7 +98,6 @@ public class DataTable implements Initializable, Subscriber {
 				address = Integer.parseUnsignedInt(addressInput.getText(), 10);
 			if(format.equals(NumberFormat.OCT))
 				address = Integer.parseUnsignedInt(addressInput.getText(), 8);
-			
 		} catch(NumberFormatException e){
 			warning.setVisible(true);
 			Timer timer = new Timer();
@@ -137,11 +136,26 @@ public class DataTable implements Initializable, Subscriber {
 	 */
 	private void fillTable(int startingAddress){
 		dataTable.getItems().clear();
-		int limit = startingAddress + TABLE_LIMIT;
+		Data temp = new Data();
+		temp.setData(startingAddress);					// TODO - not following convention of 'always be flexible' - what if startingAddress in only 10b wide ?
 		
-		for(int i = startingAddress; i < limit; i++){
-			Tuple<Integer, String> t = new Tuple(startingAddress, sourceComponent.getMemBlock(startingAddress).getHex());
-			dataTable.getItems().add(t);
+		int limit = startingAddress + TABLE_LIMIT;
+		NumberFormat format = (NumberFormat) numberFormatChoiceBox.getSelectionModel().getSelectedItem();
+		
+		// shift is MAX_BIT_SIZE/8, because each memory block takes up this amount of bytes in memory
+		for( ; temp.getData() < limit; temp.setData(temp.getData() + Data.MAX_BIT_SIZE/8)){
+			String address = "--------";
+			System.out.println("Selected: " + format);
+			if(format.equals(NumberFormat.HEX))
+				address = temp.getHex();
+			if(format.equals(NumberFormat.DEC))
+				address = Integer.toString(temp.getData());
+			if(format.equals(NumberFormat.OCT))
+				address = temp.getOct();
+			
+			dataTable.getItems().add( 
+					new Tuple(address, sourceComponent.getMemBlock(temp).getHex()) 
+			);
 		}
 	}
 }

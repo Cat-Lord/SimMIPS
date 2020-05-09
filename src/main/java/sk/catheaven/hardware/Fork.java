@@ -89,6 +89,7 @@ public class Fork extends Component {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));

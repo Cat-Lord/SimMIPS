@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -75,6 +76,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
 import sk.catheaven.exceptions.SyntaxException;
+import sk.catheaven.hardware.AND;
 import sk.catheaven.hardware.CPU;
 import sk.catheaven.hardware.Component;
 import sk.catheaven.hardware.DataMemory;
@@ -84,6 +86,7 @@ import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
 import sk.catheaven.utils.DataTable;
+import sk.catheaven.utils.DatapathLabelManager;
 import sk.catheaven.utils.RegTable;
 import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
@@ -135,7 +138,8 @@ public class MainWindowController implements Initializable {
 	@FXML protected Label EXI;		// ..etc
 	@FXML protected Label MEMI;
 	@FXML protected Label WBI;
-			
+	private DatapathLabelManager datapathLabeler;
+	
 	private ExecutorService executor;		// enables code highlighting
 	private static String KEYWORD_PATTERN; 
     private static final String NUMMERO_PATTERN = "\\d*";
@@ -216,9 +220,7 @@ public class MainWindowController implements Initializable {
 		instructionsTable.setVisible(true);
 		registersTable.setVisible(false);
 		
-		
 		setUpInstructionSetTable();
-		
 		
 		defaultButtonTimer = new Timer();
 		
@@ -230,16 +232,19 @@ public class MainWindowController implements Initializable {
 		configureStage();
 	}
 	
+	/**
+	 * Part of this code was taken from: https://github.com/FXMisc/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/lineindicator/LineIndicatorDemo.java
+	*/
 	private CodeArea initCodeEditor(){
 		CodeArea editor = new CodeArea();
 		IntFunction<Node> numberFactory = LineNumberFactory.get(editor);
-		//IntFunction<Node> arrowFactory = new ArrowFactory(editor.currentParagraphProperty());
+		IntFunction<Node> arrowFactory = new ArrowFactory(editor.currentParagraphProperty());
 		IntFunction<Node> graphicFactory = line -> {
 			HBox innerHbox = new HBox(
-				numberFactory.apply(line)
-				//,arrowFactory.apply(line)
+				numberFactory.apply(line),
+				arrowFactory.apply(line)
 			);
-			innerHbox.setSpacing(4);
+			innerHbox.setSpacing(5);
 			innerHbox.setAlignment(Pos.CENTER_LEFT);
 			return innerHbox;
 		};
@@ -248,8 +253,11 @@ public class MainWindowController implements Initializable {
 							"li r8, 36\n" +
 							"\n" +
 							"add r1, r1, r8\n" +
+							"beq r0,r0, cat\n" +
 							"\n" +
-							"sw r1, 0(r0)");
+							"sw r1, 0(r0)\n" +
+							"cat: li r9, 315\n" +
+							"addi r18, r31, 2415");
         editor.moveTo(0, 0);
 		
 		VirtualizedScrollPane sp = new VirtualizedScrollPane(editor);
@@ -310,6 +318,19 @@ public class MainWindowController implements Initializable {
 //			if(event.isControlDown()  &&  ZoomEvent.)
 		});
 		
+		// TODO - bug in popover makes it that after closing window every popover 
+		// stays above content on users screen (noover other applications), so rather
+		// than letting the user manually close every popover, every popover is hidden
+		stage.setOnHiding((t) -> {
+			System.out.println("hiding, lol (you think)");
+			clearAllPopovers();
+		});
+		
+		stage.setOnHidden((t) -> {
+			System.out.println("hidden gai, lol (you think)");
+			clearAllPopovers();
+		});
+		
 		stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent event) -> {
 			// check if user saved the code
 			// and if user really wants to quit
@@ -319,7 +340,12 @@ public class MainWindowController implements Initializable {
 			
 			cleanupWhenDone.unsubscribe();
 			
-			System.out.println("GOODBYE !");
+			System.out.println("Running threads...");
+			for (Thread t : Thread.getAllStackTraces().keySet()) {
+				System.out.println(String.format("\t%15s { class %15s | state %10s }\n ", t.getName(), t.getClass(), t.getState()));
+			}
+			
+			System.out.println("\nGOODBYE !");
 			Platform.exit();
 		});
 	}
@@ -591,7 +617,7 @@ public class MainWindowController implements Initializable {
 	/**
 	 * Stops any simulation currently running. Possible to use even
 	 * when no simulation is running, because it will reset data of 
-	 * every componen to the original state (before the simulation).
+	 * every component to the original state (before the simulation).
 	 * <b>Does not</b> clear the program loaded by assembling.
 	 */
 	public void stopSimulation(){		
@@ -617,11 +643,7 @@ public class MainWindowController implements Initializable {
 		stopSimulationButton.setDisable(true);
 		stepSimulationButton.setDisable(false);
 		
-		WBI.setText("");
-		MEMI.setText("");
-		EXI.setText("");
-		IDI.setText("");
-		IFI.setText("");
+		datapathLabeler.clear();
 	}
 	
 	/**
@@ -656,6 +678,11 @@ public class MainWindowController implements Initializable {
 			
 			datapathPane.getChildren().add(shape);
 			datapathNodes.add(cs);
+			
+			if(c instanceof AND){
+				datapathLabeler = new DatapathLabelManager(IFI, IDI, EXI, MEMI, WBI, c);
+				c.registerSub(datapathLabeler);
+			}
 			
 			if(c instanceof RegBank){
 				regTable = new RegTable(registersTable, regIndexColumn, regValueColumn, (RegBank) c);
@@ -737,12 +764,7 @@ public class MainWindowController implements Initializable {
 		}
 		colors.add(0, colors.remove(colors.size()-1));	// remove last and add it to the first place (new color)
 		
-		// update datapath labels when executing next instruction
-		WBI.setText(MEMI.getText());
-		MEMI.setText(EXI.getText());
-		EXI.setText(IDI.getText());
-		IDI.setText(IFI.getText());
-		IFI.setText(cpu.getLastInstructionLabel());
+		datapathLabeler.shiftLabels(cpu.getLastInstructionLabel());
 	}
 	
 	/**

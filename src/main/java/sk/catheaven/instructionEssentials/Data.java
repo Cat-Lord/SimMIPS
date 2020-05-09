@@ -91,6 +91,21 @@ public class Data {
 		
 		return output;
 	}
+	
+	/**
+	 * Converts data to octal representation aligned to 8 places.
+	 * @return Hexadecimal representation of data.
+	 */
+	public String getOct(){
+		String dataString = Integer.toOctalString(getData());
+		String output = "";
+
+		for(int i = 0; i < (MAX_BIT_SIZE/3 + 1) - dataString.length(); i++)
+			output += "0";
+		output += dataString;
+		
+		return output;
+	}
 	    
     /**
      * Sets data according to the input parameter.

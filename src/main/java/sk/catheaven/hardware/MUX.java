@@ -62,6 +62,7 @@ public class MUX extends BinaryComponent {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = super.getStatus();
 		s = s.concat(String.format(statusFormat, new Object[]{selector.getLeft(), selector.getRight().getHex()}));

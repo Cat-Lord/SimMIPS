@@ -150,6 +150,7 @@ public class ALU extends BinaryComponent {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = super.getStatus();
 		s = s.concat(String.format(statusFormat, new Object[]{aluOp.getLeft(), aluOp.getRight().getHex()}));

@@ -49,6 +49,7 @@ public class PC extends Component {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
@@ -56,6 +57,7 @@ public class PC extends Component {
 		return s;
 	}
 	
+	@Override
 	public Data getInput(String selector){
 		return input.duplicate();
 	}

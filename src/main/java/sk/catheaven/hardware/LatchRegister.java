@@ -35,6 +35,10 @@ public class LatchRegister extends Component {
 	Map<String, Cutter> outputs;					// output labels -> output
 	private final Tuple<String, Data> bubble;
 	
+	// we set this to 1 and lower it every execution. If this 
+	// value gets to zero, set all outputs to 0.
+	private int bubbleCounter;						
+	
 	public LatchRegister(String label, JSONObject json) throws Exception {
 		super(label, json);		
 		
@@ -49,6 +53,8 @@ public class LatchRegister extends Component {
 			bubble = new Tuple<>(so.getString("label"), new Data(so.getInt("bitSize")));
 		else
 			bubble = new Tuple<>("EMPTY_BUBBLE_SIGNAL", new Data(1));		// empty data, with the value of 0 always
+		
+		bubbleCounter = -1;
 	}
 
 	/**
@@ -59,7 +65,12 @@ public class LatchRegister extends Component {
 	@Override
 	public void execute() {
 		// if we skip, outputs are already cleared, so don't update them
-		if(bubble.getRight().getData() == 0)
+		if(bubbleCounter != 0){
+			// lower bubble counter
+			if(bubbleCounter > 0) {
+				bubbleCounter--;
+			}
+		
 			inputs.keySet().forEach((ins) -> {
 				Data insData = inputs.get(ins);
 
@@ -67,11 +78,16 @@ public class LatchRegister extends Component {
 					outputs.get(ol).setDataToCut(insData);
 				});
 			});
-		else
+		}
+		else{
+			bubbleCounter = -1;			// reset counter to indicate no bubble
+			
+			logger.log(Level.INFO, "Reseting outputs !");
+			
 			// bubble is set to 1, so we need to clear the output
 			for(String out : outputs.keySet())
 				outputs.get(out).setDataToCut(0);
-		
+		}
 		notifySubs();
 	}
 
@@ -83,9 +99,11 @@ public class LatchRegister extends Component {
 		}
 		else if(selector.equals(bubble.getLeft())){
 			bubble.getRight().setData(data.getData());
-			return true;
+			if(bubble.getRight().getData() == 1)
+				bubbleCounter = 1;
+		return true;
 		}
-		logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+		logger.log(Level.WARNING, "{0} --> Unknown request to set data for `{1}`", new Object[]{label, selector}); 
 		return false;			
 	}
 	
@@ -122,7 +140,7 @@ public class LatchRegister extends Component {
 			int inputBitSize = inJson.getInt(in);				// load its bit size
 			inputs.put(in, new Data(inputBitSize));				// store this input
 			
-			logger.log(Level.INFO, in + ": bitSize " + inputBitSize);
+			logger.log(Level.INFO, "{0}: bitSize {1}", new Object[]{in, inputBitSize});
 			String debugOutput = "Output:\n";
 			
 			ArrayList<String> list = new ArrayList();
@@ -143,6 +161,7 @@ public class LatchRegister extends Component {
 		}
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "Inputs:\n";
 		for(String ss : inputs.keySet())

@@ -55,6 +55,7 @@ public class ConstMUX extends Component {
 		return true;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{selector.getLeft(), selector.getRight().getHex()}));

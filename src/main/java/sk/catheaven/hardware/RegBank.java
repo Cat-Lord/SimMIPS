@@ -94,7 +94,7 @@ public class RegBank extends Component {
 		else if(selector.equals(destReg.getLeft())) destReg.getRight().setData(data.getData());
 		else if(selector.equals(destRegData.getLeft())) destRegData.getRight().setData(data.getData());
 		else{
-			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, "{0} --> Unknown request to set data for `{1}`", new Object[]{label, selector}); 
 			return false;
 		}
 		return true;
@@ -105,11 +105,12 @@ public class RegBank extends Component {
 		for(int i = 0; i < count; i++)
 			regArray[i] = new Data(bitSize);
 		
-		logger.log(Level.INFO, "Created array of " + count + " data elements with bit size of " + bitSize + "b");
+		logger.log(Level.INFO, "Created array of {0} data elements with bit size of {1}b", new Object[]{count, bitSize});
 		
 		return regArray;
 	}
 	
+	@Override
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{inputA.getLeft(), inputA.getRight().getHex()}));
@@ -122,6 +123,7 @@ public class RegBank extends Component {
 		return s;
 	}
 	
+	@Override
 	public Data getInput(String selector){
 		if     (selector.equals(regWrite.getLeft()))		return regWrite.getRight().duplicate();
 		else if(selector.equals(inputA.getLeft()))			return inputA.getRight().duplicate();

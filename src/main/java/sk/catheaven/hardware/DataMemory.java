@@ -53,6 +53,8 @@ public class DataMemory extends Component {
 	/**
 	 * Do only one at the time - either read or write to the memory. Checks for out-of-bounds request 
 	 * to read/write and if detected, sets output to zero. Information about activity is logged.
+	 * Read/write operation are performed on adjusted memory address references - since each block
+	 * consists of fixed amount of bytes, shifts have to be calculated (memory is not byte-referenced).		// todo - check terminology
 	 */
 	@Override
 	public void execute() {
@@ -63,6 +65,7 @@ public class DataMemory extends Component {
 		}
 		
 		Data address = inputA.getRight();
+		address.setData( ((address.getData() >>> 2) << 2) ); // remove last 2 bits // todo - possible refactor, to allow not only 32 bit architecture
 		
 		if(memRead.getRight().getData() == 1){
 			Data memBlock = memory.get(address.getData());
@@ -147,10 +150,10 @@ public class DataMemory extends Component {
 	 * @param address Address of desired block.
 	 * @return Data object with value of desired block.
 	 */
-	public Data getMemBlock(int address){
-		if(memory.get(address) == null)
+	public Data getMemBlock(Data address){
+		if(memory.get(address.getData()) == null)
 			return memoryBlock.duplicate();		// memory block always has value of 0 and corresponds correctly to memory block bit size
-		return memory.get(address).duplicate();
+		return memory.get(address.getData()).duplicate();
 	}
 	
 	public Map<Integer, Data> getMemory(){

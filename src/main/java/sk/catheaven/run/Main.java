@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -38,7 +39,7 @@ public class Main extends Application {
 		
 		// set up and launch stage
 		stage.setTitle("SimMIPS");
-        stage.setScene(scene);			
+        stage.setScene(scene);
         stage.show();
     }
 }

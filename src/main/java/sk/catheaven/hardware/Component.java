@@ -20,7 +20,7 @@ import sk.catheaven.utils.Tuple;
  */
 public abstract class Component implements Datapathable, Observable {
 	private final static String DEFAULT_COLOUR = "#98999a";
-	protected static String statusFormat = "%25s: %s\n";
+	protected static String statusFormat = "%25s: %13s\n";
 	protected String label;
 	private String componentType;
 	
