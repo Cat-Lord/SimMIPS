@@ -21,6 +21,8 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
@@ -158,6 +160,7 @@ public class MainWindowController implements Initializable {
 	private Timer defaultButtonTimer;				// timer, that sets button background back to default
 
 	private ScheduledExecutorService simulationThread;
+	ScheduledFuture<?> currentSimulation;
 	private long normalSimulationPeriod = 3000;
 	private long quickSimulationPeriod = 1000;
 	
@@ -186,11 +189,11 @@ public class MainWindowController implements Initializable {
 			fh.setFormatter(sf);
 			lgr.addHandler(fh);
 		} catch(IOException e) { System.out.println(e.getMessage()); }
+		
+		simulationThread = Executors.newScheduledThreadPool(1);
+		
 		logger.log(Level.INFO, "MainWindowController created");
-		System.out.println("MainWindowController: DONE");
 	}
-	
-
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -200,20 +203,15 @@ public class MainWindowController implements Initializable {
 		
 		KEYWORD_PATTERN = KEYWORD_PATTERN.substring(0, KEYWORD_PATTERN.lastIndexOf("|")) + ")\\b";
 		PATTERN = Pattern.compile(
-					"(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+					"(?<KEYWORD>"  + KEYWORD_PATTERN + ")"
 				  + "|(?<NUMMERO>" + NUMMERO_PATTERN + ")"
 				  + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
-	              + "|(?<LABEL>" + LABEL_PATTERN + ")"
+	              + "|(?<LABEL>"   + LABEL_PATTERN   + ")"
 		  );
 		
 		codeEditor = initCodeEditor();
-		codeTabAnchor.getChildren().add(codeEditor);
 			
-		IFI.setText("");
-		IDI.setText("");
-		EXI.setText("");
-		MEMI.setText("");
-		WBI.setText("");
+		datapathLabeler = new DatapathLabelManager(IFI, IDI, EXI, MEMI, WBI);
 		
 		asideBox.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		
@@ -290,6 +288,8 @@ public class MainWindowController implements Initializable {
                     }
                 })
                 .subscribe(this::applyHighlighting);
+		
+		codeTabAnchor.getChildren().add(editor);
 		return editor;
 	}
 	
@@ -335,8 +335,13 @@ public class MainWindowController implements Initializable {
 			// check if user saved the code
 			// and if user really wants to quit
 			System.out.println("WindowEvent: " + event.toString());
-			if(simulationThread != null)
-				simulationThread.shutdown();
+			
+			// shutdown the simulation thread
+			try {
+				simulationThread.awaitTermination(1, TimeUnit.SECONDS);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+			}
 			
 			cleanupWhenDone.unsubscribe();
 			
@@ -529,19 +534,20 @@ public class MainWindowController implements Initializable {
 	 * or the program quits.
 	 */
 	public void playSimulation(){
-		tabPane.getSelectionModel().select(cpuPane);
-		simulationThread = Executors.newScheduledThreadPool(1);
-
-		simulationThread.execute(() -> {
-			while(true){
-				System.out.println("playSimulation step!");
-				executeStep();
-				try {
-					Thread.sleep(normalSimulationPeriod);
-				} catch (InterruptedException ex) { System.out.println(ex.getMessage()); }
-			}
-		});
+		if( currentSimulation != null  &&  ! currentSimulation.isDone())
+			return;
 		
+		tabPane.getSelectionModel().select(cpuPane);	// display the cpu datapath (QoL feature)
+			
+		// start the simulation
+		currentSimulation = simulationThread.scheduleAtFixedRate(
+				() -> { executeStep(); },
+				100,		// initial delay
+				normalSimulationPeriod,
+				TimeUnit.MILLISECONDS
+		);
+		
+		// adjust buttons
 		playSimulationButton.setDisable(true);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(false);
@@ -550,23 +556,20 @@ public class MainWindowController implements Initializable {
 	}
 	
 	public void playFastSimulation(){
+		// if attempt to stop current simulation fails
+		if(stopCurrentSimulationThread() == false)
+			return;
+			
 		tabPane.getSelectionModel().select(cpuPane);
 		
-		if(simulationThread != null){
-			simulationThread.shutdown();
-			simulationThread = null;
-		}
+		currentSimulation = simulationThread.scheduleAtFixedRate(
+				() -> { executeStep(); },
+				100,		// initial delay
+				quickSimulationPeriod,
+				TimeUnit.MILLISECONDS
+		);
 		
-		simulationThread.execute(() -> {
-			while(true){
-				System.out.println("fast simulation step!");
-				executeStep();
-				try {
-					Thread.sleep(quickSimulationPeriod);
-				} catch (InterruptedException ex) { System.out.println(ex.getMessage()); }
-			}
-		});
-		
+		// adjust buttons
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(true);
 		pauseSimulationButton.setDisable(false);
@@ -580,16 +583,19 @@ public class MainWindowController implements Initializable {
 	 * already running in the background.
 	 */
 	public void stepSimulation(){
-		tabPane.getSelectionModel().select(cpuPane);
-		
-		if(simulationThread != null){
-			simulationThread.shutdown();
-			simulationThread = null;
+		// This results in a 'pause' behaviour, rather then 'pause & step', because
+		// that may be too quick for the user to notice
+		if( ! currentSimulation.isDone()) {
+			stopCurrentSimulationThread();
+			return;
 		}
 		
+		tabPane.getSelectionModel().select(cpuPane);
+	
 		System.out.println("one step simulation");
 		executeStep();
 		
+		// adjust buttons
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
@@ -602,15 +608,13 @@ public class MainWindowController implements Initializable {
 	 * but will continue from the point it paused in.
 	 */
 	public void pauseSimulation(){
-		if(simulationThread != null){
-			simulationThread.shutdown();
-			simulationThread = null;
-		}
+		stopCurrentSimulationThread();
 		
+		// adjust buttons
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
-		stopSimulationButton.setDisable(false);		// we can reset whole datapath
+		stopSimulationButton.setDisable(false);		// we can reset whole datapath even when paused
 		stepSimulationButton.setDisable(false);
 	}
 	
@@ -621,12 +625,9 @@ public class MainWindowController implements Initializable {
 	 * <b>Does not</b> clear the program loaded by assembling.
 	 */
 	public void stopSimulation(){		
-		currentPhaseLimit = 1;
+		stopCurrentSimulationThread();
 		
-		if(simulationThread != null){
-			simulationThread.shutdown();
-			simulationThread = null;
-		}
+		currentPhaseLimit = 1;
 		
 		for(Component c : cpu.getComponents()){
 			c.reset();
@@ -637,13 +638,13 @@ public class MainWindowController implements Initializable {
 			c.setColor(null);
 		}
 		
+		datapathLabeler.clear();
+		
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
 		stopSimulationButton.setDisable(true);
-		stepSimulationButton.setDisable(false);
-		
-		datapathLabeler.clear();
+		stepSimulationButton.setDisable(false);		
 	}
 	
 	/**
@@ -680,7 +681,7 @@ public class MainWindowController implements Initializable {
 			datapathNodes.add(cs);
 			
 			if(c instanceof AND){
-				datapathLabeler = new DatapathLabelManager(IFI, IDI, EXI, MEMI, WBI, c);
+				datapathLabeler.setSourceComponent(c);
 				c.registerSub(datapathLabeler);
 			}
 			
@@ -735,36 +736,50 @@ public class MainWindowController implements Initializable {
 	 * would stop the simulation.
 	 */
 	private void executeStep(){
-		try {
-			cpu.executeCycle();
-		} catch(Exception e) { System.out.println(e.getMessage()); }
-				
-		String previousLatch = "";
-		int phaseIndex = 0;
-		int colorIndex = 0;
-		
-		for(Connector wire : cpu.getWires()){
-			Component sc = wire.getSourceComponent();
-			if(sc instanceof LatchRegister  &&   ! previousLatch.equals(sc.getLabel())){
-				// dont paint the phase after this !
-				// increase the number of phases you will have to
-				// paint next time and finish for now
-				if(++phaseIndex >= currentPhaseLimit){
-					currentPhaseLimit++;		
-					break;
+		Platform.runLater(() -> {
+			try {
+				cpu.executeCycle();
+			} catch(Exception e) { System.out.println(e.getMessage()); }
+
+			String previousLatch = "";
+			int phaseIndex = 0;
+			int colorIndex = 0;
+
+			for(Connector wire : cpu.getWires()){
+				Component sc = wire.getSourceComponent();
+				if(sc instanceof LatchRegister  &&   ! previousLatch.equals(sc.getLabel())){
+					// dont paint the phase after this !
+					// increase the number of phases you will have to
+					// paint next time and finish for now
+					if(++phaseIndex >= currentPhaseLimit){
+						currentPhaseLimit++;		
+						break;
+					}
+
+					// at this point we know, that this is a new phase we will paint,
+					// so change the wire color 
+					previousLatch = sc.getLabel();
+					colorIndex++;
 				}
-				
-				// at this point we know, that this is a new phase we will paint,
-				// so change the wire color 
-				previousLatch = sc.getLabel();
-				colorIndex++;
+
+				wire.setColor(colors.get(colorIndex%colors.size()));
 			}
-			
-			wire.setColor(colors.get(colorIndex%colors.size()));
-		}
-		colors.add(0, colors.remove(colors.size()-1));	// remove last and add it to the first place (new color)
+			colors.add(0, colors.remove(colors.size()-1));	// remove last and add it to the first place (new color)
+
+			datapathLabeler.shiftLabels(cpu.getLastInstructionLabel());
+		});
+	}
+	
+	/**
+	 * Attemps to stop current simulation running, if there is any.
+	 * @return If any error occurred, returns false
+	 */
+	private boolean stopCurrentSimulationThread(){
+		if( currentSimulation != null  &&  ! currentSimulation.isDone() )
+			return currentSimulation.cancel(false); // allow it to finish its task TODO - test out
 		
-		datapathLabeler.shiftLabels(cpu.getLastInstructionLabel());
+		// if there was no simulation or the simulation has finished, the thread is in correct (stopped) state
+		return true;
 	}
 	
 	/**

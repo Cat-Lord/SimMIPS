@@ -27,20 +27,21 @@ public class DatapathLabelManager implements Subscriber {
 	// instructions (from inactive indicator + 1 up to max 3 labels)
 	private int inactiveIndicator = -1;
 	boolean inactiveLabels = false;
+	private Component sourceComponent;
 	
-	Component sourceComponent;
-	
-	public DatapathLabelManager(
-			Label IFI,
-			Label IDI,
-			Label EXI,
-			Label MEMI,
-			Label WBI,
-			Component sourceComponent
-		) {
-		labels = new Label[]{ IFI, IDI, EXI, MEMI,WBI };
-		this.sourceComponent = sourceComponent;
+	public DatapathLabelManager( Label IFI, Label IDI, Label EXI, Label MEMI, Label WBI) {
+		this(IFI, IDI, EXI, MEMI, WBI, null);
 	}	
+	
+	public DatapathLabelManager( Label IFI, Label IDI, Label EXI, Label MEMI, Label WBI, Component sourceComponent ) {
+		labels = new Label[]{ IFI, IDI, EXI, MEMI, WBI };
+		setSourceComponent(sourceComponent);
+		clear();
+	}
+	
+	public void setSourceComponent(Component sourceComponent){
+		this.sourceComponent = sourceComponent;
+	}
 	
 	public void shiftLabels(String newInstruction){
 		for(int i = labels.length - 1; i > 0; i--)
