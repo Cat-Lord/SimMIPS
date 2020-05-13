@@ -43,13 +43,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -71,6 +76,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -122,16 +128,20 @@ public class MainWindowController implements Initializable {
 	// TAB PANES
 	@FXML private TabPane tabPane;
 	@FXML private Tab codeTab;
-	@FXML private Tab cpuPane;
+	@FXML private Tab datapathTab;
 	@FXML private AnchorPane datapathPane;
+	@FXML private ScrollPane datapathScrollPane;
 	@FXML private AnchorPane codeTabAnchor;
 
 	@FXML private Button assembleButton;
-	@FXML Button playSimulationButton;
-	@FXML Button stepSimulationButton;
-	@FXML Button playFastSimulationButton;
-	@FXML Button pauseSimulationButton;
-	@FXML Button stopSimulationButton;
+	@FXML private Button playSimulationButton;
+	@FXML private Button stepSimulationButton;
+	@FXML private Button playFastSimulationButton;
+	@FXML private Button pauseSimulationButton;
+	@FXML private Button resetSimulationButton;
+	
+	@FXML private Button zoomInButton;
+	@FXML private Button zoomOutButton;
 
 
 	// LABELS
@@ -141,6 +151,22 @@ public class MainWindowController implements Initializable {
 	@FXML protected Label MEMI;
 	@FXML protected Label WBI;
 	private DatapathLabelManager datapathLabeler;
+	
+	// Menu items
+	@FXML private MenuItem playMI;
+	@FXML private MenuItem stepMI;
+	@FXML private MenuItem resetMI;
+	@FXML private MenuItem playFastMI;
+	@FXML private MenuItem pauseMI;
+	@FXML private MenuItem assembleMI;
+	@FXML private MenuItem zoomInMI;
+	@FXML private MenuItem zoomOutMI;
+	
+	// set of shortcuts (KC == keyCombination)
+	private final KeyCombination saveKC;
+	private final KeyCombination zoomInKC;
+	private final KeyCombination zoomOutKC;
+	private final KeyCombination assembleKC;
 	
 	private ExecutorService executor;		// enables code highlighting
 	private static String KEYWORD_PATTERN; 
@@ -155,11 +181,15 @@ public class MainWindowController implements Initializable {
 	private final List<Subscriber> datapathNodes;	// notification-receiving gui elements of datapath
 	
 	private int currentPhaseLimit = 1;				// phase of execution (IF, ID, EXE, ...)
-	private double datapathScaleProperty = 0.75;	// graphical scaling of the datapath section
 	
+	private double datapathScaleProperty = 0.75;	// graphical scaling of the datapath section
+	private double datapathScaleAmount = 0.05;		// the amount datapath will scale each scaling action
+	
+	private int codeFontSize = 24;
+
 	private Timer defaultButtonTimer;				// timer, that sets button background back to default
 
-	private ScheduledExecutorService simulationThread;
+	private final ScheduledExecutorService simulationThread;
 	ScheduledFuture<?> currentSimulation;
 	private long normalSimulationPeriod = 3000;
 	private long quickSimulationPeriod = 1000;
@@ -168,11 +198,19 @@ public class MainWindowController implements Initializable {
 	private DataTable dataTable;					// displays memory to user on request
 	private Subscription cleanupWhenDone;			// code highlight
 	
-	
+	/**
+	 * Window and application initialization.
+	 */
 	public MainWindowController(){
 		fileOperator = new FileOperator();
 		colors = initColors();
 		datapathNodes = new ArrayList<>();
+		simulationThread = Executors.newScheduledThreadPool(1);
+		
+		saveKC = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+		zoomInKC = new KeyCodeCombination(KeyCode.UP, KeyCombination.CONTROL_DOWN);
+		zoomOutKC = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.CONTROL_DOWN);
+		assembleKC = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
 		
 		try {
 			Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
@@ -190,8 +228,6 @@ public class MainWindowController implements Initializable {
 			lgr.addHandler(fh);
 		} catch(IOException e) { System.out.println(e.getMessage()); }
 		
-		simulationThread = Executors.newScheduledThreadPool(1);
-		
 		logger.log(Level.INFO, "MainWindowController created");
 	}
 	
@@ -200,8 +236,8 @@ public class MainWindowController implements Initializable {
 		KEYWORD_PATTERN = "\\b(";
 		for(String mnemo : cpu.getInstructionSet().keySet())
 			KEYWORD_PATTERN += mnemo + "|";
-		
 		KEYWORD_PATTERN = KEYWORD_PATTERN.substring(0, KEYWORD_PATTERN.lastIndexOf("|")) + ")\\b";
+		
 		PATTERN = Pattern.compile(
 					"(?<KEYWORD>"  + KEYWORD_PATTERN + ")"
 				  + "|(?<NUMMERO>" + NUMMERO_PATTERN + ")"
@@ -220,7 +256,39 @@ public class MainWindowController implements Initializable {
 		
 		setUpInstructionSetTable();
 		
-		defaultButtonTimer = new Timer();
+		defaultButtonTimer = new Timer();	
+		
+		// BUTTON ICONS
+		playSimulationButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/play.png"))));		// play button made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		playSimulationButton.setTooltip(createTooltip("Play Simulation"));
+		
+		playFastSimulationButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/playFast.png"))));	// play fast button made by <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn">bqlqn</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		playFastSimulationButton.setTooltip(createTooltip("Play Fast"));
+		
+		resetSimulationButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/stop.png"))));		// stop button made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		resetSimulationButton.setTooltip(createTooltip("Reset Simulation"));
+		
+		pauseSimulationButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/pause.png"))));		// pause button made by <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn">bqlqn</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		pauseSimulationButton.setTooltip(createTooltip("Pause Simulation"));
+		
+		stepSimulationButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/step.png"))));		// step button made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		stepSimulationButton.setTooltip(createTooltip("Step Simulation by one Cycle"));
+		
+		zoomInButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/zoomIn.png"))));				// zoomin button made by Icons made by <a href="https://www.flaticon.com/authors/alfredo-hernandez" title="Alfredo Hernandez">Alfredo Hernandez</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		zoomInButton.setTooltip(createTooltip("Zoom In"));
+		
+		zoomOutButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/sk/catheaven/simmips/zoomOut.png"))));			// zoom out made by Icons made by <a href="https://www.flaticon.com/authors/alfredo-hernandez" title="Alfredo Hernandez">Alfredo Hernandez</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+		zoomInButton.setTooltip(createTooltip("Zoom Out"));
+		
+		// setting accelerators somehow disables shortcut detection (don't know why)
+		//assembleMI.setAccelerator(assembleKC);
+		//zoomInMI.setAccelerator(zoomInKC);
+		//zoomOutMI.setAccelerator(zoomOutKC);
+		
+		AnchorPane.setLeftAnchor(datapathScrollPane, 0.0);
+		AnchorPane.setRightAnchor(datapathScrollPane, 0.0);
+		AnchorPane.setTopAnchor(datapathScrollPane, 0.0);
+		AnchorPane.setBottomAnchor(datapathScrollPane, 0.0);
 		
 		initDatapath();
 	}
@@ -269,9 +337,18 @@ public class MainWindowController implements Initializable {
 		editor.prefWidthProperty().bind(codeTabAnchor.widthProperty());
 		editor.prefHeightProperty().bind(codeTabAnchor.heightProperty());
 		
-		editor.setOnKeyPressed((KeyEvent e) -> markCodeChange(true));
+		editor.setOnKeyPressed((KeyEvent key) -> {
+			// ignore arrows
+			if(key.getCode().equals(KeyCode.UP)  ||  
+				key.getCode().equals(KeyCode.UP)  ||  
+				key.getCode().equals(KeyCode.UP)  ||  
+				key.getCode().equals(KeyCode.UP))
+			  return;
+			
+			markCodeChange(true);
+		});
 		
-		editor.setStyle("-fx-font: 24 arial;");
+		editor.setStyle("-fx-font: " + codeFontSize + " arial;");
 		
 		// Following part of code was taken from https://github.com/FXMisc/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywordsAsyncDemo.java
 		executor = Executors.newSingleThreadExecutor();	
@@ -282,10 +359,7 @@ public class MainWindowController implements Initializable {
                 .filterMap(t -> {
                     if(t.isSuccess()) {
                         return Optional.of(t.get());
-                    } else {
-                        t.getFailure().printStackTrace();
-                        return Optional.empty();
-                    }
+                    } else { return Optional.empty(); }
                 })
                 .subscribe(this::applyHighlighting);
 		
@@ -298,20 +372,25 @@ public class MainWindowController implements Initializable {
 	 * useful features.
 	 */
 	private void configureStage() {
-		stage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			final KeyCombination save = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
-			final KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PLUS, KeyCombination.CONTROL_ANY);
-			final KeyCombination zoomOut = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
-			final KeyCombination assemble = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_ANY);
-			
-			public void handle(KeyEvent kevent){
-				
+		stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent kevent) -> {
+			if(zoomInKC.match(kevent)){
+				zoomIn();
 			}
 			
-			/*codeTabAnchor.setScaleX(codeEditorScaleProperty);
-			codeTabAnchor.setScaleY(codeEditorScaleProperty);
-			codeTabAnchor.setScaleZ(codeEditorScaleProperty);*/
+			if(zoomOutKC.match(kevent)){
+				zoomOut();
+			}
+			
+			if(saveKC.match(kevent)){
+				saveFile();
+			}
+			
+			if(assembleKC.match(kevent)){
+				assembleCode();
+			}
 		});
+		
+		// TODO - dragable datapath
 		
 		stage.addEventHandler(ZoomEvent.ANY, (ZoomEvent event) -> {
 			System.out.println("ZoomEvent: " + event.toString());
@@ -322,12 +401,10 @@ public class MainWindowController implements Initializable {
 		// stays above content on users screen (noover other applications), so rather
 		// than letting the user manually close every popover, every popover is hidden
 		stage.setOnHiding((t) -> {
-			System.out.println("hiding, lol (you think)");
 			clearAllPopovers();
 		});
 		
 		stage.setOnHidden((t) -> {
-			System.out.println("hidden gai, lol (you think)");
 			clearAllPopovers();
 		});
 		
@@ -345,9 +422,11 @@ public class MainWindowController implements Initializable {
 			
 			cleanupWhenDone.unsubscribe();
 			
-			System.out.println("Running threads...");
-			for (Thread t : Thread.getAllStackTraces().keySet()) {
-				System.out.println(String.format("\t%15s { class %15s | state %10s }\n ", t.getName(), t.getClass(), t.getState()));
+			// try to kill all threads, app was not closing all threads before
+			for(Thread thrd : Thread.getAllStackTraces().keySet()){
+				try {
+					thrd.interrupt();
+				} catch(Exception e) {}
 			}
 			
 			System.out.println("\nGOODBYE !");
@@ -379,7 +458,8 @@ public class MainWindowController implements Initializable {
 	// TODO set the filename
 	public void saveFile(){
 		try {
-			fileOperator.saveFile(stage, "", codeEditor.getText());
+			fileOperator.saveFile(stage, codeEditor.getText());
+			markCodeChange(false);									// unmark code changes
 		} catch(Exception e) { System.out.println(e.getMessage()); return; }
 		
 		markCodeChange(false);
@@ -388,7 +468,7 @@ public class MainWindowController implements Initializable {
 	// TODO set the filename
 	public void saveFileAs(){
 		try {
-			fileOperator.saveFileAs(stage, "", codeEditor.getText());
+			fileOperator.saveFileAs(stage, codeEditor.getText());
 		} catch(Exception e) { System.out.println(e.getMessage()); return; }
 		
 		markCodeChange(false);
@@ -404,7 +484,7 @@ public class MainWindowController implements Initializable {
 		instructionVbox.setVisible(true);
 	}
 	
-	public void changeTabToCPU(){
+	public void changeTabToDatapath(){
 		instructionVbox.setVisible(false);
 		registersTable.setVisible(true);
 	}
@@ -464,13 +544,12 @@ public class MainWindowController implements Initializable {
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while(matcher.find()) {
             String styleClass =
                     matcher.group("KEYWORD") != null ? "keyword" :
                     matcher.group("NUMMERO") != null ? "nummero" :
-					matcher.group("LABEL")   != null ? "label" :
+					matcher.group("LABEL")   != null ? "code_label" :
                     matcher.group("COMMENT") != null ? "comment" :
                     null; /* never happens */ assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
@@ -537,8 +616,9 @@ public class MainWindowController implements Initializable {
 		if( currentSimulation != null  &&  ! currentSimulation.isDone())
 			return;
 		
-		tabPane.getSelectionModel().select(cpuPane);	// display the cpu datapath (QoL feature)
-			
+		tabPane.getSelectionModel().select(datapathTab);	// display the cpu datapath (QoL feature)
+		changeTabToDatapath();
+		
 		// start the simulation
 		currentSimulation = simulationThread.scheduleAtFixedRate(
 				() -> { executeStep(); },
@@ -551,7 +631,7 @@ public class MainWindowController implements Initializable {
 		playSimulationButton.setDisable(true);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(false);
-		stopSimulationButton.setDisable(false);
+		resetSimulationButton.setDisable(false);
 		stepSimulationButton.setDisable(true);
 	}
 	
@@ -560,7 +640,8 @@ public class MainWindowController implements Initializable {
 		if(stopCurrentSimulationThread() == false)
 			return;
 			
-		tabPane.getSelectionModel().select(cpuPane);
+		tabPane.getSelectionModel().select(datapathTab);
+		changeTabToDatapath();
 		
 		currentSimulation = simulationThread.scheduleAtFixedRate(
 				() -> { executeStep(); },
@@ -573,7 +654,7 @@ public class MainWindowController implements Initializable {
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(true);
 		pauseSimulationButton.setDisable(false);
-		stopSimulationButton.setDisable(false);
+		resetSimulationButton.setDisable(false);
 		stepSimulationButton.setDisable(true);
 	}
 	
@@ -590,7 +671,8 @@ public class MainWindowController implements Initializable {
 			return;
 		}
 		
-		tabPane.getSelectionModel().select(cpuPane);
+		tabPane.getSelectionModel().select(datapathTab);
+		changeTabToDatapath();
 	
 		System.out.println("one step simulation");
 		executeStep();
@@ -599,7 +681,7 @@ public class MainWindowController implements Initializable {
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
-		stopSimulationButton.setDisable(false);
+		resetSimulationButton.setDisable(false);
 		stepSimulationButton.setDisable(false);
 	}
 	
@@ -614,7 +696,7 @@ public class MainWindowController implements Initializable {
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
-		stopSimulationButton.setDisable(false);		// we can reset whole datapath even when paused
+		resetSimulationButton.setDisable(false);		// we can reset whole datapath even when paused
 		stepSimulationButton.setDisable(false);
 	}
 	
@@ -643,7 +725,7 @@ public class MainWindowController implements Initializable {
 		playSimulationButton.setDisable(false);
 		playFastSimulationButton.setDisable(false);
 		pauseSimulationButton.setDisable(true);
-		stopSimulationButton.setDisable(true);
+		resetSimulationButton.setDisable(true);
 		stepSimulationButton.setDisable(false);		
 	}
 	
@@ -720,12 +802,11 @@ public class MainWindowController implements Initializable {
 		}
 		
 		// finaly adjust datapath
-		datapathControl.setTranslateX(-20);
-		datapathControl.setTranslateX(-10);
-		
-		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
-		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
-		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
+		//datapathControl.setTranslateX(-30);
+		//datapathControl.setTranslateY(-10);
+		datapathPane.setTranslateX(-50);
+		datapathPane.setTranslateY(-50);
+		adjustScaling();
 	}
 	
 	/**
@@ -793,6 +874,18 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
+	 * Creates button tooltip. Ideal to set up global settings for tooltips.
+	 * @param message Message to display on hover.
+	 * @return Tooltip itself.
+	 */
+	private Tooltip createTooltip(String message){
+		Tooltip ttip = new Tooltip(message);
+		ttip.setShowDuration(Duration.seconds(1));
+		ttip.setHideDelay(Duration.millis(200));
+		return ttip;
+	}
+	
+	/**
 	 * Generates colors for simulation highlights.
 	 * @return List of colors.
 	 */
@@ -818,4 +911,57 @@ public class MainWindowController implements Initializable {
 		
 		return colorsQ;
 	}
+	
+	/**
+	 * Displays help window with basic app information.
+	 * @throws IOException 
+	 */
+	public void displayHelp() throws IOException {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/Help.fxml"));
+		Parent root = (Parent) loader.load();
+		
+		Scene scene = new Scene(root);
+		Stage hstage = new Stage();
+		hstage.setScene(scene);
+		hstage.show();
+	}
+	
+	/**
+	 * According to pane user is on, zooms in the whole view (either code or datapath).
+	 */
+	public void zoomIn(){
+		System.out.println("zoom in");
+		if(tabPane.getSelectionModel().getSelectedItem().equals(codeTab))
+			codeFontSize++;
+		else if(tabPane.getSelectionModel().getSelectedItem().equals(datapathTab))
+			datapathScaleProperty += datapathScaleAmount;
+
+		adjustScaling();
+	}
+
+	/**
+	 * According to pane user is on, zooms out the whole view (either code or datapath).
+	 */
+	public void zoomOut(){
+		System.out.println("zoom out");
+		if(tabPane.getSelectionModel().getSelectedItem().equals(codeTab))
+			codeFontSize--;
+		else if(tabPane.getSelectionModel().getSelectedItem().equals(datapathTab))
+			datapathScaleProperty -= datapathScaleAmount;
+
+		if(datapathScaleProperty < 0) datapathScaleProperty = 0;
+		if(codeFontSize <= 0) codeFontSize = 1;
+
+		adjustScaling();
+	}
+	
+	private void adjustScaling(){
+		datapathPane.setScaleX(datapathScaleProperty);	// dont scale on X
+		datapathPane.setScaleY(datapathScaleProperty);	// and scle down Y
+		datapathPane.setScaleZ(datapathScaleProperty);	// and Z by a thin
+
+		codeEditor.setStyle("-fx-font: " + codeFontSize + " Arial");
+	}
+	
+	
 }

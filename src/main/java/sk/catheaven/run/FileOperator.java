@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,9 @@ import sk.catheaven.run.Loader;
  * @author catlord
  */
 public class FileOperator {
-	FileChooser chooser;
+	private FileChooser chooser;
+	private String previousPath = "";
+	private String filename = "";
 	
 	public FileOperator(){
 		chooser = new FileChooser();
@@ -52,12 +55,25 @@ public class FileOperator {
 		return out;
 	}
 	
-	public void saveFile(Stage stage, String filename, String out) throws Exception, FileNotFoundException, IOException {
-		File selectedFile = new File(filename);
+	/**
+	 * Tries to save file with a remembered filename. If there is no remembered filename,
+	 * or we fail to locate a file with a given filename, saveFileAs is called to allow 
+	 * the user to specify the location and name of the file.
+	 * @param stage Stage to display possible saveFileAs interface to.
+	 * @param out Data (text) to save.
+	 * @throws Exception
+	 * @throws FileNotFoundException
+	 * @throws IOException 
+	 */
+	public void saveFile(Stage stage, String out) throws Exception, FileNotFoundException, IOException {
+		if(previousPath.isEmpty())
+			saveFileAs(stage, out);
+		
+		File selectedFile = new File(previousPath);
 		
 		// if the file doesn't exist, ask user to name it and save it
 		if( ! selectedFile.exists()){
-			saveFileAs(stage, filename, out);
+			saveFileAs(stage, out);
 			return;
 		}
 		
@@ -67,10 +83,16 @@ public class FileOperator {
 		fos.close();
 	}
 	
-	public void saveFileAs(Stage stage, String filename, String out) throws Exception {
+	public void saveFileAs(Stage stage, String out) throws Exception {
+		if( ! previousPath.isEmpty())
+			chooser.setInitialDirectory(new File(previousPath));
+		
 		File selectedFile = chooser.showSaveDialog(stage);
 		if(selectedFile == null)
 			throw new Exception("File not found !");
+		
+		filename = selectedFile.getName();
+		previousPath = selectedFile.getPath();
 		
 		// if it exists, open it and write into it
 		FileWriter fos = new FileWriter(selectedFile);

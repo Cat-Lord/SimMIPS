@@ -24,6 +24,11 @@
     -fx-fill: #0fa810;
 }
 
+.nummero {
+    -fx-fill: #12b33d;
+    -fx-font-weight: lighter;
+}
+
 .keyword {
     -fx-fill: purple;
     -fx-font-weight: bolder;
