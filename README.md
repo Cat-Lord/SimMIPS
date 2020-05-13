@@ -1,4 +1,4 @@
 # SimMIPS
 MIPS architecture simulator (bachelor's project)
 
-Program icon was made by 
+Program icon downloaded from https://icon-icons.com/
