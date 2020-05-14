@@ -12,10 +12,10 @@ import java.util.Map;
 
 /**
  * To make the code more clear, this class represents relationship 
- * one -> one -> many. It describes target component and list of 
+ * one {@literal ->} one {@literal ->} many. It describes target component and list of 
  * selectors, that have to be set for that component.
- * Thus the relationship one->one (component -> targetComponent) and 
- * finally one->many (targetComponent -> list of inputs)
+ * Thus the relationship one{@literal ->}one (component {@literal ->} targetComponent) and 
+ * finally one{@literal ->}many (targetComponent {@literal ->} list of inputs)
  * @author catlord
  */
 public class Tie {

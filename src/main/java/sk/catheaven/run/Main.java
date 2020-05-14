@@ -11,10 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
- *
+ * Main application window. Application entry.
  * @author catlord
  */
 public class Main extends Application {
@@ -30,6 +29,7 @@ public class Main extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/Primer.fxml"));
 		MainWindowController mwc = new MainWindowController();
 		mwc.setStage(stage);
+		mwc.setHostServices(this.getHostServices());
 		loader.setController(mwc);
 
 		Parent mainPane = loader.load();

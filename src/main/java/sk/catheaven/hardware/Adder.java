@@ -8,7 +8,7 @@ package sk.catheaven.hardware;
 import org.json.JSONObject;
 
 /**
- *
+ * Basic mathematical adder. Used mostly for offset (branch) calculations.
  * @author catlord
  */
 public class Adder extends BinaryComponent {

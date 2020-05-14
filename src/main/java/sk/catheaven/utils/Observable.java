@@ -6,7 +6,8 @@
 package sk.catheaven.utils;
 
 /**
- *
+ * Every class that implements this interface allows subscribers to be notified 
+ * when it desires. Subscribers can then decide on what action they will take.
  * @author catlord
  */
 public interface Observable {

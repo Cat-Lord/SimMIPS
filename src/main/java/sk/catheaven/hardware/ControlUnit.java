@@ -17,13 +17,17 @@ import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Cutter;
 
 /**
- *
+ * Control unit which generates control signals. Maps instruction operation
+ * code to output control signals. Has only one input, which is instruction 
+ * in numeric representation and outputs one number which are simply 
+ * signals concatenated into single output. These outputs are later forked
+ * to get separate signals.
  * @author catlord
  */
 public class ControlUnit extends Component {
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
-	private String[] signalLabels;		// labels of signals
+	private String[] signalLabels;							// labels of signals
 	private Map<String, Data> signals;
 	private Map<Integer, Integer[]> opcodeToSignals;
 	private final Map<Integer, Integer> funcToOp;			// mapping of "func" field to alu operations
@@ -37,8 +41,8 @@ public class ControlUnit extends Component {
 	 * From a given json file gets all signals with their respective labels.Each signal
 	 * is defined by a label and bit size.This allows easy creation of signals as labeled
 	 * data (thus the DataContainer class).
-	 * @param label
-	 * @param json
+	 * @param label Unique label of this component.
+	 * @param json 
 	 */
 	public ControlUnit(String label, JSONObject json) throws Exception, JSONException {
 		super(label, json);
@@ -155,13 +159,13 @@ public class ControlUnit extends Component {
 	 * @param opcode Opcode of instruction.
 	 */
 	private void setOutput(int opcode, int funcField){
-		logger.log(Level.INFO, "Setting output by opcode of " + opcode);
+		logger.log(Level.INFO, "Setting output by opcode of {0}", opcode);
 		
 		Integer[] signalValues = opcodeToSignals.get(opcode);
 		
 		// check existence
 		if(signalValues == null){
-			logger.log(Level.WARNING,  "There is no output signal for opcode " + opcode);
+			logger.log(Level.WARNING, "There is no output signal for opcode {0}", opcode);
 			return;
 		}
 		
@@ -210,7 +214,10 @@ public class ControlUnit extends Component {
 	public String getStatus(){
 		String s = "";
 		s = s.concat(String.format(statusFormat, new Object[]{"Input", input.getHex()}));
-		s = s.concat(String.format(statusFormat, new Object[]{"Output (binary)", output.getBinary()}));
+		s = s.concat("Output Signals:\n");
+		for(String signal : signals.keySet()){
+			s = s.concat(String.format(statusFormat, new Object[]{signal, signals.get(signal).getBitSize() + "b"}));
+		}
 		return s;
 	}
 

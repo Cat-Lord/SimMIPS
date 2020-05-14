@@ -15,7 +15,8 @@ import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
 
 /**
- *
+ * Binary component extends component class by defining two inputs and one output. Can be used
+ * to refactor code for simple components easier.
  * @author catlord
  */
 public abstract class BinaryComponent extends Component implements Datapathable, Observable {

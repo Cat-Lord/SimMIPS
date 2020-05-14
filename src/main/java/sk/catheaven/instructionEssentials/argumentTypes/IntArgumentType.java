@@ -9,7 +9,7 @@ import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.instructionEssentials.Data;
 
 /**
- *
+ * Represent a number as argument type. Number is an integer.
  * @author catlord
  */
 public class IntArgumentType extends ArgumentType {

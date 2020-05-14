@@ -27,7 +27,7 @@ public class MUX extends BinaryComponent {
 		JSONObject selectorJson = json.getJSONObject("selector");
 		selector = new Tuple<>(selectorJson.getString("label"), new Data(selectorJson.getInt("bitSize")));
 		
-		logger.log(Level.INFO, label + " --> Selector: " + selector.getLeft() + ": " + selector.getRight().getHex() + "b");
+		logger.log(Level.INFO, "{0} --> Selector: {1}: {2}b", new Object[]{label, selector.getLeft(), selector.getRight().getHex()});
 	}
 
 	@Override
@@ -39,6 +39,7 @@ public class MUX extends BinaryComponent {
 		notifySubs();
 	}
 	
+	@Override
 	public Data getInput(String selector){
 		Data d = super.getInput(selector);
 		if(d != null) return d;
@@ -56,7 +57,7 @@ public class MUX extends BinaryComponent {
 		}
 		
 		if( ! set){
-			logger.log(Level.WARNING, label + " --> Unknown request to set data for `" + selector + "`"); 
+			logger.log(Level.WARNING, "{0} --> Unknown request to set data for `{1}`", new Object[]{label, selector}); 
 			return false;
 		}
 		return true;

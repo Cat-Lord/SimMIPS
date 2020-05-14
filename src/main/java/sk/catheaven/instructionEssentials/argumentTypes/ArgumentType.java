@@ -8,7 +8,6 @@ package sk.catheaven.instructionEssentials.argumentTypes;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
-import sk.catheaven.instructionEssentials.Data;
 
 /**
  * Defines methods needed to parse user input. All classes
@@ -31,10 +30,7 @@ public abstract class ArgumentType {
 		
 	}
 	
-	public void parse(String arg) throws SyntaxException {
-		// parse given argument
-		throw new SyntaxException("Trying to parse within abstract ArgumentType class !");
-	}
+	public abstract void parse(String arg) throws SyntaxException;
 	
 	public int getData(String argument){
 		return 0;

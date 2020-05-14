@@ -12,7 +12,10 @@ import sk.catheaven.instructionEssentials.Data;
 import static sk.catheaven.instructionEssentials.argumentTypes.ArgumentType.pattern;
 
 /**
- *
+ * Represents register argument type. A register begins with letter R (lower or upper case)
+ * and an index number. Example: r4, R124, r14, etc.
+ * Index limitation depends on the size of register bank of CPU, but allows index overflows
+ * (Indexes are stored in Data objects and are properly cut if needed).
  * @author catlord
  */
 public class RegArgumentType extends ArgumentType {

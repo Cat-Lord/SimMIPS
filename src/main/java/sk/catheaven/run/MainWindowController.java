@@ -29,6 +29,7 @@ import java.util.logging.LogManager;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.Event;
@@ -100,10 +101,11 @@ import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
 
 /**
- *
+ * Main window controller. Sets up the application and manages actions.
  * @author catlord
  */
 public class MainWindowController implements Initializable {
+	private HostServices hostServices;
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final String modifiedFileSuffix = " *";
 		
@@ -190,9 +192,9 @@ public class MainWindowController implements Initializable {
 	private Timer defaultButtonTimer;				// timer, that sets button background back to default
 
 	private final ScheduledExecutorService simulationThread;
-	ScheduledFuture<?> currentSimulation;
-	private long normalSimulationPeriod = 3000;
-	private long quickSimulationPeriod = 1000;
+	private ScheduledFuture<?> currentSimulation;
+	private long normalSimulationPeriod = 1300;
+	private long quickSimulationPeriod = 150;
 	
 	private RegTable regTable;						// handles register table updates 
 	private DataTable dataTable;					// displays memory to user on request
@@ -296,6 +298,10 @@ public class MainWindowController implements Initializable {
 	public void setStage(Stage stage){
 		this.stage = stage;
 		configureStage();
+	}
+	
+	public void setHostServices(HostServices hss){
+		this.hostServices = hss;
 	}
 	
 	/**
@@ -666,7 +672,7 @@ public class MainWindowController implements Initializable {
 	public void stepSimulation(){
 		// This results in a 'pause' behaviour, rather then 'pause & step', because
 		// that may be too quick for the user to notice
-		if( ! currentSimulation.isDone()) {
+		if( currentSimulation != null  &&  ! currentSimulation.isDone()) {
 			stopCurrentSimulationThread();
 			return;
 		}
@@ -760,6 +766,10 @@ public class MainWindowController implements Initializable {
 				cs.prepareSub();		// creates a popover
 			
 			datapathPane.getChildren().add(shape);
+			// add the label of that component also to the datapath (if it exists)
+			if( ! c.getSymbol().isEmpty())
+				datapathPane.getChildren().add(cs.createLabel());
+			
 			datapathNodes.add(cs);
 			
 			if(c instanceof AND){
@@ -786,7 +796,6 @@ public class MainWindowController implements Initializable {
 						//loader.<DataTable>getController().setData((DataMemory) c);
 						root = loader.load();
 					} catch(IOException e) { 
-						e.printStackTrace();
 						System.out.println(e.getMessage());
 						logger.log(Level.SEVERE, "Failed to create Data Memory Window !\n{0}", e.getMessage()); 
 						return; 
@@ -852,7 +861,8 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Attemps to stop current simulation running, if there is any.
+	 * Attempts to stop current simulation running, if there is any. Stopping simulation 
+	 * means also to reset all registers and memory.
 	 * @return If any error occurred, returns false
 	 */
 	private boolean stopCurrentSimulationThread(){
@@ -891,23 +901,13 @@ public class MainWindowController implements Initializable {
 	 */
 	private ArrayList<String> initColors(){
 		ArrayList<String> colorsQ = new ArrayList();
-		/*colorsQ.add("#eb4034");
-		colorsQ.add("#eb34b1");
-		colorsQ.add("#217eff");
-		colorsQ.add("#21ffec");
-		colorsQ.add("#21ff30");
-		colorsQ.add("#d6ff21");
-		colorsQ.add("#5a9e80");
-		colorsQ.add("#6a00a3");
-		colorsQ.add("#ba667d");
-		colorsQ.add("#edb200");*/
-		
-		colorsQ.add("red");
-		colorsQ.add("green");
-		colorsQ.add("black");
-		colorsQ.add("blue");
-		colorsQ.add("grey");
-		colorsQ.add("brown");
+		colorsQ.add("#ff0000");
+		colorsQ.add("#ffbb00");
+		colorsQ.add("#00ff91");
+		colorsQ.add("#0264a1");
+		colorsQ.add("#6908c4");
+		colorsQ.add("#3c8a32");
+		colorsQ.add("#ff00ea");
 		
 		return colorsQ;
 	}
@@ -919,6 +919,7 @@ public class MainWindowController implements Initializable {
 	public void displayHelp() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/sk/catheaven/simmips/Help.fxml"));
 		Parent root = (Parent) loader.load();
+		loader.<HelpWindowController>getController().setHostServices(this.hostServices);
 		
 		Scene scene = new Scene(root);
 		Stage hstage = new Stage();

@@ -53,6 +53,7 @@ public class Connector implements Subscriber {
 		this.selector = selector;
 		this.line = createPolyline(nodes, type);
 		
+		setColor(null);
 		sourceComponent.registerSub(this);
 	}
 	
@@ -123,10 +124,10 @@ public class Connector implements Subscriber {
 		
 		Polyline nline = new Polyline(nodes);
 		switch(type){
-			case "normal": nline.setStrokeWidth(4);	break;
+			case "normal": nline.setStrokeWidth(4.5);	break;
 			case "thin": nline.setStrokeWidth(1);	break;
-			case "thick": nline.setStrokeWidth(8);	break;
-			default: nline.setStrokeWidth(4); break;
+			case "thick": nline.setStrokeWidth(7.5);	break;
+			default: nline.setStrokeWidth(5); break;
 		}
 		
 		this.clickLine = new Polyline(nodes);
@@ -136,6 +137,7 @@ public class Connector implements Subscriber {
 		return nline;
 	}
 	
+	@Override
 	public void prepareSub(){
 		this.popoverContent = new Label("");
 		

@@ -75,7 +75,7 @@ public class RegBank extends Component {
 		if(selector.equals(outputA.getLeft())) return outputA.getRight().duplicate();
 		if(selector.equals(outputB.getLeft())) return outputB.getRight().duplicate();
 		
-		logger.log(Level.WARNING,  "Trying to get unknown output `" + selector + "`, returning 0");
+		logger.log(Level.WARNING, "Trying to get unknown output `{0}`, returning 0", selector);
 		
 		return new Data(inputA.getRight().getBitSize());
 	}

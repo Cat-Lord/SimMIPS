@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import sk.catheaven.run.Loader;
 
 /**
- *
+ * Provides basic file operations (open, save, save as).
  * @author catlord
  */
 public class FileOperator {

@@ -17,15 +17,16 @@ import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Tuple;
 
 /**
- *
+ * Component used for mathematical operations. Operations are defined by the <i>aluOp</i> 
+ * control signal. ALU producer <i>zeroResult</i>, if the result of any operation was zero.
  * @author catlord
  */
 public class ALU extends BinaryComponent {
 	private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
-	private final Map<Integer, String> operations;
-	private final Tuple<String, Data> aluOp;
-	private final Tuple<String, Data> zeroResult;
+	private final Map<Integer, String> operations;		// maps numbers to specidic operations
+	private final Tuple<String, Data> aluOp;			// aluOp control signal
+	private final Tuple<String, Data> zeroResult;		// zeroResult signal informing about result being zero
 	
 	public ALU(String label, JSONObject json) throws JSONException {
 		super(label, json);
@@ -63,6 +64,11 @@ public class ALU extends BinaryComponent {
 		return map;
 	}
 
+	/**
+	 * According to aluOp executes a mathematical operation on input and sets the oupput as well as zeroResult 
+	 * signal. Zero signal is not set only if the ALU operation was 'bneq' - this is a special case where 
+	 * zeroResult signal is active when ouptut is <b>non-zero<b>.
+	 */
 	@Override
 	public void execute() {
 		zeroResult.getRight().setData(0);

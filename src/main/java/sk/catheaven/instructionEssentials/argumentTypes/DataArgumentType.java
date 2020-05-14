@@ -6,7 +6,6 @@
 package sk.catheaven.instructionEssentials.argumentTypes;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sk.catheaven.exceptions.SyntaxException;
@@ -31,6 +30,7 @@ public class DataArgumentType extends ArgumentType {
 		regArg  = new RegArgumentType();
 		offset = new Data(16);
 	}
+	
 	
 	@Override
 	public void parse(String arg) throws SyntaxException {
@@ -65,6 +65,7 @@ public class DataArgumentType extends ArgumentType {
 		return 0;
 	}
 	
+	@Override
 	public String toString(){
 		return "Data";
 	}

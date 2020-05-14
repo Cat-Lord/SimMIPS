@@ -1,6 +1,7 @@
 {
     "components" : [
         { "label": "PC",
+            "symbol": "PC",
             "gui": {
                "x": 95,
                "y": 555,
@@ -27,6 +28,7 @@
             "desc": "Forks address from PC."
         },
         { "label": "CONST_ADDER",
+            "symbol": "+4",
             "gui": {
                "x": 245,
                "y": 360,
@@ -70,6 +72,7 @@
             "desc": "Chooses from next address or calculated address in case of branching."
         },      
         { "label": "I_MEM",
+            "symbol": "Instruction\nMemory",
             "gui": {
                "x": 200,
                "y": 528,
@@ -79,7 +82,8 @@
             },
             "type": "InstructionMemory",
             "input": 32, 
-            "output": 32
+            "output": 32,
+            "desc": "Stores compiled code instructions."
         },
         
        
@@ -111,6 +115,7 @@
             "desc": "Latch register between Fetch and Decode phase" 
         },  
         { "label": "CU",
+            "symbol": "CU",
             "gui": {
                "x": 560,
                "y": 260,
@@ -166,7 +171,8 @@
                 {"func": 2,  "operation": 14},
                 {"func": 34, "operation": 2},
                 {"func": 38, "operation": 6}
-            ]
+            ],
+            "desc": "Control Unit generates control signals to dictate which components can be active."
         },       
         { "label": "CU_MUX", 
             "gui": {
@@ -198,6 +204,7 @@
             "desc": "Forks 'rt' part of instruction code."
         },       
         { "label": "REG_BANK",
+            "symbol": "Registers",
             "gui": {
                "x": 565,
                "y": 445,
@@ -218,6 +225,7 @@
             "desc": "Bank of registers of fixed size. Can be used as temporary storage."
         },      
         { "label": "SIGN_EXT", 
+            "symbol": "SE",
             "gui": {
                "x": 650,
                "y": 745,
@@ -349,6 +357,7 @@
             "desc": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
         },
         { "label": "OFFSET_ADDER",
+            "symbol": "+",
             "gui": {
                "x": 970,
                "y": 355,
@@ -377,7 +386,8 @@
             "selector": { "label": "aluSrcSignal", "bitSize": 1 },
             "desc": "Determins the second input into ALU. It could be either output from registers or immediate value." 
         },          
-        { "label": "ALU", 
+        { "label": "ALU",
+            "symbol": "ALU",
             "gui": {
                "x": 1000,
                "y": 480,
@@ -407,7 +417,8 @@
                 { "code": 13, "operation": "sllv" },
                 { "code": 14, "operation": "srlv" },
                 { "code": 15, "operation":  "lui" }
-            ]
+            ],
+            "desc": "Computational Unit of the CPU. Does most of the mathematical operations."
         },
         { "label": "DEST_REG_MUX", 
             "gui": {
@@ -498,8 +509,9 @@
             ]
         },
         { "label": "BRANCH_AND", 
+            "symbol": "&",
             "gui": {
-               "x": 1250,
+               "x": 1240,
                "y": 330,
                "width": 20,
                "height": 45,
@@ -567,6 +579,7 @@
             "desc": "Forks result from ALU and forwars it to the data memory and next latch register."
         },
         { "label": "DATA_MEM", 
+            "symbol": "Data Memory",
             "gui": {
                "x": 1275,
                "y": 510,
@@ -612,7 +625,7 @@
         
         { "label": "F7",
             "gui": {
-               "x": 1607,
+               "x": 1603,
                "y": 285,
                "width": 5,
                "height": 5
@@ -702,7 +715,7 @@
         
         
         { "from": "EX_MEM", "to": "F4", "selector": "controlSignals", "wireType": "normal", "nodes": [{"x": 1190, "y": 285}, {"x": 1220, "y": 285}] },
-        { "from": "EX_MEM", "to": "BRANCH_AND", "selector": "zeroResultSignal", "wireType": "thin", "nodes": [{"x": 1190, "y": 565}, {"x": 1220, "y": 565}, {"x": 1220, "y": 353}, {"x": 1260, "y": 353} ] }, 
+        { "from": "EX_MEM", "to": "BRANCH_AND", "selector": "zeroResultSignal", "wireType": "thin", "nodes": [{"x": 1190, "y": 565}, {"x": 1220, "y": 565}, {"x": 1220, "y": 363}, {"x": 1245, "y": 363} ] }, 
         { "from": "EX_MEM", "to": "BRANCH_MUX", "selector": "branchAddress", "wireType": "normal", "nodes": [{"x": 1190, "y": 400}, {"x": 1333, "y": 400}, {"x": 1333, "y": 130}, {"x": 1385, "y": 130}  ] },
         { "from": "EX_MEM", "to": "ARF", "selector": "aluResult", "wireType": "normal", "nodes": [{"x": 1190, "y": 600}, {"x": 1217, "y": 600} ] },
 
@@ -711,13 +724,13 @@
         
                                                                                           
         { "from": "F4", "to": "F5", "selector": "controlSignals", "wireType": "normal", "nodes": [{"x": 1225, "y": 285}, {"x": 1365, "y": 285}] },
-        { "from": "F4", "to": "BRANCH_AND", "selector": "branchSignal", "wireType": "thin", "nodes": [{"x": 1220, "y": 285}, {"x": 1220, "y": 340}, {"x": 1260, "y": 340}] },
+        { "from": "F4", "to": "BRANCH_AND", "selector": "branchSignal", "wireType": "thin", "nodes": [{"x": 1220, "y": 285}, {"x": 1220, "y": 340}, {"x": 1245, "y": 340}] },
         { "from": "F5", "to": "F6", "selector": "controlSignals", "wireType": "normal", "nodes": [{"x": 1365, "y": 285}, {"x": 1485, "y": 285}] },
         { "from": "F5", "to": "DATA_MEM", "selector": "memReadSignal", "wireType": "thin", "nodes": [{"x": 1365, "y": 285}, {"x": 1365, "y": 520}] },
         { "from": "F6", "to": "MEM_WB", "selector": "controlSignals", "wireType": "normal", "nodes": [{"x": 1485, "y": 285}, {"x": 1520, "y": 285}] },
         { "from": "F6", "to": "DATA_MEM", "selector": "memWriteSignal", "wireType": "thin", "nodes": [{"x": 1485, "y": 285}, {"x": 1485, "y": 710}, {"x": 1365, "y": 710}, {"x": 1365, "y": 690}] },
         
-        { "from": "BRANCH_AND", "to": "BF", "selector": "branchSignal", "wireType": "thin", "nodes": [{"x": 1268, "y": 346}, {"x": 1275, "y": 346}, {"x": 1275, "y": 150} ] },
+        { "from": "BRANCH_AND", "to": "BF", "selector": "branchSignal", "wireType": "thin", "nodes": [{"x": 1250, "y": 353}, {"x": 1275, "y": 353}, {"x": 1275, "y": 150} ] },
         { "from": "BF", "to": "BRANCH_MUX", "selector": "branchSignal", "wireType": "thin", "nodes": [{"x": 1275, "y": 150}, {"x": 1275, "y": 63}, {"x": 1390, "y": 63}, {"x": 1390, "y": 85}]  },
         { "from": "BF", "to": "BF1", "selector": "bubble", "wireType": "thin", "nodes": [ {"x": 1275, "y": 150}, {"x": 1112, "y": 150}] },
         { "from": "BF1", "to": "BF2", "selector": "bubble", "wireType": "thin", "nodes": [{"x": 1112, "y": 150}, {"x": 700, "y": 150}] },

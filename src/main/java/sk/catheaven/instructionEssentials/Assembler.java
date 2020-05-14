@@ -17,7 +17,11 @@ import sk.catheaven.instructionEssentials.argumentTypes.DataArgumentType;
 import sk.catheaven.instructionEssentials.argumentTypes.LabelArgumentType;
 
 /**
- *
+ * Assembles user code, which is not formatted. Removes comments and trims arguments as well as 
+ * instruction mnemos. Assembler needs to know the instruction set to be able to correctly
+ * parse instructions provided in user code.
+ * Also knows how to calculate address from index in array, list or any other similar collection
+ * or an index from a given address.
  * @author catlord
  */
 public class Assembler {
@@ -56,7 +60,6 @@ public class Assembler {
 			debugString += "Label `" + key + "` | Address: " + labels.get(key).getHex() + "\n";
 		
 		logger.log(Level.INFO, debugString);
-		System.out.println(debugString);
 		
 		this.labelsToRemove = labels;		// TODO: remove
 		
@@ -145,7 +148,7 @@ public class Assembler {
 		String safeInstruction = instruction.trim();			// leading and trailing tabs, spaces, etc.
 		if(commentIndex >= 0)
 			safeInstruction = instruction.substring(0, commentIndex).trim();
-		logger.log(Level.INFO, "Instruction seems valid: " + instruction);
+		logger.log(Level.INFO, "Instruction seems valid: {0}", instruction);
 		return safeInstruction;
 	}
 
@@ -300,17 +303,13 @@ public class Assembler {
 		// need to manually add newline character, otherwise following replacement wouldn't work (commentary)
 		code = code + "\n";
 		
-		System.out.println("code before:\n"+ code);
-		
 		code = code.replaceAll(COMMENT_CHAR + ".*\n", "");			// erase comments
-		//code = code.replaceAll("\n+", "\n");						// merge multiple empty lines
 		code = code.replaceAll("[ \t]+", " ");						// and merge multiple tabs and spaces
 		code = code.replaceAll("\n +", "\n");						// remove emty characters at the begining of each line
 		code = code.replaceAll("[ \t]*:\\s*", ":");					// connect label with instruction closest to it (\s  is whitespace character)
 		code = code.trim();											// and finally trim any leading/traling newlines/spaces in code
 
 		logger.log(Level.INFO, "CODE after adjusment:\n{0}\n", code);
-		System.out.println("code after:\n"+ code);
 		return code.split("\n");
 	}
 	

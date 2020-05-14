@@ -6,7 +6,8 @@
 package sk.catheaven.instructionEssentials;
 
 /**
- *
+ * Stores original line of code along with its instruction code, instruction format, line code and address. 
+ * Used to represent assembled program instruction. Can be stored in instruction memory component.
  * @author catlord
  */
 public class AssembledInstruction {

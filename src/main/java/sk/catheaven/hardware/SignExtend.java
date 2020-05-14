@@ -9,7 +9,9 @@ import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
 
 /**
- * From the input sign-extends the output.
+ * From the input sign-extends the output. If the input begins with a hexadecimal
+ * value of F, output is extended with hexadecimal value F. Otherwise output is 
+ * extended with 0's.
  * @author catlord
  */
 public class SignExtend extends Component {

@@ -26,7 +26,7 @@ import sk.catheaven.instructionEssentials.Field;
 import sk.catheaven.instructionEssentials.argumentTypes.ArgumentType;
 
 /**
- *
+ * Loads required json files and creates json objects from their contents.
  * @author catlord
  */
 public class Loader {
@@ -41,13 +41,10 @@ public class Loader {
 	}
 	
 	public Loader(String layoutPath, String cpuPath) throws IOException, URISyntaxException {
-		
-		
 		try {
 			Map<String, Instruction> instructionsSet = parseLayout(new JSONObject(readFile(layoutPath)));
 			this.cpu = new CPU(new JSONObject(readFile(cpuPath)), instructionsSet);
 		} catch(Exception e) {
-			e.printStackTrace(); 
 			System.out.println(e.getLocalizedMessage());
 			System.out.println(e.getClass().getCanonicalName());
 			System.err.println("Failed to create CPU -- " + e.getMessage()); 
@@ -132,7 +129,7 @@ public class Loader {
 					debugString = debugString.concat(f.getLabel() + ": " + i.getFieldValue(f.getLabel()) + "\n");
 			}
 			logger.log(Level.INFO, debugString);
-			logger.log(Level.INFO, "Description: " + i.getDescription());
+			logger.log(Level.INFO, "Description: {0}", i.getDescription());
 		}
 		
 		return instructions;

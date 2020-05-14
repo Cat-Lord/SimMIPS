@@ -10,8 +10,9 @@ import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.utils.Tuple;
 
 /**
- * MUX with one input and the second one is fixed constant. This constant set from input json
- * from the constructor.
+ * MUX with one input.The second input is fixed constant. This constant set from input json
+ * from the constructor. <i>selector</i> defines, which output will be selected on action.
+ * On default, the first input (<i>input</i> in this case) will be selected.
  * @author catlord
  */
 public class ConstMUX extends Component {

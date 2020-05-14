@@ -6,7 +6,8 @@
 package sk.catheaven.utils;
 
 /**
- *
+ * Simple storage unit that stores two entities as <i>left</i> and <i>right</i>.
+ * Effective for coupling string and data objects as a single unit (labeled data).
  * @author catlord
  * @param <A>
  * @param <B>
@@ -33,6 +34,4 @@ public class Tuple<A,B> {
 	public B getRight() {
 		return right;
 	}
-
-
 }

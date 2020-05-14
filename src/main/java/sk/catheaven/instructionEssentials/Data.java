@@ -6,7 +6,10 @@
 package sk.catheaven.instructionEssentials;
 
 /**
- *
+ * Basic numbering object in the application. Has a mask, which prohibits overflows. Provides 
+ * handy methods to format output into nice hex, octal or binary format. Input data can be 
+ * any number, output data is always cut by logical AND operation with the mask. 
+ * Mask is created on data initialization.
  * @author catlord
  */
 public class Data {

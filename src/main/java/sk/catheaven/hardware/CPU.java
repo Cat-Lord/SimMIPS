@@ -27,6 +27,13 @@ import sk.catheaven.utils.Tie;
 
 /**
  * Represents the CPU itself, main working unit of the simulation.
+ * Has all components and interconnections and is able to execute program by
+ * calling <code>executeCycle</code>. Defines <code>PHASE_COUNT</code> number
+ * of pipeline stages, by which it divides components into separate groups.
+ * CPU has inner class of assembler, which is able to compile (assemble) code.
+ * Other than that, CPU has instruction memory reference to easily set a new
+ * program for the CPU.
+ * Required in constructor, CPU gets and maintains reference to instruction set.
  * @author catlord
  */
 public final class CPU {
@@ -58,10 +65,8 @@ public final class CPU {
 		
 		// log every component
 		String debugString = "CPU Components:\n";
-		for(Component c : getComponents()){
-			
+		for(Component c : getComponents())
 			debugString = debugString.concat("\t`" + c.getLabel() + "`\n");
-		}
 		logger.log(Level.INFO, debugString);
 		
 		// log components of every phase
@@ -78,6 +83,13 @@ public final class CPU {
 		connections = parseConnections(cpuJson.getJSONArray("connections"));
 	}
 	
+	/**
+	 * Reads all components and their configurations and creates the list of
+	 * components.
+	 * @param cpuJson Json file containing list of all components.
+	 * @return Map of unique component labels to a component object.
+	 * @throws Exception In case there was a missing or corrupted information in component definition.
+	 */
 	private Map<String, Component> parseComponents(JSONArray cpuJson) throws Exception {
 		Map<String, Component> componentsMap = new LinkedHashMap<>();
 		Iterator<Object> componentIter = cpuJson.iterator();
@@ -149,23 +161,16 @@ public final class CPU {
 	 * Executing cycle means first passing output values of components to inputs of 
 	 * target components. After this step the components are ready to handle input
 	 * values and construct output values themselves, hence calling <code>execute</code>.
-	 * 
-	 * TODO: remove throwing an exception
 	 */
-	public void executeCycle() throws Exception {
-		String message = "%15s ==> %15s | Set %16s  || Before and after || %s --> %s";
+	public void executeCycle() {
 		
 		for(int phase_index = PHASE_COUNT - 1; phase_index >= 0; phase_index--){
-			
 			// set up inputs for every component in a phase
 			for(Component c : phases[phase_index]){
 				String from = c.getLabel();
 				
 				Component sourceComponent = components.get(from); // execute first, to handle the input values and AFTER pass the output to other components
 
-				if(sourceComponent == null)
-					throw new Exception("UNDEFINED ??!! " + from);
-				
 				sourceComponent.execute();
 				
 				Map<String, List<String>> ties = connections.get(from).getTies();
@@ -186,8 +191,9 @@ public final class CPU {
 	 * a map of component names to a Tie (ties to other components). Also creates List 
 	 * of Connectors, which represents separate wiring mechanism in CPU to interconnect
 	 * devices.
-	 * @param jsonArray
-	 * @return Map of component names and ties to other components	
+	 * @param jsonArray Array of connectors specifying connection between components and 
+	 * respective outputs to inputs.
+	 * @return Map of component names and ties to other components.
 	 */
 	private Map<String, Tie> parseConnections(JSONArray jsonArray) throws Exception {
 		Map<String, Tie> ties = new HashMap<>();
@@ -225,10 +231,19 @@ public final class CPU {
 		return ties;
 	}
 	
+	/**
+	 * Returns registers from register bank.
+	 * @return Array of register data.
+	 */
 	public Data[] getRegisters(){
 		return regBank.getRegisters();
 	}
 	
+	/**
+	 * Tries to assemble code.
+	 * @param code Unformatted code as written by user.
+	 * @throws SyntaxException In case of syntax error in code.
+	 */
 	public void assembleCode(String code) throws SyntaxException {
 		List<AssembledInstruction> program = assembler.assembleCode(code);
 		instructionMemory.setProgram(program);		
@@ -257,7 +272,7 @@ public final class CPU {
 	 * 1: Instruction Decode (ID)
 	 * 2: Execute (EX)
 	 * 3: Memory (MEM)
-	 * 4: Writeback (WB)
+	 * 4: WriteBack (WB)
 	 * @return List of components of each phase
 	 */
 	public List<Component> getComponentsOfPhase(int index){

@@ -9,7 +9,7 @@
 <!--<?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import org.fxmisc.richtext.CodeArea?>-->
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="350.0" spacing="30.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.run.ErrorWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="661.0" spacing="30.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.run.ErrorWindowController">
    <children>
       <Label text="List of errors:">
          <font>
@@ -21,7 +21,7 @@
       </Label>
       <ScrollPane prefHeight="446.0" prefWidth="350.0">
          <content>
-            <VBox fx:id="errorsBox" prefHeight="442.0" prefWidth="332.0" spacing="15.0">
+            <VBox fx:id="errorsBox" prefHeight="442.0" prefWidth="652.0" spacing="15.0">
                <padding>
                   <Insets left="25.0" />
                </padding>

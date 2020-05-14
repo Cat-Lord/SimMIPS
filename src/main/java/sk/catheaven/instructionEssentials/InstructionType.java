@@ -11,7 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- *
+ * Represents instruction type and stores all required instruction fields for that type 
+ * along with its bit size. Server the purpose to know, which fields to require from
+ * which instruction type and what sizes are the fields of.
  * @author catlord
  */
 public class InstructionType {

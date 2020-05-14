@@ -22,7 +22,7 @@ import sk.catheaven.instructionEssentials.argumentTypes.LabelArgumentType;
 import sk.catheaven.instructionEssentials.argumentTypes.RegArgumentType;
 
 /**
- *
+ * Instruction dictates a format of written instruction and its representation in instruction code.
  * @author catlord
  */
 public class Instruction {
@@ -48,7 +48,7 @@ public class Instruction {
 	
 	
 	/**
-	 * 
+	 * Parses an instruction from its fields and argument formats.
 	 * @param json
 	 * @param type 
 	 * @throws JSONException In case we don't find fields, we cant create this instruction.
@@ -59,6 +59,10 @@ public class Instruction {
 		this.description = json.getString("desc");
 	}
 	
+	/**
+	 * Each argument has a specific object associated. Argument object then know how 
+	 * to identify correctly formatted argument.
+	*/
 	private void parseArgs(JSONArray jargs){
 		Iterator<Object> jiter = jargs.iterator();
 		while(jiter.hasNext()){
@@ -69,7 +73,7 @@ public class Instruction {
 				case "int": arguments.add(new IntArgumentType());	  break;
 				case "label": arguments.add(new LabelArgumentType()); break;
 				case "data": arguments.add(new DataArgumentType());	  break;
-				default: logger.log(Level.WARNING, "Unknown argument " + arg); break;	
+				default: logger.log(Level.WARNING, "Unknown argument {0}", arg); break;	
 			}
 		}
 	}

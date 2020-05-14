@@ -45,7 +45,7 @@ public class InstructionMemory extends Component {
 		if(this.program.addAll(program) == false)
 			logger.log(Level.SEVERE, "Failed to load the program into instruction memoory !");
 		else
-			logger.log(Level.INFO, "Program has been set (" + program.size() + " compiled instructions)");
+			logger.log(Level.INFO, "Program has been set ({0} compiled instructions)", program.size());
 	}
 	
 	/**

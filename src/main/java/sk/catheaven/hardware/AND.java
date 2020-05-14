@@ -8,7 +8,7 @@ package sk.catheaven.hardware;
 import org.json.JSONObject;
 
 /**
- *
+ * Basic AND logical operation component.
  * @author catlord
  */
 public class AND extends BinaryComponent {

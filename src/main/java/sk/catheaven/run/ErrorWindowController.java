@@ -17,7 +17,8 @@ import javafx.scene.layout.VBox;
 import sk.catheaven.utils.Tuple;
 
 /**
- *
+ * Controller of error window. Displays errors in a vertical fashion in a
+ * new window.
  * @author catlord
  */
 public class ErrorWindowController implements Initializable {
@@ -52,5 +53,4 @@ public class ErrorWindowController implements Initializable {
 		lab.setStyle("-fx-font: 15 arial;");
 		return lab;
 	}
-	
 }
