@@ -1,0 +1,47 @@
+.button{
+    -fx-background-color: #e8ebe9;
+    -fx-border-insets: 0;
+}
+
+.rightVbox {
+    -fx-border-color: black;
+    -fx-border-insets: 5;
+    -fx-border-width: 3;
+}
+
+.centralVbox {
+    -fx-border-color: gray;
+    -fx-border-insets: 0;
+    -fx-border-width: 3;
+}
+
+.code_label {
+    -fx-fill: #747474;
+    -fx-font-weight: lighter;
+}
+
+.comment {
+    -fx-fill: #0fa810;
+}
+
+.nummero {
+    -fx-fill: #12b33d;
+    -fx-font-weight: lighter;
+}
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bolder;
+}
+
+.menuPanel {
+    -fx-font-size: 19;
+}
+
+.popover > .header {
+    -fx-padding: 0 0 0 12px;
+}
+
+#clear_labels:hover{
+    -fx-text-fill: blue;
+}

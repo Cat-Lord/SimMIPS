@@ -1,0 +1,48 @@
+{
+    "types": {
+	"I": [
+                {"label": "op", "bitSize": 6}, 
+		{"label": "rs", "bitSize": 5},
+		{"label": "rt", "bitSize": 5},
+		{"label": "imm", "bitSize": 16}
+        ],
+	"R": [
+                {"label": "op", "bitSize": 6}, 
+                {"label": "rs", "bitSize": 5},
+		{"label": "rt", "bitSize": 5},
+		{"label": "rd", "bitSize": 5},
+		{"label": "shamt", "bitSize": 5},
+		{"label": "func",  "bitSize": 6}
+        ]
+    },
+
+    "instructions": {
+        "add":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "32"}, "desc": "r1 = r2 + r3"},
+        "and":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "36"}, "desc": "r1 = r2 & r3"},
+        "div":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "26"}, "desc": "r1 = t2 / r3"},
+        "divu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "27"}, "desc": "r1 = t2 / r3 (unsigned)"},
+        "mul":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "24"}, "desc": "r1 = t2 * r3"},
+        "mulu": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "25"}, "desc": "r1 = t2 * r3 (unsigned)"},
+        "nor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "39"}, "desc": "r1 = ~(r2 | r3)"},
+        "or":   {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "37"}, "desc": "r1 = r2 | r3"},
+        "sllv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "1" }, "desc": "r1 = r2 << r3"},
+        "srlv": {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "2" }, "desc": "r1 = r2 >> r3"},
+        "sub":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "34"}, "desc": "r1 = r2 - r3"},
+        "xor":  {"type": "R", "args": ["reg", "reg", "reg"],    "fields": {"op": "0", "rs": "#3", "rt": "#3", "rd": "#1", "shamt": "0", "func": "38"}, "desc": "r1 = r2 ^ r3"},
+        
+        "nop":  {"type": "I", "args": [], "fields": {"op": "18",  "rs": "0", "rt": "0", "imm": "0"}, "desc": "No operation."},
+        "addi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "8",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 = r2 + 23"},
+        "subi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "9",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 = r2 - 23"},
+        "andi": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "12", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 = r2 & 53"},
+        "beq":  {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "4",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 == r2 ? branch"},
+        "bneq": {"type": "I", "args": ["reg", "reg", "label"],  "fields": {"op": "5",  "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 != r2 ? branch"},
+        "ori":  {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "13", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 = r2 | 66"},
+        "xori": {"type": "I", "args": ["reg", "reg", "int"],    "fields": {"op": "14", "rs": "#2", "rt": "#1", "imm": "#3"}, "desc": "r1 = r2 ^ 641"},
+        
+        "li":   {"type": "I", "args": ["reg", "int"],           "fields": {"op": "36", "rs": "0", "rt": "#1", "imm": "#2" }, "desc": "r1 = 69"},
+        "lui":  {"type": "I", "args": ["reg", "int"],           "fields": {"op": "37", "rs": "0", "rt": "#1", "imm": "#2"}, "desc": "r1 = 69"},
+        
+        "lw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "35", "rs": "#2.base", "rt": "#1", "imm": "#2.offset"}, "desc": "r1 = MEM[base + r2]"},
+        "sw":   {"type": "I", "args": ["reg", "data"],          "fields": {"op": "43", "rs": "#2.base", "rt": "#1", "imm": "#2.offset"}, "desc": "MEM[base + r2] = r1"}
+    }
+}

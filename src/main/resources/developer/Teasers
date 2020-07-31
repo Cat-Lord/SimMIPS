@@ -1,0 +1,18 @@
+- QUESTION: 
+      - how to represent arguments of lw/sw ?     Possible answer: argument of type "DATA" can be made of "base(reg)" arguments and parsing will be done this way. Possible.
+      - similarly beq labels ?                    Possible answer: define type "LABEL". Don't allow other types of 'addressing'
+      - how to (if even) represent NOP ?          For now no. I just put here sample representation of nop from instruction set.
+                                                  "nop":  {"type": "R", "fields": {"op": 0,  "rs":  "0", "rt":  "0", "rd":  "0", "shamt": 0, "func": 0 }, "desc": "Empty operation"}
+
+- How to effectively represent different components of CPU loaded from json ? Like... If I had 50 cpu components, I wouldnt want to write 50 different cases of their creation. 
+  Because each component requires different parameters... How ?
+
+- How to represent numbers ? Negative numbers ? How can I know that a 5-bit number is signed or not ? How can i get the biggest value from this 5-bit number without thinking its negative ?
+
+- How to represent control signals ? Normal input or separate type of input ?
+    - Separate representation allows easy GUI representation (signals will be shown as thin lines)
+
+- How to bind control signal to an operation ? ? ?
+    - it kinda needs to be hard-coded...
+
+- LABELS ?

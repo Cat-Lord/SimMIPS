@@ -1,0 +1,19 @@
+.button {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-color: #e0e0e0;
+}
+
+.code_label {
+    /*-fx-fill: #747474;*/
+    -fx-font-weight: italic;
+    -fx-fill: red;          /*TODO: check matching*/
+}
+
+.comment {
+    -fx-fill: #0fa810;
+}
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
