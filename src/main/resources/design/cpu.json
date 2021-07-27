@@ -1,949 +1,1236 @@
 {
   "CPU": {
     "BIT_SIZE": 32,
-
     "components": [
       {
-        "label": "PC",
-        "symbol": "PC",
-        "style": {
-          "x": 95,
-          "y": 555,
-          "width": 35,
-          "height": 70,
-          "colour": "#ccd360"
-        },
-        "type": "PC",
-        "inputs": {
-          "input": { }
-        },
-        "outputs": {
-          "output": { }
-        },
-        "description": "Adds 4 to the value of input A."
-      },
-      {
-        "label": "AF",
-        "style": {
-          "x": 160,
-          "y": 590,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { }
-        },
-        "outputs": {
-          "address": { }
-        },
-        "description" : "Forks address from PC."
-      },
-
-      {
-        "label": "CONST_ADDER",
-        "symbol": "+4",
-        "style": {
-          "x": 245,
-          "y": 360,
-          "width": 50,
-          "height": 100,
-          "colour": "#2c72f4"
-        },
-        "type": "ConstAdder",
-        "inputs": {
-          "address": {}
-        },
-        "outputs": {
-          "output": {}
-        },
-        "constant": { "data": 4 },
-        "description": "Adds 4 to the value of input A."
-      },
-      {
-        "label": "NAF",
-        "style": {
-          "x": 327,
-          "y": 413,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": {}
-        },
-        "outputs": {
-          "newAddress": {}
-        },
-        "description": "Forks new address from constAdder to branch and latch register."
-      },
-      {
-        "label": "BRANCH_MUX",
-        "style": {
-          "x": 1375,
-          "y": 85,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "MUX",
-        "symbol": "M\nU\nX",
-        "inputs": {
-          "newAddress": { },
-          "branchAddress": { }
-        },
-        "outputs": {
-          "output": {}
-        },
-        "selectors": {
-          "branchSignal": { "bitSize": 1 }
-        },
-        "description": "Chooses from next address or calculated address in case of branching."
-      },
-      {
-        "label": "I_MEM",
-        "symbol": "Instruction\nMemory",
-        "style": {
-          "x": 200,
-          "y": 528,
-          "width": 125,
-          "height": 125,
-          "colour": "#ccd360"
-        },
-        "type": "InstructionMemory",
-        "inputs": {
-          "input": {}
-        },
-        "outputs": {
-          "output": {}
-        },
-        "description": "Stores compiled code instructions."
-      },
-      {
-        "label": "IF_ID",
-        "style": {
-          "x": 385,
-          "y": 185,
-          "width": 40,
-          "height": 720,
-          "colour": "#589074"
-        },
-        "type": "LatchRegister",
-        "inputs": {
-          "newAddress": {},
-          "iCode": {}
-        },
-        "outputs": {
-          "newAddress": {},
-          "iCode":  {},
-          "rs": { "range": { "left": 6, "right": 27 }  },
-          "rt": { "range": { "left": 11, "right": 27 } },
-          "rd": { "range": { "left": 16, "right": 27 } },
-          "immediateValue": { "range": { "left": 16, "right": 16 } }
-        },
-        "inputsToOutputs": {
-          "newAddress": ["newAddress"],
-          "iCode": ["iCode", "rs", "rt", "rd", "immediateValue"]
-        },
-        "bubble": {
-          "label": "bubble",
-          "bitSize": 1
-        },
-        "description": "Latch register between Fetch and Decode phase"
-      },
-      {
-        "label": "CU",
-        "symbol": "CU",
-        "style": {
-          "x": 560,
-          "y": 260,
-          "width": 35,
-          "height": 70,
-          "colour": "#d1eaff"
-        },
-        "type": "ControlUnit",
-        "inputs": {
-          "input": {}
-        },
-        "opCode": { "range": { "left": 0,  "right": 26 } },
-        "func":   { "range": { "left": 27, "right": 27 } },
-        "funcDependant": "AluOp",
-        "outputs": {
-          "output": { "bitSize": "11" }
-        },
-        "controlCodes": {
-          "RegDest":  { "bitSize": "1" },
-          "AluSrc":   { "bitSize": "1" },
-          "AluOp":    { "bitSize": "4" },
-          "Branch":   { "bitSize": "1" },
-          "MemRead":  { "bitSize": "1" },
-          "MemWrite": { "bitSize": "1" },
-          "RegWrite": { "bitSize": "1" },
-          "MemToReg": { "bitSize": "1" }
-        },
-        "opcodeToControlSignals": {
-          "0": [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "4": [ 0, 0, 2, 1, 0, 0, 0, 0 ],
-          "5": [
-            0,
-            0,
-            11,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          "8": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "9": [
-            0,
-            1,
-            2,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "12": [
-            0,
-            1,
-            3,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "13": [
-            0,
-            1,
-            4,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "14": [
-            0,
-            1,
-            6,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "18": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "35": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "36": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "37": [
-            0,
-            1,
-            15,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "43": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1,
-            0,
-            1
-          ]
-        },
-        "funcToALUOpCode": {
-          "32": "1",
-          "36": "3",
-          "26": "9",
-          "27": "10",
-          "24": "7",
-          "25": "8",
-          "0": "0",
-          "39": "5",
-          "37": "4",
-          "1": "13",
-          "2": "14",
-          "34": "2",
-          "38": "6"
-        } ,
-        "description": "Control Unit generates control signals to dictate which components can be active."
-      },
-      {
-        "label": "CU_MUX",
-        "style": {
-          "x": 680,
-          "y": 240,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "ConstMUX",
-        "inputs": {
-          "input": { "bitSize": 11 }
-        },
-        "outputs": {
-          "output": { "bitSize": 11 }
-        },
-        "constant": { "data": 0 },
-        "selectors": {
-          "bubble": { "bitSize": 1 }
-        },
-        "description": "Activating this MUX results in value of constant output value."
-      },
-      {
-        "label": "RTF",
-        "style": {
-          "x": 475,
-          "y": 515,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 5 }
-        },
-        "outputs": {
-          "rt": { "bitSize": 5 }
-        },
-        "description": "Forks 'rt' part of instruction code."
-      },
-      {
-        "label": "REG_BANK",
-        "symbol": "Registers",
-        "style": {
-          "x": 565,
-          "y": 445,
-          "width": 170,
-          "height": 200,
-          "colour": "#ccd360"
-        },
-        "type": "RegBank",
-        "dataBitSize": 32,
-        "regCount": 32,
-
-        "inputs": {
-          "rs": { "bitSize": 5 },
-          "rt": { "bitSize": 5 },
-          "destReg": { "bitSize": 5 },
-          "destRegValue": { }
-        },
-        "outputs": {
-          "reg1Value": {},
-          "reg2Value": {}
-        },
-        "selectors": {
-          "regWriteSignal": { "bitSize": 1 }
-        },
-        "description": "Bank of registers of fixed size. Can be used as temporary storage."
-      },
-      {
-        "label": "SIGN_EXT",
-        "symbol": "SE",
-        "style": {
-          "x": 650,
-          "y": 745,
-          "width": 30,
-          "height": 50,
-          "colour": "#e87b7b"
-        },
-        "type": "SignExtend",
-        "inputs": {
-          "input": { "bitSize": 16 }
-        },
-        "outputs": {
-          "output": { }
-        },
-        "description": "Extends the output, from 16 bit to 32 bit in size."
-      },
-      {
-        "label": "ID_EX",
-        "style": {
-          "x": 780,
-          "y": 185,
-          "width": 40,
-          "height": 720,
-          "colour": "#589074"
-        },
-        "type": "LatchRegister",
-        "inputs": {
-          "controlSignals": { },
-          "newAddress":     { },
-          "reg1Value":      { },
-          "reg2Value":      { },
-          "immediateValue": { },
-          "rt": { "bitSize": 5 },
-          "rd": { "bitSize": 5 }
-        },
-        "outputs": {
-          "controlSignals": { },
-          "newAddress":     { },
-          "aluInputA":      { },
-          "reg2Value":      { },
-          "immediateValue": { },
-          "rt": { "bitSize": 5 },
-          "rd": { "bitSize": 5 }
-
-        },
-        "inputsToOutputs": {
-          "controlSignals": ["controlSignals"],
-          "newAddress":     ["newAddress"],
-          "reg1Value":      ["aluInputA"],
-          "reg2Value":      ["reg2Value"],
-          "immediateValue": ["immediateValue"],
-          "rt":             ["rt"],
-          "rd":             ["rd"]
-        },
-        "description": "Latch register between Decode and Execute phase"
-      },
-      {
-        "label": "F1",
-        "style": {
-          "x": 870,
-          "y": 280,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 11 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 10 },
-          "destRegSignal": { "bitSize": 11, "range": { "left": 0, "right": 10 } }
+        "PC": {
+          "label": "PC",
+          "symbol": "PC",
+          "style": {
+            "x": 95,
+            "y": 555,
+            "width": 35,
+            "height": 70,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "description": "Adds 4 to the value of input A."
         }
       },
       {
-        "label": "F2",
-        "style": {
-          "x": 940,
-          "y": 280,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 10 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 9 },
-          "aluSrcSignal": { "bitSize": 10, "range": { "left": 0, "right": 9 } }
+        "Fork": {
+          "label": "AF",
+          "style": {
+            "x": 160,
+            "y": 590,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "address": {}
+          },
+          "description": "Forks address from PC."
         }
       },
       {
-        "label": "F3",
-        "style": {
-          "x": 1050,
-          "y": 280,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 9 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 5 },
-          "aluOp": { "bitSize": 9, "range": { "left": 0, "right": 5 } }
+        "ConstAdder": {
+          "label": "CONST_ADDER",
+          "symbol": "+4",
+          "style": {
+            "x": 245,
+            "y": 360,
+            "width": 50,
+            "height": 100,
+            "colour": "#2c72f4"
+          },
+          "inputs": {
+            "address": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "constant": {
+            "data": 4
+          },
+          "description": "Adds 4 to the value of input A."
         }
       },
       {
-        "label": "EX_CU_MUX",
-        "style": {
-          "x": 1095,
-          "y": 250,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "ConstMUX",
-        "inputs": {
-          "input": { "bitSize": 5 }
-        },
-        "outputs": {
-          "output": { "bitSize": 5 }
-        },
-        "selectors": {
-          "bubble": { "bitSize": 1 }
-        },
-        "constant": { "data": 0 },
-        "description": "MUX that can zero out signals from control unit in EX phase."
-      },
-      {
-        "label": "RVF",
-        "style": {
-          "x": 855,
-          "y": 640,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { }
-        },
-        "outputs": {
-          "reg2Value": {}
-        },
-        "description": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
-      },
-      {
-        "label": "IVF",
-        "style": {
-          "x": 890,
-          "y": 675,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { }
-        },
-        "outputs": {
-          "immediateValue": {}
-        },
-        "description": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
-      },
-      {
-        "label": "OFFSET_ADDER",
-        "symbol": "+",
-        "style": {
-          "x": 970,
-          "y": 355,
-          "width": 45,
-          "height": 80,
-          "colour": "#2c72f4"
-        },
-        "type": "Adder",
-        "inputs": {
-          "newAddress": { },
-          "immediateValue": { }
-        },
-        "outputs": {
-          "output": {}
-        },
-        "description": "Computes branch address by adding offset from immediate value to the value of next address."
-      },
-      {
-        "label": "ALUSrc_MUX",
-        "style": {
-          "x": 935,
-          "y": 620,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "MUX",
-        "symbol": "M\nU\nX",
-        "inputs": {
-          "reg2Value": { },
-          "immediateValue": { }
-        },
-        "outputs": {
-          "output": {}
-        },
-        "selectors": {
-          "aluSrcSignal": { "bitSize": 1 }
-        },
-        "description": "Determines the second input into ALU. It could be either output from registers or immediate value."
-      },
-      {
-        "label": "ALU",
-        "symbol": "ALU",
-        "style": {
-          "x": 1000,
-          "y": 480,
-          "width": 110,
-          "height": 215,
-          "colour": "#98999a"
-        },
-        "type": "ALU",
-        "inputs": {
-          "aluInputA": { },
-          "aluInputB": { }
-
-        },
-        "outputs": {
-          "output": { },
-          "aluOp": { "bitSize": 4 },
-          "zeroResultSignal": { "bitSize": 1 }
-        },
-        "operations": {
-          "0":  "add",
-          "1":  "add",
-          "2":  "sub",
-          "3":  "and",
-          "4":  "or",
-          "5":  "nor",
-          "6":  "xor",
-          "7":  "mul",
-          "8":  "mulu",
-          "9":  "div",
-          "10": "divu",
-          "11": "bneq",
-          "13": "sllv",
-          "14": "srlv",
-          "15": "lui"
-        },
-        "description": "Computational Unit of the CPU. Does most of the mathematical operations."
-      },
-      {
-        "label": "DEST_REG_MUX",
-        "style": {
-          "x": 857,
-          "y": 812,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "MUX",
-        "symbol": "M\nU\nX",
-
-        "inputs": {
-          "rt": { "bitSize": 5 },
-          "rd": { "bitSize": 5 }
-
-        },
-        "outputs": {
-          "output": { "bitSize": 5 }
-        },
-        "selectors": {
-          "destRegSignal": { "bitSize": 1 }
-        },
-        "description": "Chooses destination register (either rd or rt value from instruction)."
-      },
-      {
-        "label": "EX_MEM",
-        "style": {
-          "x": 1150,
-          "y": 185,
-          "width": 40,
-          "height": 720,
-          "colour": "#589074"
-        },
-        "type": "LatchRegister",
-        "inputs": {
-          "controlSignals"  : { },
-          "branchAddress"   : { },
-          "zeroResultSignal": { "bitSize": 1 },
-          "aluResult"       : { },
-          "reg2Value"       : { },
-          "destReg"         : { "bitSize": 5 }
-        },
-        "outputs": {
-          "controlSignals"  : { },
-          "branchAddress"   : { },
-          "zeroResultSignal": { "bitSize": 1 },
-          "aluResult"       : { },
-          "reg2Value"       : { },
-          "destReg"         : { "bitSize": 5 }
-
-        },
-        "inputsToOutputs": {
-          "controlSignals":   ["controlSignals"],
-          "branchAddress":    ["branchAddress"],
-          "zeroResultSignal": ["zeroResultSignal"],
-          "aluResult":        ["aluResult"],
-          "reg2Value":        ["reg2Value"],
-          "destReg":          ["destReg"]
-        },
-        "description": "Latch register between Execute and Memory phase"
-      },
-      {
-        "label": "F4",
-        "style": {
-          "x": 1217,
-          "y": 285,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 5 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 4 },
-          "branchSignal": { "bitSize": 5, "range": { "left": 0, "right": 4 } }
+        "Fork": {
+          "label": "NAF",
+          "style": {
+            "x": 327,
+            "y": 413,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "newAddress": {}
+          },
+          "description": "Forks new address from constAdder to branch and latch register."
         }
       },
       {
-        "label": "F5",
-        "style": {
-          "x": 1360,
-          "y": 285,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 4 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 3 },
-          "memReadSignal": { "bitSize": 4, "range": { "left": 0, "right": 3 } }
+        "MUX": {
+          "label": "BRANCH_MUX",
+          "style": {
+            "x": 1375,
+            "y": 85,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "symbol": "M\nU\nX",
+          "inputs": {
+            "newAddress": {},
+            "branchAddress": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "selectors": {
+            "branchSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses from next address or calculated address in case of branching."
         }
       },
       {
-        "label": "F6",
-        "style": {
-          "x": 1485,
-          "y": 285,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 3 }
-        },
-        "outputs": {
-          "controlSignals": { "bitSize": 2 },
-          "memWriteSignal": { "bitSize": 3, "range": { "left": 0, "right": 2 } }
+        "InstructionMemory": {
+          "label": "I_MEM",
+          "symbol": "Instruction\nMemory",
+          "style": {
+            "x": 200,
+            "y": 528,
+            "width": 125,
+            "height": 125,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "description": "Stores compiled code instructions."
         }
       },
       {
-        "label": "BRANCH_AND",
-        "symbol": "&",
-        "style": {
-          "x": 1240,
-          "y": 330,
-          "width": 20,
-          "height": 45,
-          "colour": "#000000"
-        },
-        "type": "AND",
-        "inputs": {
-          "branchSignal": { "bitSize": 1 },
-          "zeroResultSignal": { "bitSize": 1 }
-        },
-        "outputs": {
-          "output": { "bitSize": 1 }
-        },
-        "description": "Output of this AND gate determines, if a branch will be taken or not."
-      },
-      {
-        "label": "BF",
-        "style": {
-          "x": 1270,
-          "y": 150,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 1 }
-        },
-        "outputs": {
-          "branchSignal": { "bitSize": 1 },
-          "bubble": { "bitSize": 1 }
-        },
-        "description": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
-      },
-      {
-        "label": "BF1",
-        "style": {
-          "x": 1112,
-          "y": 150,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 1 }
-        },
-        "outputs": {
-          "bubble": { "bitSize": 1 }
+        "LatchRegister": {
+          "label": "IF_ID",
+          "style": {
+            "x": 385,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "newAddress": {},
+            "iCode": {}
+          },
+          "outputs": {
+            "newAddress": {},
+            "iCode": {},
+            "rs": {
+              "range": {
+                "left": 6,
+                "right": 27
+              }
+            },
+            "rt": {
+              "range": {
+                "left": 11,
+                "right": 27
+              }
+            },
+            "rd": {
+              "range": {
+                "left": 16,
+                "right": 27
+              }
+            },
+            "immediateValue": {
+              "range": {
+                "left": 16,
+                "right": 16
+              }
+            }
+          },
+          "inputsToOutputs": {
+            "newAddress": [
+              "newAddress"
+            ],
+            "iCode": [
+              "iCode",
+              "rs",
+              "rt",
+              "rd",
+              "immediateValue"
+            ]
+          },
+          "bubble": {
+            "label": "bubble",
+            "bitSize": 1
+          },
+          "description": "Latch register between Fetch and Decode phase"
         }
       },
       {
-        "label": "BF2",
-        "style": {
-          "x": 697,
-          "y": 150,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 1 }
-        },
-        "outputs": {
-          "bubble": { "bitSize": 1 }
+        "ControlUnit": {
+          "label": "CU",
+          "symbol": "CU",
+          "style": {
+            "x": 560,
+            "y": 260,
+            "width": 35,
+            "height": 70,
+            "colour": "#d1eaff"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "opCode": {
+            "range": {
+              "left": 0,
+              "right": 26
+            }
+          },
+          "func": {
+            "range": {
+              "left": 27,
+              "right": 27
+            }
+          },
+          "funcDependant": "AluOp",
+          "outputs": {
+            "output": {
+              "bitSize": "11"
+            }
+          },
+          "controlCodes": {
+            "RegDest": {
+              "bitSize": "1"
+            },
+            "AluSrc": {
+              "bitSize": "1"
+            },
+            "AluOp": {
+              "bitSize": "4"
+            },
+            "Branch": {
+              "bitSize": "1"
+            },
+            "MemRead": {
+              "bitSize": "1"
+            },
+            "MemWrite": {
+              "bitSize": "1"
+            },
+            "RegWrite": {
+              "bitSize": "1"
+            },
+            "MemToReg": {
+              "bitSize": "1"
+            }
+          },
+          "opcodeToControlSignals": {
+            "0": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "4": [
+              0,
+              0,
+              2,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "5": [
+              0,
+              0,
+              11,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "8": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "9": [
+              0,
+              1,
+              2,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "12": [
+              0,
+              1,
+              3,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "13": [
+              0,
+              1,
+              4,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "14": [
+              0,
+              1,
+              6,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "18": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "35": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "36": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "37": [
+              0,
+              1,
+              15,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "43": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          "funcToALUOpCode": {
+            "32": "1",
+            "36": "3",
+            "26": "9",
+            "27": "10",
+            "24": "7",
+            "25": "8",
+            "0": "0",
+            "39": "5",
+            "37": "4",
+            "1": "13",
+            "2": "14",
+            "34": "2",
+            "38": "6"
+          },
+          "description": "Control Unit generates control signals to dictate which components can be active."
         }
       },
       {
-        "label": "ARF",
-        "style": {
-          "x": 1215,
-          "y": 600,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { }
-        },
-        "outputs": {
-          "aluResult": { }
-        },
-        "description": "Forks result from ALU and forwards it to the data memory and next latch register."
-      },
-      {
-        "label": "DATA_MEM",
-        "symbol": "Data Memory",
-        "style": {
-          "x": 1275,
-          "y": 510,
-          "width": 180,
-          "height": 180,
-          "colour": "#ccd360"
-        },
-        "type": "DataMemory",
-        "inputs": {
-          "aluResult": { },
-          "reg2Value": { }
-        },
-        "outputs": {
-          "aluResult": { }
-        },
-
-        "memRead": {
-          "label": "memReadSignal",
-          "bitSize": 1
-        },
-        "memWrite": {
-          "label": "memWriteSignal",
-          "bitSize": 1
-        },
-        "description": "Saves data, extra CPU storage and typically much bigger in size than register bank."
-      },
-      {
-        "label": "MEM_WB",
-        "style": {
-          "x": 1510,
-          "y": 185,
-          "width": 40,
-          "height": 720,
-          "colour": "#589074"
-        },
-        "type": "LatchRegister",
-        "inputs": {
-          "controlSignals": { },
-          "memData"       : { },
-          "aluResult"     : { },
-          "destReg"       : { "bitSize": 5 }
-        },
-
-        "outputs": {
-          "controlSignals"  : { },
-          "memData"         : { },
-          "aluResult"       : { },
-          "destReg"         : { "bitSize": 5 }
-
-        },
-        "inputsToOutputs": {
-          "controlSignals":   ["controlSignals"],
-          "memData":          ["memData"],
-          "aluResult":        ["aluResult"],
-          "destReg":          ["destReg"]
-        },
-
-        "description": "Latch register between Memory and WriteBack phase"
-      },
-      {
-        "label": "F7",
-        "style": {
-          "x": 1603,
-          "y": 285,
-          "width": 5,
-          "height": 5
-        },
-        "type": "Fork",
-        "inputs": {
-          "input": { "bitSize": 2 }
-        },
-        "outputs": {
-          "regWriteSignal": { "bitSize": 1 },
-          "memToRegSignal": { "bitSize": 2, "range": { "left": 0, "right": 1 } }
+        "ConstMUX": {
+          "label": "CU_MUX",
+          "style": {
+            "x": 680,
+            "y": 240,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 11
+            }
+          },
+          "outputs": {
+            "output": {
+              "bitSize": 11
+            }
+          },
+          "constant": {
+            "data": 0
+          },
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "description": "Activating this MUX results in value of constant output value."
         }
       },
       {
-        "label": "WB_MUX",
-        "style": {
-          "x": 1590,
-          "y": 595,
-          "width": 35,
-          "height": 70,
-          "colour": "#c51df8"
-        },
-        "type": "MUX",
-        "symbol": "M\nU\nX",
-        "inputs": {
-          "memData": { },
-          "aluResult": { }
-        },
-        "outputs": {
-          "output": { },
-          "memToRegSignal": { "range": { "left": 0, "right": 1 } }
-        },
-        "selectors": {
-          "memToRegSignal": { "bitSize": 1 }
-        },
-        "description": "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle."
+        "Fork": {
+          "label": "RTF",
+          "style": {
+            "x": 475,
+            "y": 515,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "rt": {
+              "bitSize": 5
+            }
+          },
+          "description": "Forks 'rt' part of instruction code."
+        }
+      },
+      {
+        "RegBank": {
+          "label": "REG_BANK",
+          "symbol": "Registers",
+          "style": {
+            "x": 565,
+            "y": 445,
+            "width": 170,
+            "height": 200,
+            "colour": "#ccd360"
+          },
+          "dataBitSize": 32,
+          "regCount": 32,
+          "inputs": {
+            "rs": {
+              "bitSize": 5
+            },
+            "rt": {
+              "bitSize": 5
+            },
+            "destReg": {
+              "bitSize": 5
+            },
+            "destRegValue": {}
+          },
+          "outputs": {
+            "reg1Value": {},
+            "reg2Value": {}
+          },
+          "selectors": {
+            "regWriteSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Bank of registers of fixed size. Can be used as temporary storage."
+        }
+      },
+      {
+        "SignExtend": {
+          "label": "SIGN_EXT",
+          "symbol": "SE",
+          "style": {
+            "x": 650,
+            "y": 745,
+            "width": 30,
+            "height": 50,
+            "colour": "#e87b7b"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 16
+            }
+          },
+          "outputs": {
+            "output": {}
+          },
+          "description": "Extends the output, from 16 bit to 32 bit in size."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "ID_EX",
+          "style": {
+            "x": 780,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "newAddress": {},
+            "reg1Value": {},
+            "reg2Value": {},
+            "immediateValue": {},
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "newAddress": {},
+            "aluInputA": {},
+            "reg2Value": {},
+            "immediateValue": {},
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "newAddress": [
+              "newAddress"
+            ],
+            "reg1Value": [
+              "aluInputA"
+            ],
+            "reg2Value": [
+              "reg2Value"
+            ],
+            "immediateValue": [
+              "immediateValue"
+            ],
+            "rt": [
+              "rt"
+            ],
+            "rd": [
+              "rd"
+            ]
+          },
+          "description": "Latch register between Decode and Execute phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F1",
+          "style": {
+            "x": 870,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 11
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 10
+            },
+            "destRegSignal": {
+              "bitSize": 11,
+              "range": {
+                "left": 0,
+                "right": 10
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F2",
+          "style": {
+            "x": 940,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 10
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 9
+            },
+            "aluSrcSignal": {
+              "bitSize": 10,
+              "range": {
+                "left": 0,
+                "right": 9
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F3",
+          "style": {
+            "x": 1050,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 9
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 5
+            },
+            "aluOp": {
+              "bitSize": 9,
+              "range": {
+                "left": 0,
+                "right": 5
+              }
+            }
+          }
+        }
+      },
+      {
+        "ConstMUX": {
+          "label": "EX_CU_MUX",
+          "style": {
+            "x": 1095,
+            "y": 250,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "output": {
+              "bitSize": 5
+            }
+          },
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "constant": {
+            "data": 0
+          },
+          "description": "MUX that can zero out signals from control unit in EX phase."
+        }
+      },
+      {
+        "Fork": {
+          "label": "RVF",
+          "style": {
+            "x": 855,
+            "y": 640,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "reg2Value": {}
+          },
+          "description": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
+        }
+      },
+      {
+        "Fork": {
+          "label": "IVF",
+          "style": {
+            "x": 890,
+            "y": 675,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "immediateValue": {}
+          },
+          "description": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
+        }
+      },
+      {
+        "Adder": {
+          "label": "OFFSET_ADDER",
+          "symbol": "+",
+          "style": {
+            "x": 970,
+            "y": 355,
+            "width": 45,
+            "height": 80,
+            "colour": "#2c72f4"
+          },
+          "inputs": {
+            "newAddress": {},
+            "immediateValue": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "description": "Computes branch address by adding offset from immediate value to the value of next address."
+        }
+      },
+      {
+        "MUX": {
+          "label": "ALUSrc_MUX",
+          "style": {
+            "x": 935,
+            "y": 620,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "symbol": "M\nU\nX",
+          "inputs": {
+            "reg2Value": {},
+            "immediateValue": {}
+          },
+          "outputs": {
+            "output": {}
+          },
+          "selectors": {
+            "aluSrcSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Determines the second input into ALU. It could be either output from registers or immediate value."
+        }
+      },
+      {
+        "ALU": {
+          "label": "ALU",
+          "symbol": "ALU",
+          "style": {
+            "x": 1000,
+            "y": 480,
+            "width": 110,
+            "height": 215,
+            "colour": "#98999a"
+          },
+          "inputs": {
+            "aluInputA": {},
+            "aluInputB": {}
+          },
+          "outputs": {
+            "output": {},
+            "aluOp": {
+              "bitSize": 4
+            },
+            "zeroResultSignal": {
+              "bitSize": 1
+            }
+          },
+          "operations": {
+            "0": "add",
+            "1": "add",
+            "2": "sub",
+            "3": "and",
+            "4": "or",
+            "5": "nor",
+            "6": "xor",
+            "7": "mul",
+            "8": "mulu",
+            "9": "div",
+            "10": "divu",
+            "11": "bneq",
+            "13": "sllv",
+            "14": "srlv",
+            "15": "lui"
+          },
+          "description": "Computational Unit of the CPU. Does most of the mathematical operations."
+        }
+      },
+      {
+        "MUX": {
+          "label": "DEST_REG_MUX",
+          "style": {
+            "x": 857,
+            "y": 812,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "symbol": "M\nU\nX",
+          "inputs": {
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "output": {
+              "bitSize": 5
+            }
+          },
+          "selectors": {
+            "destRegSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses destination register (either rd or rt value from instruction)."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "EX_MEM",
+          "style": {
+            "x": 1150,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "branchAddress": {},
+            "zeroResultSignal": {
+              "bitSize": 1
+            },
+            "aluResult": {},
+            "reg2Value": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "branchAddress": {},
+            "zeroResultSignal": {
+              "bitSize": 1
+            },
+            "aluResult": {},
+            "reg2Value": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "branchAddress": [
+              "branchAddress"
+            ],
+            "zeroResultSignal": [
+              "zeroResultSignal"
+            ],
+            "aluResult": [
+              "aluResult"
+            ],
+            "reg2Value": [
+              "reg2Value"
+            ],
+            "destReg": [
+              "destReg"
+            ]
+          },
+          "description": "Latch register between Execute and Memory phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F4",
+          "style": {
+            "x": 1217,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 4
+            },
+            "branchSignal": {
+              "bitSize": 5,
+              "range": {
+                "left": 0,
+                "right": 4
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F5",
+          "style": {
+            "x": 1360,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 4
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 3
+            },
+            "memReadSignal": {
+              "bitSize": 4,
+              "range": {
+                "left": 0,
+                "right": 3
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F6",
+          "style": {
+            "x": 1485,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 3
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 2
+            },
+            "memWriteSignal": {
+              "bitSize": 3,
+              "range": {
+                "left": 0,
+                "right": 2
+              }
+            }
+          }
+        }
+      },
+      {
+        "AND": {
+          "label": "BRANCH_AND",
+          "symbol": "&",
+          "style": {
+            "x": 1240,
+            "y": 330,
+            "width": 20,
+            "height": 45,
+            "colour": "#000000"
+          },
+          "inputs": {
+            "branchSignal": {
+              "bitSize": 1
+            },
+            "zeroResultSignal": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "output": {
+              "bitSize": 1
+            }
+          },
+          "description": "Output of this AND gate determines, if a branch will be taken or not."
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF",
+          "style": {
+            "x": 1270,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "branchSignal": {
+              "bitSize": 1
+            },
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "description": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF1",
+          "style": {
+            "x": 1112,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "bubble": {
+              "bitSize": 1
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF2",
+          "style": {
+            "x": 697,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "bubble": {
+              "bitSize": 1
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "ARF",
+          "style": {
+            "x": 1215,
+            "y": 600,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "aluResult": {}
+          },
+          "description": "Forks result from ALU and forwards it to the data memory and next latch register."
+        }
+      },
+      {
+        "DataMemory": {
+          "label": "DATA_MEM",
+          "symbol": "Data Memory",
+          "style": {
+            "x": 1275,
+            "y": 510,
+            "width": 180,
+            "height": 180,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "aluResult": {},
+            "reg2Value": {}
+          },
+          "outputs": {
+            "aluResult": {}
+          },
+          "memRead": {
+            "label": "memReadSignal",
+            "bitSize": 1
+          },
+          "memWrite": {
+            "label": "memWriteSignal",
+            "bitSize": 1
+          },
+          "description": "Saves data, extra CPU storage and typically much bigger in size than register bank."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "MEM_WB",
+          "style": {
+            "x": 1510,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "memData": {},
+            "aluResult": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "memData": {},
+            "aluResult": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "memData": [
+              "memData"
+            ],
+            "aluResult": [
+              "aluResult"
+            ],
+            "destReg": [
+              "destReg"
+            ]
+          },
+          "description": "Latch register between Memory and WriteBack phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F7",
+          "style": {
+            "x": 1603,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 2
+            }
+          },
+          "outputs": {
+            "regWriteSignal": {
+              "bitSize": 1
+            },
+            "memToRegSignal": {
+              "bitSize": 2,
+              "range": {
+                "left": 0,
+                "right": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "MUX": {
+          "label": "WB_MUX",
+          "style": {
+            "x": 1590,
+            "y": 595,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "symbol": "M\nU\nX",
+          "inputs": {
+            "memData": {},
+            "aluResult": {}
+          },
+          "outputs": {
+            "output": {},
+            "memToRegSignal": {
+              "range": {
+                "left": 0,
+                "right": 1
+              }
+            }
+          },
+          "selectors": {
+            "memToRegSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle."
+        }
       }
     ]
   },
-
   "connections": [
     {
       "from": "PC",

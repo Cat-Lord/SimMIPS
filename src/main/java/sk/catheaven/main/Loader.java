@@ -28,41 +28,7 @@ public class Loader {
     
     public static CPU getCPU(InputStream jsonResource) throws Exception {
         JsonNode root = objectMapper.readTree(jsonResource);
-        JsonNode cpuNode = root.get("CPU");
-        
-        CPU cpu = new CPU();
-        CPU.BIT_SIZE = cpuNode.get("BIT_SIZE").asInt();     // first read the bit size of the whole architecture
-    
-        JsonNode componentsArray = cpuNode.get("components");
-    
-        if ( ! componentsArray.isArray())
-            throw new Exception("Invalid json formatting - Components need to be defined in an array of objects");
-        
-        for (JsonNode componentNode : componentsArray) {
-            JsonNode type = componentNode.get("type");
-            
-            if (type == null) {
-                log.error("Unspecified component type: {}", componentNode);
-                continue;
-            }
-    
-            String componentType = type.asText();
-            Class<?> componentClass = findComponentClass(componentType);
-            if (componentClass == null) {
-                log.error("Class of type `{}` not found", componentType);
-                continue;
-            }
-            try {
-                Component component = (Component) objectMapper.treeToValue(componentNode, componentClass);
-                cpu.getComponents().add(component);
-
-                log.info("Component added to cpu: {}", componentClass.getSimpleName());
-            }
-            catch (JsonProcessingException e) { log.error("{}: {}", e.getLocation(), e.getMessage()); }
-            catch (IllegalArgumentException e) { log.error(e.getMessage()); }
-        }
-        
-        return cpu;
+        return objectMapper.treeToValue(root.get("CPU"), CPU.class);
     }
     
     private static Class<?> findComponentClass(String componentType) {

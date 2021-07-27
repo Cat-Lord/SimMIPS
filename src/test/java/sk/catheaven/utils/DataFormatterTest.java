@@ -14,7 +14,7 @@ class DataFormatterTest {
     @BeforeAll
     private void preparation() {
         data = new Data();
-        data.setBitSize(CPU.BIT_SIZE);
+        data.setBitSize(CPU.getBitSize());
         data.setData(69696969); // set a fixed number
     }
     

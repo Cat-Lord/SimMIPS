@@ -47,7 +47,7 @@ public class DataFormatter {
         String dataString = Integer.toHexString(data.getData());
         String output = "";
         
-        for(int i = 0; i < CPU.BIT_SIZE /4 - dataString.length(); i++)
+        for(int i = 0; i < CPU.getBitSize() /4 - dataString.length(); i++)
             output += "0";
         output += dataString;
         
@@ -62,7 +62,7 @@ public class DataFormatter {
         String dataString = Integer.toOctalString(data.getData());
         String output = "";
         
-        for(int i = 0; i < (CPU.BIT_SIZE /3 + 1) - dataString.length(); i++)
+        for(int i = 0; i < (CPU.getBitSize() /3 + 1) - dataString.length(); i++)
             output += "0";
         output += dataString;
         

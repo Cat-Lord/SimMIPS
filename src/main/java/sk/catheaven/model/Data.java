@@ -34,8 +34,8 @@ public class Data {
 	}
  
 	public void setBitSize(int bitSize) {
-		if (bitSize > CPU.BIT_SIZE)
-			this.bitSize = CPU.BIT_SIZE;            // assign highest possible value
+		if (bitSize > CPU.getBitSize())
+			this.bitSize = CPU.getBitSize();            // assign highest possible value
 		else if (bitSize <= 0)
 			this.bitSize = 1;                       // lowest possible value of one bit
 		else
@@ -48,7 +48,7 @@ public class Data {
 	 * According to bit-size of this objects data creates a mask.
 	 */
 	public void createMask() {
-		this.mask = (-1 >>> (CPU.BIT_SIZE - bitSize));
+		this.mask = (-1 >>> (CPU.getBitSize() - bitSize));
 	}
 	
 	public Tuple<Integer, Integer> getRange() {

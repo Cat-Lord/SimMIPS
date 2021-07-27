@@ -1,5 +1,9 @@
 package sk.catheaven.model.components;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +24,11 @@ public class CPU {
     }
     
     public static int getBitSize() {
-        return BIT_SIZE;
+        return CPU.BIT_SIZE;
     }
     
-    public static void setBitSize(int bitSize) {
-        BIT_SIZE = bitSize;
+    @JsonSetter("BIT_SIZE")
+    public void setBitSize(int bitSize) {
+        CPU.BIT_SIZE = bitSize;
     }
 }
