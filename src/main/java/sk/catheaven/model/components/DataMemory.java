@@ -6,7 +6,7 @@
 package sk.catheaven.model.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.utils.Tuple;
+import sk.catheaven.model.Tuple;
 
 /**
  * Data storage unit. InputA represents target address (to read from or write to)

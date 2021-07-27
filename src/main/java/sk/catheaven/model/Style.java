@@ -1,4 +1,4 @@
-package sk.catheaven.utils;
+package sk.catheaven.model;
 
 import java.util.Locale;
 

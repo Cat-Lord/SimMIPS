@@ -5,12 +5,9 @@
  */
 package sk.catheaven.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.components.CPU;
-import sk.catheaven.utils.Tuple;
 
 /**
  * Basic numbering object in the application. Has a mask, which prohibits overflows. Provides 

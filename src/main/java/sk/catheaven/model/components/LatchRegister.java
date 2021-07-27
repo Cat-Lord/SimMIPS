@@ -1,7 +1,7 @@
 package sk.catheaven.model.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.utils.Tuple;
+import sk.catheaven.model.Tuple;
 
 import java.util.List;
 import java.util.Map;

@@ -7,7 +7,6 @@ import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.IntArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.RegArgumentType;
-import sk.catheaven.utils.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;

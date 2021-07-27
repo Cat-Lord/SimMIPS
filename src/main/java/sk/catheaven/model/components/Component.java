@@ -8,7 +8,7 @@ package sk.catheaven.model.components;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sk.catheaven.model.Data;
-import sk.catheaven.utils.Style;
+import sk.catheaven.model.Style;
 
 import java.util.HashMap;
 import java.util.Map;
