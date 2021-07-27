@@ -3,6 +3,7 @@ package sk.catheaven.main;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.components.CPU;
+import sk.catheaven.model.components.Component;
 import sk.catheaven.model.instructions.Instruction;
 
 import java.io.InputStream;
@@ -19,11 +20,17 @@ public class Launcher {
             
             for (Instruction instruction : instructions) {
                 log.debug("{}: type {} with {} fields",
-                        instruction.getMnemo(), instruction.getType(), instruction.getFields().size());
+                        instruction.getMnemo(), instruction.getType().getLabel(), instruction.getFields().size());
             }
             log.debug("Successfully loaded {} instructions\n", instructions.length);
             
             CPU cpu = Loader.getCPU(cpuJsonResource);
+            
+            for (Component component: cpu.getComponents())
+                log.debug("{}\n{}\n {} input(s) | {} output(s) | {} selector(s)",
+                        component.getLabel(), component,
+                        component.getInputs().size(), component.getOutputs().size(), component.getSelectors().size()
+                );
             
             log.debug("Successfully initiated CPU with {} components\n", cpu.getComponents().size());
         } catch (Exception exception) {

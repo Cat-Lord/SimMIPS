@@ -1,5 +1,7 @@
 package sk.catheaven.utils;
 
+import java.util.Locale;
+
 public class Style {
     private final static String DEFAULT_COLOUR = "#98999a";
     
@@ -7,7 +9,7 @@ public class Style {
     private int y;
     private int width;
     private int height;
-    private String colour;
+    private String colour = DEFAULT_COLOUR;
     
     public int getX() {
         return x;
@@ -47,5 +49,16 @@ public class Style {
     
     public void setColour(String colour) {
         this.colour = colour;
+    }
+    
+    @Override
+    public String toString() {
+        return "Style {" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                ", colour='" + colour.toUpperCase(Locale.ROOT) + '\'' +
+                '}';
     }
 }

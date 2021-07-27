@@ -5,7 +5,6 @@
       {
         "PC": {
           "label": "PC",
-          "symbol": "PC",
           "style": {
             "x": 95,
             "y": 555,
@@ -42,8 +41,7 @@
       },
       {
         "ConstAdder": {
-          "label": "CONST_ADDER",
-          "symbol": "+4",
+          "label": "+4",
           "style": {
             "x": 245,
             "y": 360,
@@ -91,7 +89,6 @@
             "height": 70,
             "colour": "#c51df8"
           },
-          "symbol": "M\nU\nX",
           "inputs": {
             "newAddress": {},
             "branchAddress": {}
@@ -109,8 +106,7 @@
       },
       {
         "InstructionMemory": {
-          "label": "I_MEM",
-          "symbol": "Instruction\nMemory",
+          "label": "Instruction\nMemory",
           "style": {
             "x": 200,
             "y": 528,
@@ -191,7 +187,6 @@
       {
         "ControlUnit": {
           "label": "CU",
-          "symbol": "CU",
           "style": {
             "x": 560,
             "y": 260,
@@ -451,8 +446,7 @@
       },
       {
         "RegBank": {
-          "label": "REG_BANK",
-          "symbol": "Registers",
+          "label": "Registers",
           "style": {
             "x": 565,
             "y": 445,
@@ -488,8 +482,7 @@
       },
       {
         "SignExtend": {
-          "label": "SIGN_EXT",
-          "symbol": "SE",
+          "label": "SE",
           "style": {
             "x": 650,
             "y": 745,
@@ -723,8 +716,7 @@
       },
       {
         "Adder": {
-          "label": "OFFSET_ADDER",
-          "symbol": "+",
+          "label": "+",
           "style": {
             "x": 970,
             "y": 355,
@@ -752,7 +744,6 @@
             "height": 70,
             "colour": "#c51df8"
           },
-          "symbol": "M\nU\nX",
           "inputs": {
             "reg2Value": {},
             "immediateValue": {}
@@ -771,7 +762,6 @@
       {
         "ALU": {
           "label": "ALU",
-          "symbol": "ALU",
           "style": {
             "x": 1000,
             "y": 480,
@@ -814,7 +804,7 @@
       },
       {
         "MUX": {
-          "label": "DEST_REG_MUX",
+          "label": "DEST_REG MUX",
           "style": {
             "x": 857,
             "y": 812,
@@ -822,7 +812,6 @@
             "height": 70,
             "colour": "#c51df8"
           },
-          "symbol": "M\nU\nX",
           "inputs": {
             "rt": {
               "bitSize": 5
@@ -987,8 +976,7 @@
       },
       {
         "AND": {
-          "label": "BRANCH_AND",
-          "symbol": "&",
+          "label": "&",
           "style": {
             "x": 1240,
             "y": 330,
@@ -1099,8 +1087,7 @@
       },
       {
         "DataMemory": {
-          "label": "DATA_MEM",
-          "symbol": "Data Memory",
+          "label": "Data Memory",
           "style": {
             "x": 1275,
             "y": 510,
@@ -1199,7 +1186,7 @@
       },
       {
         "MUX": {
-          "label": "WB_MUX",
+          "label": "WB MUX",
           "style": {
             "x": 1590,
             "y": 595,
@@ -1207,7 +1194,6 @@
             "height": 70,
             "colour": "#c51df8"
           },
-          "symbol": "M\nU\nX",
           "inputs": {
             "memData": {},
             "aluResult": {}

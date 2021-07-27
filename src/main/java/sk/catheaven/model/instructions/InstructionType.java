@@ -3,15 +3,15 @@ package sk.catheaven.model.instructions;
 import java.util.List;
 
 public class InstructionType {
-    private String type;			// I, R, ...
+    private String label;			// I, R, ...
     private List<Field> fields;
     
-    public String getType() {
-        return type;
+    public String getLabel() {
+        return label;
     }
     
-    public void setType(String type) {
-        this.type = type;
+    public void setLabel(String label) {
+        this.label = label;
     }
     
     public List<Field> getFields() {

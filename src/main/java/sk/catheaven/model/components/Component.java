@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sk.catheaven.model.Data;
 import sk.catheaven.utils.Style;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
@@ -31,14 +32,13 @@ import java.util.Map;
 })
 public abstract class Component {
 	
-	protected String label;
+	protected String label = "";
 	private Style style;
-	private String symbol = "";
 	private String description = "";
 	
-	private Map<String, Data> inputs;
-	private Map<String, Data> outputs;
-	private Map<String, Data> selectors;
+	private Map<String, Data> inputs = new HashMap<>();
+	private Map<String, Data> outputs = new HashMap<>();
+	private Map<String, Data> selectors = new HashMap<>();
 	
 	public String getLabel() {
 		return label;
@@ -54,14 +54,6 @@ public abstract class Component {
 	
 	public void setStyle(Style style) {
 		this.style = style;
-	}
-	
-	public String getSymbol() {
-		return symbol;
-	}
-	
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
 	}
 	
 	public String getDescription() {
@@ -94,5 +86,17 @@ public abstract class Component {
 	
 	public void setSelectors(Map<String, Data> selectors) {
 		this.selectors = selectors;
+	}
+	
+	@Override
+	public String toString() {
+		return "Component {" +
+				"label='" + label + '\'' +
+				", style=" + style + System.lineSeparator() +
+				", description='" + description + '\'' +
+				", inputs=" + inputs.size() +
+				", outputs=" + outputs.size() +
+				", selectors=" + selectors.size() +
+				'}';
 	}
 }

@@ -7,6 +7,8 @@ package sk.catheaven.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.components.CPU;
 import sk.catheaven.utils.Tuple;
 
@@ -23,15 +25,10 @@ public class Data {
     private int bitSize;
     private Tuple<Integer, Integer> range;
 	
-    @JsonCreator
-    public Data() {
-    
-	}
+    private static Logger log = LogManager.getLogger();
  
-	@JsonCreator
-    public Data(@JsonProperty("bitSize") int bitSize) {
-    	setBitSize(bitSize);
-	}
+    public Data() { }
+	public Data(int bitSize) { setBitSize(bitSize); }
  
 	public void setBitSize(int bitSize) {
 		if (bitSize > CPU.getBitSize())
@@ -75,7 +72,7 @@ public class Data {
     public int getData(){
 		int returnData = (data & mask);
 	
-		/**
+		/*
 		 * If a range is specified, data will get truncated. Example:
 		 * range: 4-5 (shift first 4 to the left and then 5 to the right)
 		 * data:   '1101 0101 0000 1111'

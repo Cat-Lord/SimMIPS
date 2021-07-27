@@ -42,7 +42,7 @@ public class Loader {
                 = objectMapper.treeToValue(root, InstructionType[].class);
     
         for(InstructionType type : instructionTypes)
-            log.debug(type.getType() + ": " + type.getFields().size() + " field(s)");
+            log.debug(type.getLabel() + ": " + type.getFields().size() + " field(s)");
     
         return instructionTypes;
     }
@@ -60,7 +60,7 @@ public class Loader {
     
     private static InstructionType getInstructionType(InstructionType[] instructionTypes, String type) {
         for (InstructionType instructionType : instructionTypes) {
-            if (instructionType.getType().equalsIgnoreCase(type))
+            if (instructionType.getLabel().equalsIgnoreCase(type))
                 return instructionType;
         }
         throw new TypeNotPresentException(type, null);

@@ -1,5 +1,6 @@
 package sk.catheaven.model.components;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class CPU {
         this.components = components;
     }
     
+    @JsonGetter
     public static int getBitSize() {
         return CPU.BIT_SIZE;
     }

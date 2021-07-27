@@ -4,13 +4,13 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout disableAnsi="false" pattern="%highlight{%d{HH:mm} [%t] %-5level} %logger{36} - %msg%n"/>
         </Console>
-        <Console name="AlignedConsole" target="SYSTEM_OUT">
-            <PatternLayout disableAnsi="false" pattern="%highlight{%d [%7.7r]} %6.6p - %c{30} - %m%n"/>
+        <Console name="SimpleOutput" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false" pattern="%highlight{%c{2} - %6.6p } %m%n"/>
         </Console>
     </Appenders>
     <Loggers>
         <Root level="debug">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SimpleOutput"/>
         </Root>
     </Loggers>
 </Configuration>

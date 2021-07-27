@@ -1,7 +1,7 @@
 {
     "instructionTypes": [
       {
-          "type": "I",
+          "label": "I",
           "fields": [
               {"label": "op",  "bitSize": 6},
               {"label": "rs",  "bitSize": 5},
@@ -10,7 +10,7 @@
           ]
       },
       {
-        "type": "R",
+        "label": "R",
         "fields": [
             {"label": "op", "bitSize": 6},
             {"label": "rs", "bitSize": 5},
