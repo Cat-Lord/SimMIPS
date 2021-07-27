@@ -1,7 +1,5 @@
 package sk.catheaven.model.components;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.ArrayList;

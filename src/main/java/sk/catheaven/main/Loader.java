@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.components.CPU;
-import sk.catheaven.model.components.Component;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.model.instructions.InstructionType;
@@ -19,31 +18,13 @@ import java.util.Map;
 
 public class Loader {
     private static Logger log = LogManager.getLogger();
-    private static ObjectMapper objectMapper = getObjectMapper();
-    
-    private static ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper;
-    }
+    private static ObjectMapper objectMapper = new ObjectMapper();
     
     public static CPU getCPU(InputStream jsonResource) throws Exception {
         JsonNode root = objectMapper.readTree(jsonResource);
         return objectMapper.treeToValue(root.get("CPU"), CPU.class);
     }
-    
-    private static Class<?> findComponentClass(String componentType) {
-        if (componentType.isBlank())
-            return null;
-        
-        Class<?> componentClass = null;
-        try {
-            final String packageName = "sk.catheaven.model.components.";
-            componentClass = Class.forName(packageName.concat(componentType));
-        } catch (ClassNotFoundException ignored) {}
-        
-        return componentClass;
-    }
-    
+
     public static Instruction[] getInstructionSet(InputStream jsonResource) throws IOException {
         JsonNode root = objectMapper.readTree(jsonResource);
         JsonNode instructionsRootNode = root.get("instructions");

@@ -1,7 +1,6 @@
 package sk.catheaven.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -24,6 +23,6 @@ public class TupleDeserializer extends StdDeserializer<Tuple<?,?>> {
         var key = node.fields().next().getKey();
         var value = node.get(key).asText();
         
-        return new Tuple(key, value);
+        return new Tuple<>(key, value);
     }
 }

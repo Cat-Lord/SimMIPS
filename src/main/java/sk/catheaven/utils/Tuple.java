@@ -5,11 +5,7 @@
  */
 package sk.catheaven.utils;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import sk.catheaven.main.Loader;
 
 /**
  * Simple storage unit that stores two entities as <i>left</i> and <i>right</i>.
