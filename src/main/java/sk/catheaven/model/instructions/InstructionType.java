@@ -1,4 +1,4 @@
-package sk.catheaven.instruction;
+package sk.catheaven.model.instructions;
 
 import java.util.List;
 

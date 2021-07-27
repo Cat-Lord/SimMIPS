@@ -1,12 +1,12 @@
-package sk.catheaven.instruction;
+package sk.catheaven.model.instructions;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.instruction.argumentTypes.DataArgumentType;
-import sk.catheaven.instruction.argumentTypes.IntArgumentType;
-import sk.catheaven.instruction.argumentTypes.LabelArgumentType;
-import sk.catheaven.instruction.argumentTypes.RegArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.IntArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.RegArgumentType;
 import sk.catheaven.utils.Tuple;
 
 import java.util.ArrayList;
@@ -78,13 +78,4 @@ public class Instruction {
         this.description = description;
     }
     
-    @Override
-    public String toString() {
-        return "Instruction{" +
-                "type=" + type.getType() +
-                ", mnemo='" + mnemo + '\'' +
-                ", NO of arguments=" + arguments.size() +
-                ", fields=" + fields +
-                '}';
-    }
 }

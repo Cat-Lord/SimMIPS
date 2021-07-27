@@ -1,27 +1,21 @@
 package sk.catheaven.main;
 
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.instruction.Field;
-import sk.catheaven.instruction.Instruction;
-import sk.catheaven.instruction.InstructionType;
-import sk.catheaven.utils.Tuple;
+import sk.catheaven.model.components.CPU;
+import sk.catheaven.model.components.Component;
+import sk.catheaven.model.instructions.Field;
+import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.model.instructions.InstructionType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 public class Loader {
     private static Logger log = LogManager.getLogger();
@@ -30,6 +24,58 @@ public class Loader {
     private static ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper;
+    }
+    
+    public static CPU getCPU(InputStream jsonResource) throws Exception {
+        JsonNode root = objectMapper.readTree(jsonResource);
+        JsonNode cpuNode = root.get("CPU");
+        
+        CPU cpu = new CPU();
+        CPU.BIT_SIZE = cpuNode.get("BIT_SIZE").asInt();     // first read the bit size of the whole architecture
+    
+        JsonNode componentsArray = cpuNode.get("components");
+    
+        if ( ! componentsArray.isArray())
+            throw new Exception("Invalid json formatting - Components need to be defined in an array of objects");
+        
+        for (JsonNode componentNode : componentsArray) {
+            JsonNode type = componentNode.get("type");
+            
+            if (type == null) {
+                log.error("Unspecified component type: {}", componentNode);
+                continue;
+            }
+    
+            String componentType = type.asText();
+            Class<?> componentClass = findComponentClass(componentType);
+            if (componentClass == null) {
+                log.error("Class of type `{}` not found", componentType);
+                continue;
+            }
+            try {
+                Component component = (Component) objectMapper.treeToValue(componentNode, componentClass);
+                cpu.getComponents().add(component);
+
+                log.info("Component added to cpu: {}", componentClass.getSimpleName());
+            }
+            catch (JsonProcessingException e) { log.error("{}: {}", e.getLocation(), e.getMessage()); }
+            catch (IllegalArgumentException e) { log.error(e.getMessage()); }
+        }
+        
+        return cpu;
+    }
+    
+    private static Class<?> findComponentClass(String componentType) {
+        if (componentType.isBlank())
+            return null;
+        
+        Class<?> componentClass = null;
+        try {
+            final String packageName = "sk.catheaven.model.components.";
+            componentClass = Class.forName(packageName.concat(componentType));
+        } catch (ClassNotFoundException ignored) {}
+        
+        return componentClass;
     }
     
     public static Instruction[] getInstructionSet(InputStream jsonResource) throws IOException {

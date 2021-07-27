@@ -1,4 +1,4 @@
-package sk.catheaven.instruction;
+package sk.catheaven.model.instructions;
 
 public class Field {
     private String label;
