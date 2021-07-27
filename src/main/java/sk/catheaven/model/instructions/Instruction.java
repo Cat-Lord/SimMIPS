@@ -64,10 +64,8 @@ public class Instruction {
         return fields;
     }
     
-    public void setFields(Tuple<String, String>[] fields) {
-        for (Tuple<String, String> field : fields) {
-            this.fields.put(field.getLeft(), field.getRight());     // resolve the tuple loaded from json in deserialization process
-        }
+    public void setFields(Map<String, String> fields) {
+        this.fields = fields;
     }
     
     public String getDescription() {

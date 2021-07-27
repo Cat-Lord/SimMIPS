@@ -177,9 +177,10 @@
               "immediateValue"
             ]
           },
-          "bubble": {
-            "label": "bubble",
-            "bitSize": 1
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
           },
           "description": "Latch register between Fetch and Decode phase"
         }

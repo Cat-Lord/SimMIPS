@@ -27,7 +27,7 @@ public class Data {
 	
     private static Logger log = LogManager.getLogger();
  
-    public Data() { }
+    public Data() { this(CPU.BIT_SIZE); }
 	public Data(int bitSize) { setBitSize(bitSize); }
  
 	public void setBitSize(int bitSize) {

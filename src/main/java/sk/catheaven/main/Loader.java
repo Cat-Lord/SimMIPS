@@ -80,7 +80,7 @@ public class Loader {
                 log.error("""
                         Invalid instruction: Instruction is missing an expected Field.\s
                         \tField "{}"
-                        \tInstruction {}""", expectedField.getLabel(), instruction);
+                        \tInstruction {} of type {}""", expectedField.getLabel(), instruction.getMnemo(), instruction.getType());
                 return false;
             }
         }
