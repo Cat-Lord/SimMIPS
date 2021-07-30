@@ -2,6 +2,7 @@ package sk.catheaven.model.components;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import sk.catheaven.model.Connector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class CPU {
     public static int BIT_SIZE = 32;
     private List<Component> components;
+    private List<Connector> connectors;
     
     public CPU() {
         components = new ArrayList<>();
@@ -30,5 +32,18 @@ public class CPU {
     @JsonSetter("BIT_SIZE")
     public void setBitSize(int bitSize) {
         CPU.BIT_SIZE = bitSize;
+    }
+    
+    public List<Connector> getConnectors() {
+        return connectors;
+    }
+    
+    public void setConnectors(List<Connector> connectors) {
+        if (areValidConnectors(connectors))
+            this.connectors = connectors;
+    }
+    
+    private boolean areValidConnectors(List<Connector> connectors) {
+        return true;
     }
 }

@@ -32,7 +32,8 @@ public class Launcher {
                         component.getInputs().size(), component.getOutputs().size(), component.getSelectors().size()
                 );
             
-            log.debug("Successfully initiated CPU with {} components\n", cpu.getComponents().size());
+            log.debug("Successfully initiated CPU with {} components and {} connectors\n",
+                                cpu.getComponents().size(), cpu.getConnectors().size());
         } catch (Exception exception) {
             log.error(exception.getMessage());
             exception.printStackTrace();

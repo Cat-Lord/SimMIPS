@@ -36,9 +36,9 @@ public abstract class Component {
 	private Style style;
 	private String description = "";
 	
-	private Map<String, Data> inputs = new HashMap<>();
-	private Map<String, Data> outputs = new HashMap<>();
-	private Map<String, Data> selectors = new HashMap<>();
+	protected Map<String, Data> inputs = new HashMap<>();
+	protected Map<String, Data> outputs = new HashMap<>();
+	protected Map<String, Data> selectors = new HashMap<>();
 	
 	public String getLabel() {
 		return label;
@@ -93,10 +93,9 @@ public abstract class Component {
 		return "Component {" +
 				"label='" + label + '\'' +
 				", style=" + style + System.lineSeparator() +
-				", description='" + description + '\'' +
-				", inputs=" + inputs.size() +
-				", outputs=" + outputs.size() +
-				", selectors=" + selectors.size() +
+				", inputs=" + inputs.size() + " [ " + inputs.getClass().getName() + " ] " +
+				", outputs=" + outputs.size() + " [ " + outputs.getClass().getName() + " ] " +
+				", selectors=" + selectors.size() + " [ " + selectors.getClass().getName() + " ] " +
 				'}';
 	}
 }
