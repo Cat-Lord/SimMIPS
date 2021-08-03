@@ -24,8 +24,8 @@ public class Launcher {
 
 	public static void main(String[] args){
 		
-		InputStream instructionsJsonResource = Launcher.class.getResourceAsStream("/sk/catheaven/design/instructions.json");
-		InputStream cpuJsonResource = Launcher.class.getResourceAsStream("/sk/catheaven/design/cpu.json");
+		InputStream instructionsJsonResource = Launcher.class.getResourceAsStream("/design/instructions.json");
+		InputStream cpuJsonResource = Launcher.class.getResourceAsStream("/design/cpu.json");
 		try {
 			Instruction[] instructions = Loader.getInstructionSet(instructionsJsonResource);
 			
