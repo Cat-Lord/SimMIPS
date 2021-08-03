@@ -23,7 +23,7 @@ public class CPUTest {
 	public void test(){
 		CPU cpu1, cpu2;
 		try {
-			Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
+			Loader l = new Loader("sk/catheaven/design/instructions.json", "sk/catheaven/design/cpu.json");
 			cpu1 = l.getCPU();
 			
 		} catch(Exception e) { 
@@ -47,7 +47,7 @@ public class CPUTest {
 		// CPU 2
 		//
 		try {
-			Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
+			Loader l = new Loader("sk/catheaven/design/instructions.json", "sk/catheaven/design/cpu.json");
 			cpu2 = l.getCPU();
 		} catch(Exception e) { 
 			e.printStackTrace();

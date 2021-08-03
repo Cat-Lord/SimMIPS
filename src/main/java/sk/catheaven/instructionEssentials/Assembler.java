@@ -341,7 +341,7 @@ public class Assembler {
 		else if(fieldValue.contains(POSITIONAL_CHAR))
 			seqString = fieldValue.substring(fieldValue.indexOf(POSITIONAL_CHAR) + 1, fieldValue.length());
 
-		return (Integer.parseInt(seqString) - 1); // numbering in layout.json starts from 1, so substract one
+		return (Integer.parseInt(seqString) - 1); // numbering in instructions.json starts from 1, so substract one
 	}
 	
 	// TODO: REMOVE THIS METHOD -- USED ONLY FOR DEBUGGING

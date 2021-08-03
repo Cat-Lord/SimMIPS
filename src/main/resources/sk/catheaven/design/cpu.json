@@ -1,2648 +1,2760 @@
 {
-  "components": [
-    {
-      "label": "PC",
-      "symbol": "PC",
-      "gui": {
-        "x": 95,
-        "y": 555,
-        "width": 35,
-        "height": 70,
-        "colour": "#ccd360"
-      },
-      "type": "PC",
-      "bitSize": 32,
-      "desc": "Adds 4 to the value of input A."
-    },
-    {
-      "label": "AF",
-      "gui": {
-        "x": 160,
-        "y": 590,
-        "width": 5,
-        "height": 5
-      },
-      "type": "Fork",
-      "in": 32,
-      "out": [
-        {
-          "label": "address",
-          "bitSize": "32"
-        }
-      ],
-      "desc": "Forks address from PC."
-    },
-    {
-      "label": "CONST_ADDER",
-      "symbol": "+4",
-      "gui": {
-        "x": 245,
-        "y": 360,
-        "width": 50,
-        "height": 100,
-        "colour": "#2c72f4"
-      },
-      "type": "ConstAdder",
-      "input": {
-        "label": "address",
-        "bitSize": 32
-      },
-      "output": 32,
-      "const": 4,
-      "desc": "Adds 4 to the value of input A."
-    },
-    {
-      "label": "NAF",
-      "gui": {
-        "x": 327,
-        "y": 413,
-        "width": 5,
-        "height": 5
-      },
-      "type": "Fork",
-      "in": 32,
-      "out": [
-        {
-          "label": "newAddress",
-          "bitSize": "32"
-        }
-      ],
-      "desc": "Forks new address from constAdder to branch and latch register."
-    },
-    {
-      "label": "BRANCH_MUX",
-      "gui": {
-        "x": 1375,
-        "y": 85,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
-      },
-      "type": "MUX",
-      "symbol": "M\nU\nX",
-      "inputA": {
-        "label": "newAddress",
-        "bitSize": 32
-      },
-      "inputB": {
-        "label": "branchAddress",
-        "bitSize": 32
-      },
-      "output": 32,
-      "selector": {
-        "label": "branchSignal",
-        "bitSize": 1
-      },
-      "desc": "Chooses from next address or calculated address in case of branching."
-    },
-    {
-      "label": "I_MEM",
-      "symbol": "Instruction\nMemory",
-      "gui": {
-        "x": 200,
-        "y": 528,
-        "width": 125,
-        "height": 125,
-        "colour": "#ccd360"
-      },
-      "type": "InstructionMemory",
-      "input": 32,
-      "output": 32,
-      "desc": "Stores compiled code instructions."
-    },
-    {
-      "label": "IF_ID",
-      "gui": {
-        "x": 385,
-        "y": 185,
-        "width": 40,
-        "height": 720,
-        "colour": "#589074"
-      },
-      "type": "LatchRegister",
-      "in": {
-        "newAddress": 32,
-        "iCode": 32
-      },
-      "out": {
-        "newAddress": {
-          "newAddress": "32"
-        },
-        "iCode": {
-          "iCode": "32",
-          "rs": "6-27",
-          "rt": "11-27",
-          "rd": "16-27",
-          "immediateValue": "16-16"
+  "CPU": {
+    "BIT_SIZE": 32,
+    "components": [
+      {
+        "PC": {
+          "label": "PC",
+          "style": {
+            "x": 95,
+            "y": 555,
+            "width": 35,
+            "height": 70,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "address": {}
+          },
+          "description": "Adds 4 to the value of input A."
         }
       },
-      "bubble": {
-        "label": "bubble",
-        "bitSize": 1
+      {
+        "Fork": {
+          "label": "AF",
+          "style": {
+            "x": 160,
+            "y": 590,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "address": {}
+          },
+          "description": "Forks address from PC."
+        }
       },
-      "desc": "Latch register between Fetch and Decode phase"
-    },
-    {
-      "label": "CU",
-      "symbol": "CU",
-      "gui": {
-        "x": 560,
-        "y": 260,
-        "width": 35,
-        "height": 70,
-        "colour": "#d1eaff"
+      {
+        "ConstAdder": {
+          "label": "+4",
+          "style": {
+            "x": 245,
+            "y": 360,
+            "width": 50,
+            "height": 100,
+            "colour": "#2c72f4"
+          },
+          "inputs": {
+            "address": {}
+          },
+          "outputs": {
+            "newAddress": {}
+          },
+          "constant": {
+            "data": 4
+          },
+          "description": "Adds 4 to the value of input A."
+        }
       },
-      "type": "ControlUnit",
-      "in": 32,
-      "opCodeCut": "0-26",
-      "funcCut": "27-27",
-      "funcDependant": "AluOp",
-      "controlCodes": {
-        "codesDescription": [
+      {
+        "Fork": {
+          "label": "NAF",
+          "style": {
+            "x": 327,
+            "y": 413,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "newAddress": {}
+          },
+          "description": "Forks new address from constAdder to branch and latch register."
+        }
+      },
+      {
+        "MUX": {
+          "label": "BRANCH_MUX",
+          "style": {
+            "x": 1375,
+            "y": 85,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "newAddress": {},
+            "branchAddress": {}
+          },
+          "outputs": {
+            "newAddress": {}
+          },
+          "selectors": {
+            "branchSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses from next address or calculated address in case of branching."
+        }
+      },
+      {
+        "InstructionMemory": {
+          "label": "Instruction\nMemory",
+          "style": {
+            "x": 200,
+            "y": 528,
+            "width": 125,
+            "height": 125,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "iCode": {}
+          },
+          "description": "Stores compiled code instructions."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "IF_ID",
+          "style": {
+            "x": 385,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "newAddress": {},
+            "iCode": {}
+          },
+          "outputs": {
+            "newAddress": {},
+            "iCode": {},
+            "rs": {
+              "range": {
+                "left": 6,
+                "right": 27
+              }
+            },
+            "rt": {
+              "range": {
+                "left": 11,
+                "right": 27
+              }
+            },
+            "rd": {
+              "range": {
+                "left": 16,
+                "right": 27
+              }
+            },
+            "immediateValue": {
+              "range": {
+                "left": 16,
+                "right": 16
+              }
+            }
+          },
+          "inputsToOutputs": {
+            "newAddress": [
+              "newAddress"
+            ],
+            "iCode": [
+              "iCode",
+              "rs",
+              "rt",
+              "rd",
+              "immediateValue"
+            ]
+          },
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "description": "Latch register between Fetch and Decode phase"
+        }
+      },
+      {
+        "ControlUnit": {
+          "label": "CU",
+          "style": {
+            "x": 560,
+            "y": 260,
+            "width": 35,
+            "height": 70,
+            "colour": "#d1eaff"
+          },
+          "inputs": {
+            "input": {}
+          },
+          "opCode": {
+            "range": {
+              "left": 0,
+              "right": 26
+            }
+          },
+          "func": {
+            "range": {
+              "left": 27,
+              "right": 27
+            }
+          },
+          "funcDependant": "AluOp",
+          "outputs": {
+            "controlSignals": {
+              "bitSize": "11"
+            }
+          },
+          "controlCodes": {
+            "RegDest": {
+              "bitSize": "1"
+            },
+            "AluSrc": {
+              "bitSize": "1"
+            },
+            "AluOp": {
+              "bitSize": "4"
+            },
+            "Branch": {
+              "bitSize": "1"
+            },
+            "MemRead": {
+              "bitSize": "1"
+            },
+            "MemWrite": {
+              "bitSize": "1"
+            },
+            "RegWrite": {
+              "bitSize": "1"
+            },
+            "MemToReg": {
+              "bitSize": "1"
+            }
+          },
+          "opcodeToControlSignals": {
+            "0": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "4": [
+              0,
+              0,
+              2,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "5": [
+              0,
+              0,
+              11,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "8": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "9": [
+              0,
+              1,
+              2,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "12": [
+              0,
+              1,
+              3,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "13": [
+              0,
+              1,
+              4,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "14": [
+              0,
+              1,
+              6,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "18": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "35": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "36": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "37": [
+              0,
+              1,
+              15,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "43": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          "funcToALUOpCode": {
+            "32": "1",
+            "36": "3",
+            "26": "9",
+            "27": "10",
+            "24": "7",
+            "25": "8",
+            "0": "0",
+            "39": "5",
+            "37": "4",
+            "1": "13",
+            "2": "14",
+            "34": "2",
+            "38": "6"
+          },
+          "description": "Control Unit generates control signals to dictate which components can be active."
+        }
+      },
+      {
+        "ConstMUX": {
+          "label": "CU_MUX",
+          "style": {
+            "x": 680,
+            "y": 240,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 11
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 11
+            }
+          },
+          "constant": {
+            "data": 0
+          },
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "description": "Activating this MUX results in value of constant output value."
+        }
+      },
+      {
+        "Fork": {
+          "label": "RTF",
+          "style": {
+            "x": 475,
+            "y": 515,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "rt": {
+              "bitSize": 5
+            }
+          },
+          "description": "Forks 'rt' part of instruction code."
+        }
+      },
+      {
+        "RegBank": {
+          "label": "Registers",
+          "style": {
+            "x": 565,
+            "y": 445,
+            "width": 170,
+            "height": 200,
+            "colour": "#ccd360"
+          },
+          "dataBitSize": 32,
+          "regCount": 32,
+          "inputs": {
+            "rs": {
+              "bitSize": 5
+            },
+            "rt": {
+              "bitSize": 5
+            },
+            "destReg": {
+              "bitSize": 5
+            },
+            "destRegValue": {}
+          },
+          "outputs": {
+            "reg1Value": {},
+            "reg2Value": {}
+          },
+          "selectors": {
+            "regWriteSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Bank of registers of fixed size. Can be used as temporary storage."
+        }
+      },
+      {
+        "SignExtend": {
+          "label": "SE",
+          "style": {
+            "x": 650,
+            "y": 745,
+            "width": 30,
+            "height": 50,
+            "colour": "#e87b7b"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 16
+            }
+          },
+          "outputs": {
+            "immediateValue": {}
+          },
+          "description": "Extends the output, from 16 bit to 32 bit in size."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "ID_EX",
+          "style": {
+            "x": 780,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "newAddress": {},
+            "reg1Value": {},
+            "reg2Value": {},
+            "immediateValue": {},
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "newAddress": {},
+            "aluInputA": {},
+            "reg2Value": {},
+            "immediateValue": {},
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "newAddress": [
+              "newAddress"
+            ],
+            "reg1Value": [
+              "aluInputA"
+            ],
+            "reg2Value": [
+              "reg2Value"
+            ],
+            "immediateValue": [
+              "immediateValue"
+            ],
+            "rt": [
+              "rt"
+            ],
+            "rd": [
+              "rd"
+            ]
+          },
+          "description": "Latch register between Decode and Execute phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F1",
+          "style": {
+            "x": 870,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 11
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 10
+            },
+            "destRegSignal": {
+              "bitSize": 11,
+              "range": {
+                "left": 0,
+                "right": 10
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F2",
+          "style": {
+            "x": 940,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 10
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 9
+            },
+            "aluSrcSignal": {
+              "bitSize": 10,
+              "range": {
+                "left": 0,
+                "right": 9
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F3",
+          "style": {
+            "x": 1050,
+            "y": 280,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 9
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 5
+            },
+            "aluOp": {
+              "bitSize": 9,
+              "range": {
+                "left": 0,
+                "right": 5
+              }
+            }
+          }
+        }
+      },
+      {
+        "ConstMUX": {
+          "label": "EX_CU_MUX",
+          "style": {
+            "x": 1095,
+            "y": 250,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 5
+            }
+          },
+          "selectors": {
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "constant": {
+            "data": 0
+          },
+          "description": "MUX that can zero out signals from control unit in EX phase."
+        }
+      },
+      {
+        "Fork": {
+          "label": "RVF",
+          "style": {
+            "x": 855,
+            "y": 640,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "reg2Value": {}
+          },
+          "description": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
+        }
+      },
+      {
+        "Fork": {
+          "label": "IVF",
+          "style": {
+            "x": 890,
+            "y": 675,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "immediateValue": {}
+          },
+          "description": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
+        }
+      },
+      {
+        "Adder": {
+          "label": "+",
+          "style": {
+            "x": 970,
+            "y": 355,
+            "width": 45,
+            "height": 80,
+            "colour": "#2c72f4"
+          },
+          "inputs": {
+            "newAddress": {},
+            "immediateValue": {}
+          },
+          "outputs": {
+            "branchAddress": {}
+          },
+          "description": "Computes branch address by adding offset from immediate value to the value of next address."
+        }
+      },
+      {
+        "MUX": {
+          "label": "ALUSrc_MUX",
+          "style": {
+            "x": 935,
+            "y": 620,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "reg2Value": {},
+            "immediateValue": {}
+          },
+          "outputs": {
+            "aluInputB": {}
+          },
+          "selectors": {
+            "aluSrcSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Determines the second input into ALU. It could be either output from registers or immediate value."
+        }
+      },
+      {
+        "ALU": {
+          "label": "ALU",
+          "style": {
+            "x": 1000,
+            "y": 480,
+            "width": 110,
+            "height": 215,
+            "colour": "#98999a"
+          },
+          "inputs": {
+            "aluInputA": {},
+            "aluInputB": {}
+          },
+          "outputs": {
+            "aluResult": {},
+            "zeroResultSignal": {
+              "bitSize": 1
+            }
+          },
+          "selectors": {
+            "aluOp": {
+              "bitSize": 4
+            }
+          },
+          "operations": {
+            "0": "add",
+            "1": "add",
+            "2": "sub",
+            "3": "and",
+            "4": "or",
+            "5": "nor",
+            "6": "xor",
+            "7": "mul",
+            "8": "mulu",
+            "9": "div",
+            "10": "divu",
+            "11": "bneq",
+            "13": "sllv",
+            "14": "srlv",
+            "15": "lui"
+          },
+          "description": "Computational Unit of the CPU. Does most of the mathematical operations."
+        }
+      },
+      {
+        "MUX": {
+          "label": "DEST_REG MUX",
+          "style": {
+            "x": 857,
+            "y": 812,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "rt": {
+              "bitSize": 5
+            },
+            "rd": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "selectors": {
+            "destRegSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses destination register (either rd or rt value from instruction)."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "EX_MEM",
+          "style": {
+            "x": 1150,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "branchAddress": {},
+            "zeroResultSignal": {
+              "bitSize": 1
+            },
+            "aluResult": {},
+            "reg2Value": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "branchAddress": {},
+            "zeroResultSignal": {
+              "bitSize": 1
+            },
+            "aluResult": {},
+            "reg2Value": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "branchAddress": [
+              "branchAddress"
+            ],
+            "zeroResultSignal": [
+              "zeroResultSignal"
+            ],
+            "aluResult": [
+              "aluResult"
+            ],
+            "reg2Value": [
+              "reg2Value"
+            ],
+            "destReg": [
+              "destReg"
+            ]
+          },
+          "description": "Latch register between Execute and Memory phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F4",
+          "style": {
+            "x": 1217,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 4
+            },
+            "branchSignal": {
+              "bitSize": 5,
+              "range": {
+                "left": 0,
+                "right": 4
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F5",
+          "style": {
+            "x": 1360,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 4
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 3
+            },
+            "memReadSignal": {
+              "bitSize": 4,
+              "range": {
+                "left": 0,
+                "right": 3
+              }
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "F6",
+          "style": {
+            "x": 1485,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 3
+            }
+          },
+          "outputs": {
+            "controlSignals": {
+              "bitSize": 2
+            },
+            "memWriteSignal": {
+              "bitSize": 3,
+              "range": {
+                "left": 0,
+                "right": 2
+              }
+            }
+          }
+        }
+      },
+      {
+        "AND": {
+          "label": "&",
+          "style": {
+            "x": 1240,
+            "y": 330,
+            "width": 20,
+            "height": 45,
+            "colour": "#000000"
+          },
+          "inputs": {
+            "branchSignal": {
+              "bitSize": 1
+            },
+            "zeroResultSignal": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "branchSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Output of this AND gate determines, if a branch will be taken or not."
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF",
+          "style": {
+            "x": 1270,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "branchSignal": {
+              "bitSize": 1
+            },
+            "bubble": {
+              "bitSize": 1
+            }
+          },
+          "description": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF1",
+          "style": {
+            "x": 1112,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "bubble": {
+              "bitSize": 1
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "BF2",
+          "style": {
+            "x": 697,
+            "y": 150,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 1
+            }
+          },
+          "outputs": {
+            "bubble": {
+              "bitSize": 1
+            }
+          }
+        }
+      },
+      {
+        "Fork": {
+          "label": "ARF",
+          "style": {
+            "x": 1215,
+            "y": 600,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {}
+          },
+          "outputs": {
+            "aluResult": {}
+          },
+          "description": "Forks result from ALU and forwards it to the data memory and next latch register."
+        }
+      },
+      {
+        "DataMemory": {
+          "label": "Data Memory",
+          "style": {
+            "x": 1275,
+            "y": 510,
+            "width": 180,
+            "height": 180,
+            "colour": "#ccd360"
+          },
+          "inputs": {
+            "aluResult": {},
+            "reg2Value": {}
+          },
+          "outputs": {
+            "memData": {}
+          },
+          "selectors": {
+            "memReadSignal": { "bitSize": 1 },
+            "memWriteSignal": { "bitSize": 1 }
+          },
+          "description": "Saves data, extra CPU storage and typically much bigger in size than register bank."
+        }
+      },
+      {
+        "LatchRegister": {
+          "label": "MEM_WB",
+          "style": {
+            "x": 1510,
+            "y": 185,
+            "width": 40,
+            "height": 720,
+            "colour": "#589074"
+          },
+          "inputs": {
+            "controlSignals": {},
+            "memData": {},
+            "aluResult": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "outputs": {
+            "controlSignals": {},
+            "memData": {},
+            "aluResult": {},
+            "destReg": {
+              "bitSize": 5
+            }
+          },
+          "inputsToOutputs": {
+            "controlSignals": [
+              "controlSignals"
+            ],
+            "memData": [
+              "memData"
+            ],
+            "aluResult": [
+              "aluResult"
+            ],
+            "destReg": [
+              "destReg"
+            ]
+          },
+          "description": "Latch register between Memory and WriteBack phase"
+        }
+      },
+      {
+        "Fork": {
+          "label": "F7",
+          "style": {
+            "x": 1603,
+            "y": 285,
+            "width": 5,
+            "height": 5
+          },
+          "inputs": {
+            "input": {
+              "bitSize": 2
+            }
+          },
+          "outputs": {
+            "regWriteSignal": {
+              "bitSize": 1
+            },
+            "memToRegSignal": {
+              "bitSize": 2,
+              "range": {
+                "left": 0,
+                "right": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "MUX": {
+          "label": "WB MUX",
+          "style": {
+            "x": 1590,
+            "y": 595,
+            "width": 35,
+            "height": 70,
+            "colour": "#c51df8"
+          },
+          "inputs": {
+            "memData": {},
+            "aluResult": {}
+          },
+          "outputs": {
+            "destRegValue": {}
+          },
+          "selectors": {
+            "memToRegSignal": {
+              "bitSize": 1
+            }
+          },
+          "description": "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle."
+        }
+      }
+    ],
+    "connectors": [
+      {
+        "from": "PC",
+        "to": "AF",
+        "selector": "address",
+        "wireType": "normal",
+        "nodes": [
           {
-            "label": "RegDest",
-            "bitSize": 1
+            "x": 100,
+            "y": 590
           },
           {
-            "label": "AluSrc",
-            "bitSize": 1
+            "x": 160,
+            "y": 590
+          }
+        ]
+      },
+      {
+        "from": "AF",
+        "to": "Instruction\nMemory",
+        "selector": "address",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 163,
+            "y": 590
           },
           {
-            "label": "AluOp",
-            "bitSize": 4
+            "x": 205,
+            "y": 590
+          }
+        ]
+      },
+      {
+        "from": "AF",
+        "to": "+4",
+        "selector": "address",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 163,
+            "y": 590
           },
           {
-            "label": "Branch",
-            "bitSize": 1
+            "x": 163,
+            "y": 390
           },
           {
-            "label": "MemRead",
-            "bitSize": 1
+            "x": 250,
+            "y": 390
+          }
+        ]
+      },
+      {
+        "from": "+4",
+        "to": "NAF",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 295,
+            "y": 415
           },
           {
-            "label": "MemWrite",
-            "bitSize": 1
+            "x": 330,
+            "y": 415
+          }
+        ]
+      },
+      {
+        "from": "NAF",
+        "to": "IF_ID",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 330,
+            "y": 415
           },
           {
-            "label": "RegWrite",
-            "bitSize": 1
+            "x": 390,
+            "y": 415
+          }
+        ]
+      },
+      {
+        "from": "NAF",
+        "to": "BRANCH_MUX",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 330,
+            "y": 415
           },
           {
-            "label": "MemToReg",
-            "bitSize": 1
+            "x": 330,
+            "y": 100
+          },
+          {
+            "x": 1380,
+            "y": 100
+          }
+        ]
+      },
+      {
+        "from": "BRANCH_MUX",
+        "to": "PC",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1390,
+            "y": 121
+          },
+          {
+            "x": 1500,
+            "y": 121
+          },
+          {
+            "x": 1500,
+            "y": 30
+          },
+          {
+            "x": 35,
+            "y": 30
+          },
+          {
+            "x": 35,
+            "y": 590
+          },
+          {
+            "x": 100,
+            "y": 590
+          }
+        ]
+      },
+      {
+        "from": "Instruction\nMemory",
+        "to": "IF_ID",
+        "selector": "iCode",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 325,
+            "y": 590
+          },
+          {
+            "x": 400,
+            "y": 590
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "CU",
+        "selector": "iCode",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 265
+          },
+          {
+            "x": 545,
+            "y": 265
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "ID_EX",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 415
+          },
+          {
+            "x": 790,
+            "y": 415
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "Registers",
+        "selector": "rs",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 475
+          },
+          {
+            "x": 580,
+            "y": 475
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "RTF",
+        "selector": "rt",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 515
+          },
+          {
+            "x": 477,
+            "y": 515
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "SE",
+        "selector": "immediateValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 750
+          },
+          {
+            "x": 650,
+            "y": 750
+          }
+        ]
+      },
+      {
+        "from": "IF_ID",
+        "to": "ID_EX",
+        "selector": "rd",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 400,
+            "y": 865
+          },
+          {
+            "x": 790,
+            "y": 865
+          }
+        ]
+      },
+      {
+        "from": "CU",
+        "to": "CU_MUX",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 555,
+            "y": 265
+          },
+          {
+            "x": 690,
+            "y": 265
           }
         ],
-        "opcodeToControl": {
-          "0": [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "4": [
-            0,
-            0,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          "5": [
-            0,
-            0,
-            11,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          "8": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "9": [
-            0,
-            1,
-            2,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "12": [
-            0,
-            1,
-            3,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "13": [
-            0,
-            1,
-            4,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "14": [
-            0,
-            1,
-            6,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "18": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "35": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "36": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "37": [
-            0,
-            1,
-            15,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          "43": [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1,
-            0,
-            1
-          ]
-        }
+        "content": [
+          {
+            "regDest": 1
+          },
+          {
+            "aluSrc": 1
+          },
+          {
+            "aluOp": 4
+          },
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "funcToOperation": [
-        {
-          "func": 32,
-          "operation": 1
-        },
-        {
-          "func": 36,
-          "operation": 3
-        },
-        {
-          "func": 26,
-          "operation": 9
-        },
-        {
-          "func": 27,
-          "operation": 10
-        },
-        {
-          "func": 24,
-          "operation": 7
-        },
-        {
-          "func": 25,
-          "operation": 8
-        },
-        {
-          "func": 0,
-          "operation": 0
-        },
-        {
-          "func": 39,
-          "operation": 5
-        },
-        {
-          "func": 37,
-          "operation": 4
-        },
-        {
-          "func": 1,
-          "operation": 13
-        },
-        {
-          "func": 2,
-          "operation": 14
-        },
-        {
-          "func": 34,
-          "operation": 2
-        },
-        {
-          "func": 38,
-          "operation": 6
-        }
-      ],
-      "desc": "Control Unit generates control signals to dictate which components can be active."
-    },
-    {
-      "label": "CU_MUX",
-      "gui": {
-        "x": 680,
-        "y": 240,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
+      {
+        "from": "CU_MUX",
+        "to": "ID_EX",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 710,
+            "y": 280
+          },
+          {
+            "x": 790,
+            "y": 280
+          }
+        ],
+        "content": [
+          {
+            "regDest": 1
+          },
+          {
+            "aluSrc": 1
+          },
+          {
+            "aluOp": 4
+          },
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "ConstMUX",
-      "input": 11,
-      "const": 0,
-      "output": 11,
-      "selector": {
-        "label": "bubble",
-        "bitSize": 1
+      {
+        "from": "RTF",
+        "to": "Registers",
+        "selector": "rt",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 477,
+            "y": 515
+          },
+          {
+            "x": 575,
+            "y": 515
+          }
+        ]
       },
-      "desc": "Activating this MUX results in value of constant output value."
-    },
-    {
-      "label": "RTF",
-      "gui": {
-        "x": 475,
-        "y": 515,
-        "width": 5,
-        "height": 5
+      {
+        "from": "RTF",
+        "to": "ID_EX",
+        "selector": "rt",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 477,
+            "y": 515
+          },
+          {
+            "x": 477,
+            "y": 830
+          },
+          {
+            "x": 790,
+            "y": 830
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 5,
-      "out": [
-        {
-          "label": "rt",
-          "bitSize": "5"
-        }
-      ],
-      "desc": "Forks 'rt' part of instruction code."
-    },
-    {
-      "label": "REG_BANK",
-      "symbol": "Registers",
-      "gui": {
-        "x": 565,
-        "y": 445,
-        "width": 170,
-        "height": 200,
-        "colour": "#ccd360"
+      {
+        "from": "Registers",
+        "to": "ID_EX",
+        "selector": "reg1Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 735,
+            "y": 480
+          },
+          {
+            "x": 765,
+            "y": 480
+          },
+          {
+            "x": 765,
+            "y": 520
+          },
+          {
+            "x": 790,
+            "y": 520
+          }
+        ]
       },
-      "type": "RegBank",
-      "dataBitSize": 32,
-      "inputA": {
-        "label": "rs",
-        "bitSize": 5
+      {
+        "from": "Registers",
+        "to": "ID_EX",
+        "selector": "reg2Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 735,
+            "y": 620
+          },
+          {
+            "x": 765,
+            "y": 620
+          },
+          {
+            "x": 765,
+            "y": 580
+          },
+          {
+            "x": 790,
+            "y": 580
+          }
+        ]
       },
-      "inputB": {
-        "label": "rt",
-        "bitSize": 5
+      {
+        "from": "SE",
+        "to": "ID_EX",
+        "selector": "immediateValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 650,
+            "y": 750
+          },
+          {
+            "x": 790,
+            "y": 750
+          }
+        ]
       },
-      "destReg": {
-        "label": "destReg",
-        "bitSize": 5
+      {
+        "from": "ID_EX",
+        "to": "F1",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 280
+          },
+          {
+            "x": 870,
+            "y": 280
+          }
+        ],
+        "content": [
+          {
+            "regDest": 1
+          },
+          {
+            "aluSrc": 1
+          },
+          {
+            "aluOp": 4
+          },
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "destRegData": "destRegValue",
-      "outputA": "reg1Value",
-      "outputB": "reg2Value",
-      "regCount": 32,
-      "selector": {
-        "label": "regWriteSignal",
-        "bitSize": 1
+      {
+        "from": "ID_EX",
+        "to": "+",
+        "selector": "newAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 415
+          },
+          {
+            "x": 980,
+            "y": 415
+          }
+        ]
       },
-      "desc": "Bank of registers of fixed size. Can be used as temporary storage."
-    },
-    {
-      "label": "SIGN_EXT",
-      "symbol": "SE",
-      "gui": {
-        "x": 650,
-        "y": 745,
-        "width": 30,
-        "height": 50,
-        "colour": "#e87b7b"
+      {
+        "from": "ID_EX",
+        "to": "IVF",
+        "selector": "immediateValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 750
+          },
+          {
+            "x": 892,
+            "y": 750
+          },
+          {
+            "x": 892,
+            "y": 675
+          }
+        ]
       },
-      "type": "SignExt",
-      "input": 16,
-      "output": 32,
-      "desc": "Extends the output, from 16 bit to 32 bit in size."
-    },
-    {
-      "label": "ID_EX",
-      "gui": {
-        "x": 780,
-        "y": 185,
-        "width": 40,
-        "height": 720,
-        "colour": "#589074"
+      {
+        "from": "ID_EX",
+        "to": "ALU",
+        "selector": "aluInputA",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 520
+          },
+          {
+            "x": 1010,
+            "y": 520
+          }
+        ]
       },
-      "type": "LatchRegister",
-      "in": {
-        "controlSignals": 32,
-        "newAddress": 32,
-        "reg1Value": 32,
-        "reg2Value": 32,
-        "immediateValue": 32,
-        "rt": 5,
-        "rd": 5
+      {
+        "from": "ID_EX",
+        "to": "RVF",
+        "selector": "reg2Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 580
+          },
+          {
+            "x": 857,
+            "y": 580
+          },
+          {
+            "x": 857,
+            "y": 642
+          }
+        ]
       },
-      "out": {
-        "controlSignals": {
-          "controlSignals": "32"
-        },
-        "newAddress": {
-          "newAddress": "32"
-        },
-        "reg1Value": {
-          "aluInputA": "32"
-        },
-        "reg2Value": {
-          "reg2Value": "32"
-        },
-        "immediateValue": {
-          "immediateValue": "32"
-        },
-        "rt": {
-          "rt": "5"
-        },
-        "rd": {
-          "rd": "5"
-        }
+      {
+        "from": "ID_EX",
+        "to": "DEST_REG MUX",
+        "selector": "rt",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 830
+          },
+          {
+            "x": 880,
+            "y": 830
+          }
+        ]
       },
-      "desc": "Latch register between Decode and Execute phase"
-    },
-    {
-      "label": "F1",
-      "gui": {
-        "x": 870,
-        "y": 280,
-        "width": 5,
-        "height": 5
+      {
+        "from": "ID_EX",
+        "to": "DEST_REG MUX",
+        "selector": "rd",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 820,
+            "y": 865
+          },
+          {
+            "x": 880,
+            "y": 865
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 11,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "10"
-        },
-        {
-          "label": "destRegSignal",
-          "bitSize": "0-10"
-        }
-      ]
-    },
-    {
-      "label": "F2",
-      "gui": {
-        "x": 940,
-        "y": 280,
-        "width": 5,
-        "height": 5
+      {
+        "from": "DEST_REG MUX",
+        "to": "EX_MEM",
+        "selector": "destReg",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 880,
+            "y": 855
+          },
+          {
+            "x": 1160,
+            "y": 855
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 10,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "9"
-        },
-        {
-          "label": "aluSrcSignal",
-          "bitSize": "0-9"
-        }
-      ]
-    },
-    {
-      "label": "F3",
-      "gui": {
-        "x": 1050,
-        "y": 280,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F1",
+        "to": "F2",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 873,
+            "y": 280
+          },
+          {
+            "x": 940,
+            "y": 280
+          }
+        ],
+        "content": [
+          {
+            "aluSrc": 1
+          },
+          {
+            "aluOp": 4
+          },
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 9,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "5"
-        },
-        {
-          "label": "aluOp",
-          "bitSize": "0-5"
-        }
-      ]
-    },
-    {
-      "label": "EX_CU_MUX",
-      "gui": {
-        "x": 1095,
-        "y": 250,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
+      {
+        "from": "F1",
+        "to": "DEST_REG MUX",
+        "selector": "destRegSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 873,
+            "y": 280
+          },
+          {
+            "x": 873,
+            "y": 815
+          }
+        ]
       },
-      "type": "ConstMUX",
-      "input": 5,
-      "const": 0,
-      "output": 5,
-      "selector": {
-        "label": "bubble",
-        "bitSize": 1
+      {
+        "from": "F2",
+        "to": "F3",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 943,
+            "y": 280
+          },
+          {
+            "x": 1055,
+            "y": 280
+          }
+        ],
+        "content": [
+          {
+            "aluOp": 4
+          },
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "desc": "MUX that can zero out signals from control unit in EX phase."
-    },
-    {
-      "label": "RVF",
-      "gui": {
-        "x": 855,
-        "y": 640,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F2",
+        "to": "ALUSrc_MUX",
+        "selector": "aluSrcSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 943,
+            "y": 280
+          },
+          {
+            "x": 943,
+            "y": 635
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 32,
-      "out": [
-        {
-          "label": "reg2Value",
-          "bitSize": "32"
-        }
-      ],
-      "desc": "Forks  value from second register from Reg Bank. This value is forwarded to AluSrc MUX and to the next latch register."
-    },
-    {
-      "label": "IVF",
-      "gui": {
-        "x": 890,
-        "y": 675,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F3",
+        "to": "EX_CU_MUX",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1053,
+            "y": 280
+          },
+          {
+            "x": 1105,
+            "y": 280
+          }
+        ],
+        "content": [
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 32,
-      "out": [
-        {
-          "label": "immediateValue",
-          "bitSize": "32"
-        }
-      ],
-      "desc": "Forks immediate value and forwards it to the AluSrc MUX and to the branch adder to compute branch address."
-    },
-    {
-      "label": "OFFSET_ADDER",
-      "symbol": "+",
-      "gui": {
-        "x": 970,
-        "y": 355,
-        "width": 45,
-        "height": 80,
-        "colour": "#2c72f4"
+      {
+        "from": "F3",
+        "to": "ALU",
+        "selector": "aluOp",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1053,
+            "y": 280
+          },
+          {
+            "x": 1053,
+            "y": 495
+          }
+        ]
       },
-      "type": "Adder",
-      "inputA": {
-        "label": "newAddress",
-        "bitSize": 32
+      {
+        "from": "EX_CU_MUX",
+        "to": "EX_MEM",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1105,
+            "y": 285
+          },
+          {
+            "x": 1160,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "inputB": {
-        "label": "immediateValue",
-        "bitSize": 32
+      {
+        "from": "RVF",
+        "to": "ALUSrc_MUX",
+        "selector": "reg2Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 857,
+            "y": 642
+          },
+          {
+            "x": 950,
+            "y": 642
+          }
+        ]
       },
-      "output": 32,
-      "desc": "Computes branch address by adding offset from immediate value to the value of next address."
-    },
-    {
-      "label": "ALUSrc_MUX",
-      "gui": {
-        "x": 935,
-        "y": 620,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
+      {
+        "from": "RVF",
+        "to": "EX_MEM",
+        "selector": "reg2Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 857,
+            "y": 642
+          },
+          {
+            "x": 857,
+            "y": 777
+          },
+          {
+            "x": 1165,
+            "y": 777
+          }
+        ]
       },
-      "type": "MUX",
-      "symbol": "M\nU\nX",
-      "inputA": {
-        "label": "reg2Value",
-        "bitSize": 32
+      {
+        "from": "IVF",
+        "to": "+",
+        "selector": "immediateValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 892,
+            "y": 675
+          },
+          {
+            "x": 892,
+            "y": 375
+          },
+          {
+            "x": 980,
+            "y": 375
+          }
+        ]
       },
-      "inputB": {
-        "label": "immediateValue",
-        "bitSize": 32
+      {
+        "from": "IVF",
+        "to": "ALUSrc_MUX",
+        "selector": "immediateValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 892,
+            "y": 675
+          },
+          {
+            "x": 945,
+            "y": 675
+          }
+        ]
       },
-      "output": 32,
-      "selector": {
-        "label": "aluSrcSignal",
-        "bitSize": 1
+      {
+        "from": "+",
+        "to": "EX_MEM",
+        "selector": "branchAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1015,
+            "y": 400
+          },
+          {
+            "x": 1160,
+            "y": 400
+          }
+        ]
       },
-      "desc": "Determins the second input into ALU. It could be either output from registers or immediate value."
-    },
-    {
-      "label": "ALU",
-      "symbol": "ALU",
-      "gui": {
-        "x": 1000,
-        "y": 480,
-        "width": 110,
-        "height": 215,
-        "colour": "#98999a"
+      {
+        "from": "ALUSrc_MUX",
+        "to": "ALU",
+        "selector": "aluInputB",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 970,
+            "y": 665
+          },
+          {
+            "x": 1010,
+            "y": 665
+          }
+        ]
       },
-      "type": "ALU",
-      "inputA": {
-        "label": "aluInputA",
-        "bitSize": 32
+      {
+        "from": "ALU",
+        "to": "EX_MEM",
+        "selector": "aluResult",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1110,
+            "y": 600
+          },
+          {
+            "x": 1165,
+            "y": 600
+          }
+        ]
       },
-      "inputB": {
-        "label": "aluInputB",
-        "bitSize": 32
+      {
+        "from": "ALU",
+        "to": "EX_MEM",
+        "selector": "zeroResultSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1110,
+            "y": 565
+          },
+          {
+            "x": 1165,
+            "y": 565
+          }
+        ]
       },
-      "output": 32,
-      "aluOp": {
-        "label": "aluOp",
-        "bitSize": 4
+      {
+        "from": "EX_MEM",
+        "to": "F4",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 285
+          },
+          {
+            "x": 1220,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "branch": 1
+          },
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "zeroResult": {
-        "label": "zeroResultSignal",
-        "bitSize": 1
+      {
+        "from": "EX_MEM",
+        "to": "&",
+        "selector": "zeroResultSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 565
+          },
+          {
+            "x": 1220,
+            "y": 565
+          },
+          {
+            "x": 1220,
+            "y": 363
+          },
+          {
+            "x": 1245,
+            "y": 363
+          }
+        ]
       },
-      "operations": [
-        {
-          "code": 0,
-          "operation": "add"
-        },
-        {
-          "code": 1,
-          "operation": "add"
-        },
-        {
-          "code": 2,
-          "operation": "sub"
-        },
-        {
-          "code": 3,
-          "operation": "and"
-        },
-        {
-          "code": 4,
-          "operation": "or"
-        },
-        {
-          "code": 5,
-          "operation": "nor"
-        },
-        {
-          "code": 6,
-          "operation": "xor"
-        },
-        {
-          "code": 7,
-          "operation": "mul"
-        },
-        {
-          "code": 8,
-          "operation": "mulu"
-        },
-        {
-          "code": 9,
-          "operation": "div"
-        },
-        {
-          "code": 10,
-          "operation": "divu"
-        },
-        {
-          "code": 11,
-          "operation": "bneq"
-        },
-        {
-          "code": 13,
-          "operation": "sllv"
-        },
-        {
-          "code": 14,
-          "operation": "srlv"
-        },
-        {
-          "code": 15,
-          "operation": "lui"
-        }
-      ],
-      "desc": "Computational Unit of the CPU. Does most of the mathematical operations."
-    },
-    {
-      "label": "DEST_REG_MUX",
-      "gui": {
-        "x": 857,
-        "y": 812,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
+      {
+        "from": "EX_MEM",
+        "to": "BRANCH_MUX",
+        "selector": "branchAddress",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 400
+          },
+          {
+            "x": 1333,
+            "y": 400
+          },
+          {
+            "x": 1333,
+            "y": 130
+          },
+          {
+            "x": 1385,
+            "y": 130
+          }
+        ]
       },
-      "type": "MUX",
-      "symbol": "M\nU\nX",
-      "inputA": {
-        "label": "rt",
-        "bitSize": 5
+      {
+        "from": "EX_MEM",
+        "to": "ARF",
+        "selector": "aluResult",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 600
+          },
+          {
+            "x": 1217,
+            "y": 600
+          }
+        ]
       },
-      "inputB": {
-        "label": "rd",
-        "bitSize": 5
+      {
+        "from": "EX_MEM",
+        "to": "Data Memory",
+        "selector": "reg2Value",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 777
+          },
+          {
+            "x": 1245,
+            "y": 777
+          },
+          {
+            "x": 1245,
+            "y": 670
+          },
+          {
+            "x": 1280,
+            "y": 670
+          }
+        ]
       },
-      "output": 5,
-      "selector": {
-        "label": "destRegSignal",
-        "bitSize": 1
+      {
+        "from": "EX_MEM",
+        "to": "MEM_WB",
+        "selector": "destReg",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1190,
+            "y": 855
+          },
+          {
+            "x": 1520,
+            "y": 855
+          }
+        ]
       },
-      "desc": "Chooses destination register (either rd or rt value from instruction)."
-    },
-    {
-      "label": "EX_MEM",
-      "gui": {
-        "x": 1150,
-        "y": 185,
-        "width": 40,
-        "height": 720,
-        "colour": "#589074"
+      {
+        "from": "F4",
+        "to": "F5",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1225,
+            "y": 285
+          },
+          {
+            "x": 1365,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "memRead": 1
+          },
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "LatchRegister",
-      "in": {
-        "controlSignals": 32,
-        "branchAddress": 32,
-        "zeroResultSignal": 1,
-        "aluResult": 32,
-        "reg2Value": 32,
-        "destReg": 5
+      {
+        "from": "F4",
+        "to": "&",
+        "selector": "branchSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1220,
+            "y": 285
+          },
+          {
+            "x": 1220,
+            "y": 340
+          },
+          {
+            "x": 1245,
+            "y": 340
+          }
+        ]
       },
-      "out": {
-        "controlSignals": {
-          "controlSignals": "32"
-        },
-        "branchAddress": {
-          "branchAddress": "32"
-        },
-        "zeroResultSignal": {
-          "zeroResultSignal": "1"
-        },
-        "aluResult": {
-          "aluResult": "32"
-        },
-        "reg2Value": {
-          "reg2Value": "32"
-        },
-        "destReg": {
-          "destReg": "5"
-        }
+      {
+        "from": "F5",
+        "to": "F6",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1365,
+            "y": 285
+          },
+          {
+            "x": 1485,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "memWrite": 1
+          },
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "desc": "Latch register between Execute and Memory phase"
-    },
-    {
-      "label": "F4",
-      "gui": {
-        "x": 1217,
-        "y": 285,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F5",
+        "to": "Data Memory",
+        "selector": "memReadSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1365,
+            "y": 285
+          },
+          {
+            "x": 1365,
+            "y": 520
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 5,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "4"
-        },
-        {
-          "label": "branchSignal",
-          "bitSize": "0-4"
-        }
-      ]
-    },
-    {
-      "label": "F5",
-      "gui": {
-        "x": 1360,
-        "y": 285,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F6",
+        "to": "MEM_WB",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1485,
+            "y": 285
+          },
+          {
+            "x": 1520,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 4,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "3"
-        },
-        {
-          "label": "memReadSignal",
-          "bitSize": "0-3"
-        }
-      ]
-    },
-    {
-      "label": "F6",
-      "gui": {
-        "x": 1485,
-        "y": 285,
-        "width": 5,
-        "height": 5
+      {
+        "from": "F6",
+        "to": "Data Memory",
+        "selector": "memWriteSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1485,
+            "y": 285
+          },
+          {
+            "x": 1485,
+            "y": 710
+          },
+          {
+            "x": 1365,
+            "y": 710
+          },
+          {
+            "x": 1365,
+            "y": 690
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 3,
-      "out": [
-        {
-          "label": "controlSignals",
-          "bitSize": "2"
-        },
-        {
-          "label": "memWriteSignal",
-          "bitSize": "0-2"
-        }
-      ]
-    },
-    {
-      "label": "BRANCH_AND",
-      "symbol": "&",
-      "gui": {
-        "x": 1240,
-        "y": 330,
-        "width": 20,
-        "height": 45,
-        "colour": "#000000"
+      {
+        "from": "&",
+        "to": "BF",
+        "selector": "branchSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1250,
+            "y": 353
+          },
+          {
+            "x": 1275,
+            "y": 353
+          },
+          {
+            "x": 1275,
+            "y": 150
+          }
+        ]
       },
-      "type": "AND",
-      "inputA": {
-        "label": "branchSignal",
-        "bitSize": 1
+      {
+        "from": "BF",
+        "to": "BRANCH_MUX",
+        "selector": "branchSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1275,
+            "y": 150
+          },
+          {
+            "x": 1275,
+            "y": 63
+          },
+          {
+            "x": 1390,
+            "y": 63
+          },
+          {
+            "x": 1390,
+            "y": 85
+          }
+        ]
       },
-      "inputB": {
-        "label": "zeroResultSignal",
-        "bitSize": 1
+      {
+        "from": "BF",
+        "to": "BF1",
+        "selector": "bubble",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1275,
+            "y": 150
+          },
+          {
+            "x": 1112,
+            "y": 150
+          }
+        ]
       },
-      "output": 1,
-      "desc": "Output of this AND gate determines, if a branch will be taken or not."
-    },
-    {
-      "label": "BF",
-      "gui": {
-        "x": 1270,
-        "y": 150,
-        "width": 5,
-        "height": 5
+      {
+        "from": "BF1",
+        "to": "BF2",
+        "selector": "bubble",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1112,
+            "y": 150
+          },
+          {
+            "x": 700,
+            "y": 150
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 1,
-      "out": [
-        {
-          "label": "branchSignal",
-          "bitSize": "1"
-        },
-        {
-          "label": "bubble",
-          "bitSize": "1"
-        }
-      ],
-      "desc": "Forks branch signal into bubble, to erase all control signals from previous datapath phases."
-    },
-    {
-      "label": "BF1",
-      "gui": {
-        "x": 1112,
-        "y": 150,
-        "width": 5,
-        "height": 5
+      {
+        "from": "BF1",
+        "to": "EX_CU_MUX",
+        "selector": "bubble",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1112,
+            "y": 150
+          },
+          {
+            "x": 1112,
+            "y": 250
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 1,
-      "out": [
-        {
-          "label": "bubble",
-          "bitSize": "1"
-        }
-      ]
-    },
-    {
-      "label": "BF2",
-      "gui": {
-        "x": 697,
-        "y": 150,
-        "width": 5,
-        "height": 5
+      {
+        "from": "BF2",
+        "to": "CU_MUX",
+        "selector": "bubble",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 700,
+            "y": 150
+          },
+          {
+            "x": 700,
+            "y": 250
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 1,
-      "out": [
-        {
-          "label": "bubble",
-          "bitSize": "1"
-        }
-      ]
-    },
-    {
-      "label": "ARF",
-      "gui": {
-        "x": 1215,
-        "y": 600,
-        "width": 5,
-        "height": 5
+      {
+        "from": "BF2",
+        "to": "IF_ID",
+        "selector": "bubble",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 700,
+            "y": 150
+          },
+          {
+            "x": 410,
+            "y": 150
+          },
+          {
+            "x": 410,
+            "y": 195
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 32,
-      "out": [
-        {
-          "label": "aluResult",
-          "bitSize": "32"
-        }
-      ],
-      "desc": "Forks result from ALU and forwars it to the data memory and next latch register."
-    },
-    {
-      "label": "DATA_MEM",
-      "symbol": "Data Memory",
-      "gui": {
-        "x": 1275,
-        "y": 510,
-        "width": 180,
-        "height": 180,
-        "colour": "#ccd360"
+      {
+        "from": "ARF",
+        "to": "Data Memory",
+        "selector": "aluResult",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1217,
+            "y": 600
+          },
+          {
+            "x": 1290,
+            "y": 600
+          }
+        ]
       },
-      "type": "DataMemory",
-      "bitSize": 32,
-      "inputA": "aluResult",
-      "inputB": "reg2Value",
-      "memRead": {
-        "label": "memReadSignal",
-        "bitSize": 1
+      {
+        "from": "ARF",
+        "to": "MEM_WB",
+        "selector": "aluResult",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1217,
+            "y": 600
+          },
+          {
+            "x": 1217,
+            "y": 740
+          },
+          {
+            "x": 1520,
+            "y": 740
+          }
+        ]
       },
-      "memWrite": {
-        "label": "memWriteSignal",
-        "bitSize": 1
+      {
+        "from": "Data Memory",
+        "to": "MEM_WB",
+        "selector": "memData",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1460,
+            "y": 615
+          },
+          {
+            "x": 1520,
+            "y": 615
+          }
+        ]
       },
-      "desc": "Saves data, extra CPU storage and typically much bigger in size than register bank."
-    },
-    {
-      "label": "MEM_WB",
-      "gui": {
-        "x": 1510,
-        "y": 185,
-        "width": 40,
-        "height": 720,
-        "colour": "#589074"
+      {
+        "from": "MEM_WB",
+        "to": "F7",
+        "selector": "controlSignals",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1555,
+            "y": 285
+          },
+          {
+            "x": 1607,
+            "y": 285
+          }
+        ],
+        "content": [
+          {
+            "regWrite": 1
+          },
+          {
+            "memToReg": 1
+          }
+        ]
       },
-      "type": "LatchRegister",
-      "in": {
-        "controlSignals": 32,
-        "memData": 32,
-        "aluResult": 32,
-        "destReg": 5
+      {
+        "from": "MEM_WB",
+        "to": "WB MUX",
+        "selector": "memData",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1555,
+            "y": 615
+          },
+          {
+            "x": 1602,
+            "y": 615
+          }
+        ]
       },
-      "out": {
-        "controlSignals": {
-          "controlSignals": "32"
-        },
-        "memData": {
-          "memData": "32"
-        },
-        "aluResult": {
-          "aluResult": "32"
-        },
-        "destReg": {
-          "destReg": "5"
-        }
+      {
+        "from": "MEM_WB",
+        "to": "WB MUX",
+        "selector": "aluResult",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1555,
+            "y": 740
+          },
+          {
+            "x": 1570,
+            "y": 740
+          },
+          {
+            "x": 1570,
+            "y": 645
+          },
+          {
+            "x": 1607,
+            "y": 645
+          }
+        ]
       },
-      "desc": "Latch register between Memory and WriteBack phase"
-    },
-    {
-      "label": "F7",
-      "gui": {
-        "x": 1603,
-        "y": 285,
-        "width": 5,
-        "height": 5
+      {
+        "from": "MEM_WB",
+        "to": "Registers",
+        "selector": "destReg",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1555,
+            "y": 855
+          },
+          {
+            "x": 1610,
+            "y": 855
+          },
+          {
+            "x": 1610,
+            "y": 925
+          },
+          {
+            "x": 505,
+            "y": 925
+          },
+          {
+            "x": 505,
+            "y": 570
+          },
+          {
+            "x": 575,
+            "y": 570
+          }
+        ]
       },
-      "type": "Fork",
-      "in": 2,
-      "out": [
-        {
-          "label": "regWriteSignal",
-          "bitSize": "1"
-        },
-        {
-          "label": "memToRegSignal",
-          "bitSize": "0-1"
-        }
-      ]
-    },
-    {
-      "label": "WB_MUX",
-      "gui": {
-        "x": 1590,
-        "y": 595,
-        "width": 35,
-        "height": 70,
-        "colour": "#c51df8"
+      {
+        "from": "F7",
+        "to": "WB MUX",
+        "selector": "memToRegSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1607,
+            "y": 285
+          },
+          {
+            "x": 1607,
+            "y": 590
+          }
+        ]
       },
-      "type": "MUX",
-      "symbol": "M\nU\nX",
-      "inputA": {
-        "label": "memData",
-        "bitSize": 32
+      {
+        "from": "F7",
+        "to": "Registers",
+        "selector": "regWriteSignal",
+        "wireType": "thin",
+        "nodes": [
+          {
+            "x": 1607,
+            "y": 285
+          },
+          {
+            "x": 1607,
+            "y": 55
+          },
+          {
+            "x": 655,
+            "y": 55
+          },
+          {
+            "x": 655,
+            "y": 455
+          }
+        ]
       },
-      "inputB": {
-        "label": "aluResult",
-        "bitSize": 32
-      },
-      "output": 32,
-      "selector": {
-        "label": "memToRegSignal",
-        "bitSize": 1
-      },
-      "desc": "Chooses from memory output or immediate value. Chosen value may be written into a register in next cycle."
-    }
-  ],
-  "connections": [
-    {
-      "from": "PC",
-      "to": "AF",
-      "selector": "address",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 100,
-          "y": 590
-        },
-        {
-          "x": 160,
-          "y": 590
-        }
-      ]
-    },
-    {
-      "from": "AF",
-      "to": "I_MEM",
-      "selector": "address",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 163,
-          "y": 590
-        },
-        {
-          "x": 205,
-          "y": 590
-        }
-      ]
-    },
-    {
-      "from": "AF",
-      "to": "CONST_ADDER",
-      "selector": "address",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 163,
-          "y": 590
-        },
-        {
-          "x": 163,
-          "y": 390
-        },
-        {
-          "x": 250,
-          "y": 390
-        }
-      ]
-    },
-    {
-      "from": "CONST_ADDER",
-      "to": "NAF",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 295,
-          "y": 415
-        },
-        {
-          "x": 330,
-          "y": 415
-        }
-      ]
-    },
-    {
-      "from": "NAF",
-      "to": "IF_ID",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 330,
-          "y": 415
-        },
-        {
-          "x": 390,
-          "y": 415
-        }
-      ]
-    },
-    {
-      "from": "NAF",
-      "to": "BRANCH_MUX",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 330,
-          "y": 415
-        },
-        {
-          "x": 330,
-          "y": 100
-        },
-        {
-          "x": 1380,
-          "y": 100
-        }
-      ]
-    },
-    {
-      "from": "BRANCH_MUX",
-      "to": "PC",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1390,
-          "y": 121
-        },
-        {
-          "x": 1500,
-          "y": 121
-        },
-        {
-          "x": 1500,
-          "y": 30
-        },
-        {
-          "x": 35,
-          "y": 30
-        },
-        {
-          "x": 35,
-          "y": 590
-        },
-        {
-          "x": 100,
-          "y": 590
-        }
-      ]
-    },
-    {
-      "from": "I_MEM",
-      "to": "IF_ID",
-      "selector": "iCode",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 325,
-          "y": 590
-        },
-        {
-          "x": 400,
-          "y": 590
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "CU",
-      "selector": "iCode",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 265
-        },
-        {
-          "x": 545,
-          "y": 265
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "ID_EX",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 415
-        },
-        {
-          "x": 790,
-          "y": 415
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "REG_BANK",
-      "selector": "rs",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 475
-        },
-        {
-          "x": 580,
-          "y": 475
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "RTF",
-      "selector": "rt",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 515
-        },
-        {
-          "x": 477,
-          "y": 515
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "SIGN_EXT",
-      "selector": "immediateValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 750
-        },
-        {
-          "x": 650,
-          "y": 750
-        }
-      ]
-    },
-    {
-      "from": "IF_ID",
-      "to": "ID_EX",
-      "selector": "rd",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 400,
-          "y": 865
-        },
-        {
-          "x": 790,
-          "y": 865
-        }
-      ]
-    },
-    {
-      "from": "CU",
-      "to": "CU_MUX",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 555,
-          "y": 265
-        },
-        {
-          "x": 690,
-          "y": 265
-        }
-      ],
-      "data": [
-        {
-          "regDest": 1
-        },
-        {
-          "aluSrc": 1
-        },
-        {
-          "aluOp": 4
-        },
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "CU_MUX",
-      "to": "ID_EX",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 710,
-          "y": 280
-        },
-        {
-          "x": 790,
-          "y": 280
-        }
-      ],
-      "data": [
-        {
-          "regDest": 1
-        },
-        {
-          "aluSrc": 1
-        },
-        {
-          "aluOp": 4
-        },
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "RTF",
-      "to": "REG_BANK",
-      "selector": "rt",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 477,
-          "y": 515
-        },
-        {
-          "x": 575,
-          "y": 515
-        }
-      ]
-    },
-    {
-      "from": "RTF",
-      "to": "ID_EX",
-      "selector": "rt",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 477,
-          "y": 515
-        },
-        {
-          "x": 477,
-          "y": 830
-        },
-        {
-          "x": 790,
-          "y": 830
-        }
-      ]
-    },
-    {
-      "from": "REG_BANK",
-      "to": "ID_EX",
-      "selector": "reg1Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 735,
-          "y": 480
-        },
-        {
-          "x": 765,
-          "y": 480
-        },
-        {
-          "x": 765,
-          "y": 520
-        },
-        {
-          "x": 790,
-          "y": 520
-        }
-      ]
-    },
-    {
-      "from": "REG_BANK",
-      "to": "ID_EX",
-      "selector": "reg2Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 735,
-          "y": 620
-        },
-        {
-          "x": 765,
-          "y": 620
-        },
-        {
-          "x": 765,
-          "y": 580
-        },
-        {
-          "x": 790,
-          "y": 580
-        }
-      ]
-    },
-    {
-      "from": "SIGN_EXT",
-      "to": "ID_EX",
-      "selector": "immediateValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 650,
-          "y": 750
-        },
-        {
-          "x": 790,
-          "y": 750
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "F1",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 280
-        },
-        {
-          "x": 870,
-          "y": 280
-        }
-      ],
-      "data": [
-        {
-          "regDest": 1
-        },
-        {
-          "aluSrc": 1
-        },
-        {
-          "aluOp": 4
-        },
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "OFFSET_ADDER",
-      "selector": "newAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 415
-        },
-        {
-          "x": 980,
-          "y": 415
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "IVF",
-      "selector": "immediateValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 750
-        },
-        {
-          "x": 892,
-          "y": 750
-        },
-        {
-          "x": 892,
-          "y": 675
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "ALU",
-      "selector": "aluInputA",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 520
-        },
-        {
-          "x": 1010,
-          "y": 520
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "RVF",
-      "selector": "reg2Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 580
-        },
-        {
-          "x": 857,
-          "y": 580
-        },
-        {
-          "x": 857,
-          "y": 642
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "DEST_REG_MUX",
-      "selector": "rt",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 830
-        },
-        {
-          "x": 880,
-          "y": 830
-        }
-      ]
-    },
-    {
-      "from": "ID_EX",
-      "to": "DEST_REG_MUX",
-      "selector": "rd",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 820,
-          "y": 865
-        },
-        {
-          "x": 880,
-          "y": 865
-        }
-      ]
-    },
-    {
-      "from": "DEST_REG_MUX",
-      "to": "EX_MEM",
-      "selector": "destReg",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 880,
-          "y": 855
-        },
-        {
-          "x": 1160,
-          "y": 855
-        }
-      ]
-    },
-    {
-      "from": "F1",
-      "to": "F2",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 873,
-          "y": 280
-        },
-        {
-          "x": 940,
-          "y": 280
-        }
-      ],
-      "data": [
-        {
-          "aluSrc": 1
-        },
-        {
-          "aluOp": 4
-        },
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F1",
-      "to": "DEST_REG_MUX",
-      "selector": "destRegSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 873,
-          "y": 280
-        },
-        {
-          "x": 873,
-          "y": 815
-        }
-      ]
-    },
-    {
-      "from": "F2",
-      "to": "F3",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 943,
-          "y": 280
-        },
-        {
-          "x": 1055,
-          "y": 280
-        }
-      ],
-      "data": [
-        {
-          "aluOp": 4
-        },
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F2",
-      "to": "ALUSrc_MUX",
-      "selector": "aluSrcSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 943,
-          "y": 280
-        },
-        {
-          "x": 943,
-          "y": 635
-        }
-      ]
-    },
-    {
-      "from": "F3",
-      "to": "EX_CU_MUX",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1053,
-          "y": 280
-        },
-        {
-          "x": 1105,
-          "y": 280
-        }
-      ],
-      "data": [
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F3",
-      "to": "ALU",
-      "selector": "aluOp",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1053,
-          "y": 280
-        },
-        {
-          "x": 1053,
-          "y": 495
-        }
-      ]
-    },
-    {
-      "from": "EX_CU_MUX",
-      "to": "EX_MEM",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1105,
-          "y": 285
-        },
-        {
-          "x": 1160,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "RVF",
-      "to": "ALUSrc_MUX",
-      "selector": "reg2Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 857,
-          "y": 642
-        },
-        {
-          "x": 950,
-          "y": 642
-        }
-      ]
-    },
-    {
-      "from": "RVF",
-      "to": "EX_MEM",
-      "selector": "reg2Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 857,
-          "y": 642
-        },
-        {
-          "x": 857,
-          "y": 777
-        },
-        {
-          "x": 1165,
-          "y": 777
-        }
-      ]
-    },
-    {
-      "from": "IVF",
-      "to": "OFFSET_ADDER",
-      "selector": "immediateValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 892,
-          "y": 675
-        },
-        {
-          "x": 892,
-          "y": 375
-        },
-        {
-          "x": 980,
-          "y": 375
-        }
-      ]
-    },
-    {
-      "from": "IVF",
-      "to": "ALUSrc_MUX",
-      "selector": "immediateValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 892,
-          "y": 675
-        },
-        {
-          "x": 945,
-          "y": 675
-        }
-      ]
-    },
-    {
-      "from": "OFFSET_ADDER",
-      "to": "EX_MEM",
-      "selector": "branchAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1015,
-          "y": 400
-        },
-        {
-          "x": 1160,
-          "y": 400
-        }
-      ]
-    },
-    {
-      "from": "ALUSrc_MUX",
-      "to": "ALU",
-      "selector": "aluInputB",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 970,
-          "y": 665
-        },
-        {
-          "x": 1010,
-          "y": 665
-        }
-      ]
-    },
-    {
-      "from": "ALU",
-      "to": "EX_MEM",
-      "selector": "aluResult",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1110,
-          "y": 600
-        },
-        {
-          "x": 1165,
-          "y": 600
-        }
-      ]
-    },
-    {
-      "from": "ALU",
-      "to": "EX_MEM",
-      "selector": "zeroResultSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1110,
-          "y": 565
-        },
-        {
-          "x": 1165,
-          "y": 565
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "F4",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 285
-        },
-        {
-          "x": 1220,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "branch": 1
-        },
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "BRANCH_AND",
-      "selector": "zeroResultSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 565
-        },
-        {
-          "x": 1220,
-          "y": 565
-        },
-        {
-          "x": 1220,
-          "y": 363
-        },
-        {
-          "x": 1245,
-          "y": 363
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "BRANCH_MUX",
-      "selector": "branchAddress",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 400
-        },
-        {
-          "x": 1333,
-          "y": 400
-        },
-        {
-          "x": 1333,
-          "y": 130
-        },
-        {
-          "x": 1385,
-          "y": 130
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "ARF",
-      "selector": "aluResult",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 600
-        },
-        {
-          "x": 1217,
-          "y": 600
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "DATA_MEM",
-      "selector": "reg2Value",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 777
-        },
-        {
-          "x": 1245,
-          "y": 777
-        },
-        {
-          "x": 1245,
-          "y": 670
-        },
-        {
-          "x": 1280,
-          "y": 670
-        }
-      ]
-    },
-    {
-      "from": "EX_MEM",
-      "to": "MEM_WB",
-      "selector": "destReg",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1190,
-          "y": 855
-        },
-        {
-          "x": 1520,
-          "y": 855
-        }
-      ]
-    },
-    {
-      "from": "F4",
-      "to": "F5",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1225,
-          "y": 285
-        },
-        {
-          "x": 1365,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "memRead": 1
-        },
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F4",
-      "to": "BRANCH_AND",
-      "selector": "branchSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1220,
-          "y": 285
-        },
-        {
-          "x": 1220,
-          "y": 340
-        },
-        {
-          "x": 1245,
-          "y": 340
-        }
-      ]
-    },
-    {
-      "from": "F5",
-      "to": "F6",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1365,
-          "y": 285
-        },
-        {
-          "x": 1485,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "memWrite": 1
-        },
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F5",
-      "to": "DATA_MEM",
-      "selector": "memReadSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1365,
-          "y": 285
-        },
-        {
-          "x": 1365,
-          "y": 520
-        }
-      ]
-    },
-    {
-      "from": "F6",
-      "to": "MEM_WB",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1485,
-          "y": 285
-        },
-        {
-          "x": 1520,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "F6",
-      "to": "DATA_MEM",
-      "selector": "memWriteSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1485,
-          "y": 285
-        },
-        {
-          "x": 1485,
-          "y": 710
-        },
-        {
-          "x": 1365,
-          "y": 710
-        },
-        {
-          "x": 1365,
-          "y": 690
-        }
-      ]
-    },
-    {
-      "from": "BRANCH_AND",
-      "to": "BF",
-      "selector": "branchSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1250,
-          "y": 353
-        },
-        {
-          "x": 1275,
-          "y": 353
-        },
-        {
-          "x": 1275,
-          "y": 150
-        }
-      ]
-    },
-    {
-      "from": "BF",
-      "to": "BRANCH_MUX",
-      "selector": "branchSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1275,
-          "y": 150
-        },
-        {
-          "x": 1275,
-          "y": 63
-        },
-        {
-          "x": 1390,
-          "y": 63
-        },
-        {
-          "x": 1390,
-          "y": 85
-        }
-      ]
-    },
-    {
-      "from": "BF",
-      "to": "BF1",
-      "selector": "bubble",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1275,
-          "y": 150
-        },
-        {
-          "x": 1112,
-          "y": 150
-        }
-      ]
-    },
-    {
-      "from": "BF1",
-      "to": "BF2",
-      "selector": "bubble",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1112,
-          "y": 150
-        },
-        {
-          "x": 700,
-          "y": 150
-        }
-      ]
-    },
-    {
-      "from": "BF1",
-      "to": "EX_CU_MUX",
-      "selector": "bubble",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1112,
-          "y": 150
-        },
-        {
-          "x": 1112,
-          "y": 250
-        }
-      ]
-    },
-    {
-      "from": "BF2",
-      "to": "CU_MUX",
-      "selector": "bubble",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 700,
-          "y": 150
-        },
-        {
-          "x": 700,
-          "y": 250
-        }
-      ]
-    },
-    {
-      "from": "BF2",
-      "to": "IF_ID",
-      "selector": "bubble",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 700,
-          "y": 150
-        },
-        {
-          "x": 410,
-          "y": 150
-        },
-        {
-          "x": 410,
-          "y": 195
-        }
-      ]
-    },
-    {
-      "from": "ARF",
-      "to": "DATA_MEM",
-      "selector": "aluResult",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1217,
-          "y": 600
-        },
-        {
-          "x": 1290,
-          "y": 600
-        }
-      ]
-    },
-    {
-      "from": "ARF",
-      "to": "MEM_WB",
-      "selector": "aluResult",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1217,
-          "y": 600
-        },
-        {
-          "x": 1217,
-          "y": 740
-        },
-        {
-          "x": 1520,
-          "y": 740
-        }
-      ]
-    },
-    {
-      "from": "DATA_MEM",
-      "to": "MEM_WB",
-      "selector": "memData",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1460,
-          "y": 615
-        },
-        {
-          "x": 1520,
-          "y": 615
-        }
-      ]
-    },
-    {
-      "from": "MEM_WB",
-      "to": "F7",
-      "selector": "controlSignals",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1555,
-          "y": 285
-        },
-        {
-          "x": 1607,
-          "y": 285
-        }
-      ],
-      "data": [
-        {
-          "regWrite": 1
-        },
-        {
-          "memToReg": 1
-        }
-      ]
-    },
-    {
-      "from": "MEM_WB",
-      "to": "WB_MUX",
-      "selector": "memData",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1555,
-          "y": 615
-        },
-        {
-          "x": 1602,
-          "y": 615
-        }
-      ]
-    },
-    {
-      "from": "MEM_WB",
-      "to": "WB_MUX",
-      "selector": "aluResult",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1555,
-          "y": 740
-        },
-        {
-          "x": 1570,
-          "y": 740
-        },
-        {
-          "x": 1570,
-          "y": 645
-        },
-        {
-          "x": 1607,
-          "y": 645
-        }
-      ]
-    },
-    {
-      "from": "MEM_WB",
-      "to": "REG_BANK",
-      "selector": "destReg",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1555,
-          "y": 855
-        },
-        {
-          "x": 1610,
-          "y": 855
-        },
-        {
-          "x": 1610,
-          "y": 925
-        },
-        {
-          "x": 505,
-          "y": 925
-        },
-        {
-          "x": 505,
-          "y": 570
-        },
-        {
-          "x": 575,
-          "y": 570
-        }
-      ]
-    },
-    {
-      "from": "F7",
-      "to": "WB_MUX",
-      "selector": "memToRegSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1607,
-          "y": 285
-        },
-        {
-          "x": 1607,
-          "y": 590
-        }
-      ]
-    },
-    {
-      "from": "F7",
-      "to": "REG_BANK",
-      "selector": "regWriteSignal",
-      "wireType": "thin",
-      "nodes": [
-        {
-          "x": 1607,
-          "y": 285
-        },
-        {
-          "x": 1607,
-          "y": 55
-        },
-        {
-          "x": 655,
-          "y": 55
-        },
-        {
-          "x": 655,
-          "y": 455
-        }
-      ]
-    },
-    {
-      "from": "WB_MUX",
-      "to": "REG_BANK",
-      "selector": "destRegValue",
-      "wireType": "normal",
-      "nodes": [
-        {
-          "x": 1625,
-          "y": 625
-        },
-        {
-          "x": 1640,
-          "y": 625
-        },
-        {
-          "x": 1640,
-          "y": 950
-        },
-        {
-          "x": 540,
-          "y": 950
-        },
-        {
-          "x": 540,
-          "y": 625
-        },
-        {
-          "x": 575,
-          "y": 625
-        }
-      ]
-    }
-  ]
+      {
+        "from": "WB MUX",
+        "to": "Registers",
+        "selector": "destRegValue",
+        "wireType": "normal",
+        "nodes": [
+          {
+            "x": 1625,
+            "y": 625
+          },
+          {
+            "x": 1640,
+            "y": 625
+          },
+          {
+            "x": 1640,
+            "y": 950
+          },
+          {
+            "x": 540,
+            "y": 950
+          },
+          {
+            "x": 540,
+            "y": 625
+          },
+          {
+            "x": 575,
+            "y": 625
+          }
+        ]
+      }
+    ]
+  }
 }

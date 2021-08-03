@@ -1,0 +1,54 @@
+{
+  "instructionTypes": [
+    {
+      "label": "I",
+      "fields": [
+        {"label": "op",  "bitSize": 6},
+        {"label": "rs",  "bitSize": 5},
+        {"label": "rt",  "bitSize": 5},
+        {"label": "imm", "bitSize": 16}
+      ]
+    },
+    {
+      "label": "R",
+      "fields": [
+        {"label": "op", "bitSize": 6},
+        {"label": "rs", "bitSize": 5},
+        {"label": "rt", "bitSize": 5},
+        {"label": "rd", "bitSize": 5},
+        {"label": "shamt", "bitSize": 5},
+        {"label": "func",  "bitSize": 6}
+      ]
+    }
+  ],
+
+  "instructions": [
+    { "mnemo": "add",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "32" }, "description": "r1 = r2 + r3"},
+    { "mnemo": "and",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "36" }, "description": "r1 = r2 & r3"},
+    { "mnemo": "div",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "26" }, "description": "r1 = t2 / r3"},
+    { "mnemo": "divu", "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "27" }, "description": "r1 = t2 / r3 (unsigned)"},
+    { "mnemo": "mul",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "24" }, "description": "r1 = t2 * r3"},
+    { "mnemo": "mulu", "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "25" }, "description": "r1 = t2 * r3 (unsigned)"},
+    { "mnemo": "nor",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "39" }, "description": "r1 = ~(r2 | r3)"},
+    { "mnemo": "or",   "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "37" }, "description": "r1 = r2 | r3"},
+    { "mnemo": "sllv", "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "1"  }, "description": "r1 = r2 << r3"},
+    { "mnemo": "srlv", "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "2"  }, "description": "r1 = r2 >> r3"},
+    { "mnemo": "sub",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#2", "rt": "#3", "rd": "#1", "shamt": "0", "func": "34" }, "description": "r1 = r2 - r3"},
+    { "mnemo": "xor",  "type": "R", "arguments": ["reg", "reg", "reg"],    "fields": { "op": "0",  "rs": "#3", "rt": "#3", "rd": "#1", "shamt": "0", "func": "38" }, "description": "r1 = r2 ^ r3"},
+
+    { "mnemo": "nop",  "type": "I", "arguments": [],                       "fields": { "op": "18", "rs": "0" , "rt": "0" , "imm": "0"  }, "description": "No operation."},
+    { "mnemo": "addi", "type": "I", "arguments": ["reg", "reg", "int"],    "fields": { "op": "8" , "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 = r2 + 23"},
+    { "mnemo": "subi", "type": "I", "arguments": ["reg", "reg", "int"],    "fields": { "op": "9" , "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 = r2 - 23"},
+    { "mnemo": "andi", "type": "I", "arguments": ["reg", "reg", "int"],    "fields": { "op": "12", "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 = r2 & 53"},
+    { "mnemo": "beq",  "type": "I", "arguments": ["reg", "reg", "label"],  "fields": { "op": "4" , "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 == r2 ? branch"},
+    { "mnemo": "bneq", "type": "I", "arguments": ["reg", "reg", "label"],  "fields": { "op": "5" , "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 != r2 ? branch"},
+    { "mnemo": "ori",  "type": "I", "arguments": ["reg", "reg", "int"],    "fields": { "op": "13", "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 = r2 | 66"},
+    { "mnemo": "xori", "type": "I", "arguments": ["reg", "reg", "int"],    "fields": { "op": "14", "rs": "#2", "rt": "#1", "imm": "#3" }, "description": "r1 = r2 ^ 641"},
+
+    { "mnemo": "li",   "type": "I", "arguments": ["reg", "int"],           "fields": { "op": "36", "rs": "0",  "rt": "#1",  "imm": "#2"}, "description": "r1 = 69"},
+    { "mnemo": "lui",  "type": "I", "arguments": ["reg", "int"],           "fields": { "op": "37", "rs": "0",  "rt": "#1",  "imm": "#2"}, "description": "r1 = 69"},
+
+    { "mnemo": "lw",   "type": "I", "arguments": ["reg", "data"],          "fields": { "op": "35", "rs": "#2.base", "rt": "#1", "imm": "#2.offset" }, "description": "r1 = MEM[base + r2]"},
+    { "mnemo": "sw",   "type": "I", "arguments": ["reg", "data"],          "fields": { "op": "43", "rs": "#2.base", "rt": "#1", "imm": "#2.offset" }, "description": "MEM[base + r2] = r1"}
+  ]
+}

@@ -210,7 +210,7 @@ public class MainWindowController implements Initializable {
 		assembleKC = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
 		
 		try {
-			Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
+			Loader l = new Loader("sk/catheaven/design/instructions.json", "sk/catheaven/design/cpu.json");
 			cpu = l.getCPU();
 		} catch(Exception e) { e.printStackTrace(); System.out.println(e.getMessage()); return; }
 		

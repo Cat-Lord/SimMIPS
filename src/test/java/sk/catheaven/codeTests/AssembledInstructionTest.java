@@ -25,7 +25,7 @@ public class AssembledInstructionTest {
 	
 	@Before
 	public void setUp() throws IOException, URISyntaxException {
-		Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
+		Loader l = new Loader("sk/catheaven/design/instructions.json", "sk/catheaven/design/cpu.json");
 		CPU cpu = l.getCPU();
 		assembler = cpu.getAssembler();
 	}
