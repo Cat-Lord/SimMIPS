@@ -1,6 +1,6 @@
-/src/main/resources/sk/catheaven/design/cpu_.json
+/core/src/main/resources/design/cpu_.json
 /nbproject/
-/src/test/java/sk/catheaven/visuals/
+/UI/src/test/java/sk/catheaven/visuals/
 .idea
 log
 /SimMIPS.iml
