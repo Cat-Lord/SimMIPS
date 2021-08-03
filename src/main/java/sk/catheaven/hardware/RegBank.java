@@ -24,7 +24,7 @@ public class RegBank extends Component {
 	
 	private final Tuple<String, Data> inputA, inputB;						// input data
 	private final Tuple<String, Data> destReg, destRegData, regWrite;		// data for writing into register bank
-	private final Tuple<String, Data> outputA, outputB;							// two outputs
+	private final Tuple<String, Data> outputA, outputB;						// two outputs
 	
 	public RegBank(String label, JSONObject json) throws JSONException {
 		super(label, json);

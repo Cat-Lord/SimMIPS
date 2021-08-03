@@ -7,14 +7,12 @@ package sk.catheaven.hardware;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.json.JSONObject;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import sk.catheaven.hardware.ControlUnit;
+
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.run.Loader;
 
 /**
  *

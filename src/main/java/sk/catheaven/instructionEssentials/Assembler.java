@@ -285,14 +285,14 @@ public class Assembler {
 		// add newline at the end of code, to allow commentary regex matching at the end of code
 		code = code + "\n";
 		
-		code = code.replaceAll(COMMENT_CHAR + ".*\\R", "\n");		// erase comments ('\R' matches multiple versions of newline characters)
-		code = code.replaceAll("[ \t]+", " ");						// and merge multiple tabs and spaces
-		code = code.replaceAll("\n +", "\n");						// remove emty characters at the begining of each line
+		code = code.replaceAll(COMMENT_CHAR + ".*\\R", System.lineSeparator()); // erase comments ('\R' matches multiple versions of newline characters)
+		code = code.replaceAll("[ \t]+", " ");							// and merge multiple tabs and spaces
+		code = code.replaceAll("\n +", System.lineSeparator());					// remove emty characters at the begining of each line
 		code = code.replaceAll("[ \t]*:\\s*", ":");					// connect label with instruction closest to it (\s  is whitespace character)
 		code = code.trim();											// and finally trim any leading/traling newlines/spaces in code
 
 		logger.log(Level.INFO, "CODE after adjusment:\n{0}\n", code);
-		return code.split("\n");
+		return code.split(System.lineSeparator());
 	}
 	
 	/**

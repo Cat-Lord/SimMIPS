@@ -6,12 +6,9 @@
 package sk.catheaven.hardware;
 
 import sk.catheaven.utils.Datapathable;
-import java.util.logging.Logger;
 import org.json.JSONObject;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.run.Connector;
 import sk.catheaven.utils.Observable;
-import sk.catheaven.utils.Subscriber;
 import sk.catheaven.utils.Tuple;
 
 /**

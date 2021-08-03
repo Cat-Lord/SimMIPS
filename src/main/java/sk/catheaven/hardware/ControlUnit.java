@@ -5,6 +5,8 @@
  */
 package sk.catheaven.hardware;
 
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,6 +77,19 @@ public class ControlUnit extends Component {
 		this.input  = new Data(json.getInt("in"));
 		this.opcodeParser = new Cutter(Data.MAX_BIT_SIZE, json.getString("opCodeCut"));
 		this.funcParser   = new Cutter(Data.MAX_BIT_SIZE, json.getString("funcCut"));
+		
+		System.out.println("SIGNAL LABELS");
+		for (String siglabel : signalLabels) {
+			System.out.println(siglabel);
+		}
+		System.out.println("---------------------");
+		
+		System.out.println("MAP KEYS");
+		for (String key: signals.keySet()) {
+			System.out.println(key);
+		}
+		System.out.println("=========================");
+		
 	}
 	
 	/**
@@ -87,7 +102,7 @@ public class ControlUnit extends Component {
 		JSONArray labelsJson = json.getJSONArray("codesDescription");
 		
 		signalLabels = new String[labelsJson.length()];
-		signals = new HashMap<>();
+		signals = new LinkedHashMap<>();
 		int totalBitSize = 0;
 		
 		for(int j = 0; j < labelsJson.length(); j++){

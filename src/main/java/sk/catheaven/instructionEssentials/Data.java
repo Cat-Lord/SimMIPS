@@ -56,28 +56,28 @@ public class Data {
      */
     public String getBinary(){
         String dataString = Integer.toBinaryString(getData());
-        String output = "";
+        StringBuilder output = new StringBuilder();
         int index = 1;
 		
         // add necessary number of one's
         for(int i = 0; i < bitSize - dataString.length(); i++, index++){
-			output += "0";
+			output.append("0");
             if((bitSize - index) % 4 == 0)
-                output += " ";
+                output.append(" ");
         }
         
         // append zero's
         for(int i = 0; i < dataString.length(); i++, index++){
 			if(dataString.charAt(i) == '0')						// avoids adding one for binary string "0"
-				output += "0";
+				output.append("0");
 			else
-				output += "1";
+				output.append("1");
             
             if((bitSize - index) % 4 == 0  &&  i < (dataString.length() -1))
-                output += " ";
+                output.append(" ");
         }
         
-        return output;
+        return output.toString();
     }
 	
 	/**

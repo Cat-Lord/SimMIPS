@@ -5,12 +5,10 @@
  */
 package sk.catheaven.hardware;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import sk.catheaven.run.Loader;
+import sk.catheaven.main.Loader;
 
 /**
  * Not a test class, but does the necessary setup for each separate test class. 
@@ -25,7 +23,7 @@ public class Container {
 		Loader l;
 		try {
 			l = new Loader();
-			cpuJson = new JSONObject(l.readFile("sk/catheaven/data/cpu.json")).getJSONArray("components");
+			cpuJson = new JSONObject(l.readFile("sk/catheaven/design/cpu.json")).getJSONArray("components");
 			cpu = l.getCPU();
 		} catch(Exception e) { System.out.println(e.getMessage()); }
 	}

@@ -22,7 +22,7 @@ import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
 import sk.catheaven.instructionEssentials.Instruction;
-import sk.catheaven.run.Connector;
+import sk.catheaven.main.Connector;
 import sk.catheaven.utils.Tie;
 
 /**

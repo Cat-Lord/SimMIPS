@@ -24,9 +24,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
-import sk.catheaven.hardware.Container;
 import sk.catheaven.instructionEssentials.Assembler;
-import sk.catheaven.run.Loader;
+import sk.catheaven.main.Loader;
 import sk.catheaven.utils.Tuple;
 
 /**
@@ -40,7 +39,7 @@ public class CommentaryTest {
 	
 	public CommentaryTest() throws IOException, URISyntaxException {
 		codeLines = createCodeLines();
-		Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+		Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
 		CPU cpu = l.getCPU();
 		assembler = cpu.getAssembler();
 	}

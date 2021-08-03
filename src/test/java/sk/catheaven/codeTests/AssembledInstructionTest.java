@@ -8,14 +8,10 @@ package sk.catheaven.codeTests;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import sk.catheaven.exceptions.SyntaxException;
 import sk.catheaven.hardware.CPU;
-import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
-import sk.catheaven.run.Loader;
+import sk.catheaven.main.Loader;
 
 /**
  *
@@ -29,7 +25,7 @@ public class AssembledInstructionTest {
 	
 	@Before
 	public void setUp() throws IOException, URISyntaxException {
-		Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+		Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
 		CPU cpu = l.getCPU();
 		assembler = cpu.getAssembler();
 	}

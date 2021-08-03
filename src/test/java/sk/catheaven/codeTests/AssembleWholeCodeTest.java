@@ -17,7 +17,7 @@ import sk.catheaven.hardware.CPU;
 import sk.catheaven.instructionEssentials.AssembledInstruction;
 import sk.catheaven.instructionEssentials.Assembler;
 import sk.catheaven.instructionEssentials.Data;
-import sk.catheaven.run.Loader;
+import sk.catheaven.main.Loader;
 
 /**
  *
@@ -31,7 +31,7 @@ public class AssembleWholeCodeTest {
 	
 	@Before
 	public void setUp() throws IOException, URISyntaxException {
-		Loader l = new Loader("sk/catheaven/data/layout.json", "sk/catheaven/data/cpu.json");
+		Loader l = new Loader("sk/catheaven/design/layout.json", "sk/catheaven/design/cpu.json");
 		CPU cpu = l.getCPU();
 		assembler = cpu.getAssembler();
 	}
