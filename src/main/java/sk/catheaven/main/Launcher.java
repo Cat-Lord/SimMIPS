@@ -26,12 +26,12 @@ public class Launcher {
             
             CPU cpu = Loader.getCPU(cpuJsonResource);
             
-            for (Component component: cpu.getComponents())
+            for (Component component: cpu.getComponents().values())
                 log.debug("{}\n{}\n {} input(s) | {} output(s) | {} selector(s)",
                         component.getLabel(), component,
                         component.getInputs().size(), component.getOutputs().size(), component.getSelectors().size()
                 );
-            
+
             log.debug("Successfully initiated CPU with {} components and {} connectors\n",
                                 cpu.getComponents().size(), cpu.getConnectors().size());
         } catch (Exception exception) {
