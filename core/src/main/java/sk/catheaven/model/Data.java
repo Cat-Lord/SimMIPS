@@ -16,7 +16,7 @@ import sk.catheaven.model.components.CPU;
  * Mask is created on data initialization.
  * @author catlord
  */
-public class Data {    
+public class Data {
     private int mask = 0;
     private int data = 0;
     private int bitSize;
@@ -105,14 +105,7 @@ public class Data {
 		return bitSize;
 	}
 	
-	/**
-	 * Clone method to allow duplication of data.
-	 * @return Duplicate (clone) of this object as new object with the same data.
-	 */
-	public Data duplicate() {		
-		Data cloned = new Data();
-		cloned.setBitSize(this.bitSize);
-		cloned.setData(this.data);
-		return cloned;
+	public Data newInstance() {
+		return new Data(getBitSize());
 	}
 }

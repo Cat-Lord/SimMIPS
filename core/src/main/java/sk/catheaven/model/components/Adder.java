@@ -5,8 +5,6 @@
  */
 package sk.catheaven.model.components;
 
-import sk.catheaven.model.Data;
-
 /**
  * Basic mathematical adder. Used mostly for offset (branch) calculations.
  * @author catlord
@@ -14,15 +12,7 @@ import sk.catheaven.model.Data;
 public class Adder extends Component {
     
     public void execute() {
-        Data data = new Data();
-        for (String inputLabel: inputs.keySet()) {
-            data.setData(
-                    data.getData() + inputs.get(inputLabel).getData()
-            );
-        }
     
-        for (String outputLabel: outputs.keySet())
-            outputs.get(outputLabel).setData(data.getData());
     }
     
 }

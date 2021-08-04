@@ -786,21 +786,51 @@
             }
           },
           "operations": {
-            "0": "add",
-            "1": "add",
-            "2": "sub",
-            "3": "and",
-            "4": "or",
-            "5": "nor",
-            "6": "xor",
-            "7": "mul",
-            "8": "mulu",
-            "9": "div",
-            "10": "divu",
-            "11": "bneq",
-            "13": "sllv",
-            "14": "srlv",
-            "15": "lui"
+            "0": {
+              "label": "ADD"
+            },
+            "1": {
+              "label": "ADD"
+            },
+            "2": {
+              "label": "SUB"
+            },
+            "3": {
+              "label": "AND"
+            },
+            "4": {
+              "label": "OR"
+            },
+            "5": {
+              "label": "NOR"
+            },
+            "6": {
+              "label": "XOR"
+            },
+            "7": {
+              "label": "MUL"
+            },
+            "8": {
+              "label": "MULU"
+            },
+            "9": {
+              "label": "DIV"
+            },
+            "10": {
+              "label": "DIVU"
+            },
+            "11": {
+              "label": "BNEQ"
+            },
+            "13": {
+              "label": "SLLV"
+            },
+            "14": {
+              "label": "SRLV"
+            },
+            "15": {
+              "label": "LUI"
+            }
           },
           "description": "Computational Unit of the CPU. Does most of the mathematical operations."
         }

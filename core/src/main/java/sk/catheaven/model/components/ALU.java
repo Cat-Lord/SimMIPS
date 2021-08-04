@@ -5,6 +5,9 @@
  */
 package sk.catheaven.model.components;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import sk.catheaven.model.aluOperations.Operation;
+
 import java.util.Map;
 
 /**
@@ -13,13 +16,13 @@ import java.util.Map;
  * @author catlord
  */
 public class ALU extends Component {
-	private Map<Integer, String> operations;		// maps numbers to specific operations
+	private Map<Integer, Operation> operations;		// maps numbers to specific mathematical operations
 	
-	public Map<Integer, String> getOperations() {
+	public Map<Integer, Operation> getOperations() {
 		return operations;
 	}
 	
-	public void setOperations(Map<Integer, String> operations) {
+	public void setOperations(Map<Integer, Operation> operations) {
 		this.operations = operations;
 	}
 	
