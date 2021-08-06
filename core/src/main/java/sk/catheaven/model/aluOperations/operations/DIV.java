@@ -8,7 +8,11 @@ public class DIV extends Operation {
     @Override
     public Data perform(Data inputA, Data inputB) {
         Data result = inputA.newInstance();
-        result.setData(inputA.getData() / inputB.getData());
+        result.setData(0);
+        
+        if (inputB.getData() != 0)
+            result.setData(inputA.getData() / inputB.getData());
+        
         return result;
     }
 }

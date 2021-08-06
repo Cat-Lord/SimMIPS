@@ -7,6 +7,12 @@ public class DIVU extends Operation {
     
     @Override
     public Data perform(Data inputA, Data inputB) {
-        return null;
+        Data result = new Data();
+        
+        if (inputB.getData() != 0)
+            result.setData(
+                    (int) (Integer.toUnsignedLong(inputA.getData()) / Integer.toUnsignedLong(inputB.getData()))
+            );
+        return result;
     }
 }

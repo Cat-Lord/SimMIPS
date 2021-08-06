@@ -7,6 +7,8 @@ public class LUI extends Operation {
     
     @Override
     public Data perform(Data inputA, Data inputB) {
-        return null;
+        Data result = inputA.newInstance();
+        result.setData( inputA.getData() << (inputA.getBitSize() / 2) );
+        return result;
     }
 }
