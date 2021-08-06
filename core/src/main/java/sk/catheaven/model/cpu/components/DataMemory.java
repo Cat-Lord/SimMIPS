@@ -25,27 +25,30 @@ import java.util.logging.Level;
  * zero is returned. Otherwise data duplicate at that memory address is returned.
  * Memory can be in one of three states: inactive, memory read or memory write.
  * State when memory read signal and memory write signal is active is forbidden.
- *
+ * <p>
  * Calculation of address is complicated, because memory aligns data byte-wise. Although every cell
  * has a specific amount of bytes, storage does not suffer from this limitation and thus following
  * can occur in (i.e. 4-byte wide) memory cells:
- *
- *          number: XYZ (spread out in between address 00 and 04 because it got byte-aligned,
- *                       not address aligned)
- *
- *          address:         0x00                0x04
- *                       ___________________________________
- *          content:     ;   |   |   | X  ; YZ |   |   |   ;
- *                       -----------------------------------
+ * <p>
+ * number: XYZ (spread out in between address 00 and 04 because it got byte-aligned,
+ * not address aligned)
+ * <p>
+ * address:         0x00                0x04
+ * ___________________________________
+ * content:     ;   |   |   | X  ; YZ |   |   |   ;
+ * -----------------------------------
+ * <p>
  *
  * todo - needs testing
  * @author catlord
  */
 public class DataMemory extends Component {
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
+    private static final String MEM_READ_SIGNAL = "memReadSignal";
+    private static final String MEM_WRITE_SIGNAL = "memWriteSignal";
     
-    private final Map<Integer, Data> memory = new HashMap<>();		// maps addresses represented as data to data values
-    private Data memoryBlock = new Data(CPU.getBitSize());		    // to avoid overflows, this will be container, which will manage input/output from memory
+    private final Map<Integer, Data> memory = new HashMap<>();        // maps addresses represented as data to data values
+    private Data memoryBlock = new Data(CPU.getBitSize());            // to avoid overflows, this will be container, which will manage input/output from memory
     private Data memReadSignal, memWriteSignal;
     
     // todo - validate and test
@@ -53,13 +56,13 @@ public class DataMemory extends Component {
     public void execute() {
         Data output = IOHandler.getSingleOutput(getOutputs());
         output.setData(0);
-    
-        if (memReadSignal.getData() == 1  && memWriteSignal.getData() == 1) {
+        
+        if (memReadSignal.getData() == 1 && memWriteSignal.getData() == 1) {
             log.error("Inconsistent state, both control signals (read & write) are active !");
             return;
         }
-    
-        int bitWidth = 2;		// maximal number of bits used to differentiate between a memory cell and a following cell
+        
+        int bitWidth = 2;        // maximal number of bits used to differentiate between a memory cell and a following cell
         Data inputA = IOHandler.getInputA(getInputs());
         Data inputB = IOHandler.getInputB(getInputs());
         
@@ -71,54 +74,52 @@ public class DataMemory extends Component {
         // contains the amount we need to shift data while having 4-byte alignment // todo -- - possible refactor, to allow not only 32 bit architecture
         Data dataShift = new Data(bitWidth);
         dataShift.setData(address.getData());
-    
+        
         // remove last 2 bits // todo - possible refactor, to allow not only 32 bit architecture
-        address.setData( ((address.getData() >>> bitWidth) << bitWidth) );
-        nextAddress.setData( address.getData() + (int) Math.pow(bitWidth,2));			 // todo - refactor
-    
+        address.setData(((address.getData() >>> bitWidth) << bitWidth));
+        nextAddress.setData(address.getData() + (int) Math.pow(bitWidth, 2));             // todo - refactor
+        
         log.debug("InputA:     {}" + DataFormatter.getHex(inputA));
         log.debug("InputB:     {}" + DataFormatter.getHex(inputB));
         log.debug("Address:    {}" + DataFormatter.getHex(address));
         log.debug("Next addr:  {}" + DataFormatter.getHex(nextAddress));
         log.debug("Data shift: {}" + DataFormatter.getHex(dataShift));
-    
+        
         if (memReadSignal.getData() == 1) {
-            Data testBlock = memory.get(nextAddress.getData());		// first fetch data from following address
-        
+            Data testBlock = memory.get(nextAddress.getData());        // first fetch data from following address
+            
             output.setData(0);
-        
+            
             if (testBlock != null) {
                 // first read the following block and shift left (to make room for next number
-                memoryBlock.setData( (testBlock.getData() << ((int) Math.pow(bitWidth,2) - dataShift.getData())) );
-            
+                memoryBlock.setData((testBlock.getData() << ((int) Math.pow(bitWidth, 2) - dataShift.getData())));
+                
                 // and then get the next part of the result (could be zero)
                 testBlock = memory.get(address.getData());
                 if (testBlock != null)
-                    memoryBlock.setData( memoryBlock.getData() | (testBlock.getData() >>> dataShift.getData()) );
-            
+                    memoryBlock.setData(memoryBlock.getData() | (testBlock.getData() >>> dataShift.getData()));
+                
                 output.setData(memoryBlock.getData());
             }
             log.info("Reading from memory address 0x{}, got number 0x{}",
-                    DataFormatter.getHex(address),  DataFormatter.getHex(output));
-        
-        }
-        else if (memWriteSignal.getData() == 1) {
+                    DataFormatter.getHex(address), DataFormatter.getHex(output));
+            
+        } else if (memWriteSignal.getData() == 1) {
             // write first memory block
-            memoryBlock.setData(inputB.getData() << dataShift.getData());			// first perform possible bit size adjustment of the input
+            memoryBlock.setData(inputB.getData() << dataShift.getData());            // first perform possible bit size adjustment of the input
             memory.put(address.getData(), memoryBlock.newInstance());
-        
+            
             // write next memory block (if any)
             if (dataShift.getData() != 0) {
-                memoryBlock.setData(inputB.getData() >>> ((int) Math.pow(bitWidth,2) - dataShift.getData()));			// first perform possible bit size adjustment of the input
+                memoryBlock.setData(inputB.getData() >>> ((int) Math.pow(bitWidth, 2) - dataShift.getData()));            // first perform possible bit size adjustment of the input
                 memory.put(nextAddress.getData(), memoryBlock.newInstance());
             }
-        
+            
             // reset memory block for next usage
             memoryBlock.setData(0);
             log.info("Writing to memory address 0x{} value of {}",
-                    DataFormatter.getHex(address),  DataFormatter.getHex(inputB));
-        }
-        else
+                    DataFormatter.getHex(address), DataFormatter.getHex(inputB));
+        } else
             log.info("Memory inactive");
     }
     
@@ -128,7 +129,7 @@ public class DataMemory extends Component {
     
     public void setMemReadSignal(Data memReadSignal) {
         this.memReadSignal = memReadSignal;
-        getInputs().put("memReadSignal", this.memReadSignal);
+        getInputs().put(MEM_READ_SIGNAL, this.memReadSignal);
     }
     
     public Data getMemWriteSignal() {
@@ -137,8 +138,10 @@ public class DataMemory extends Component {
     
     public void setMemWriteSignal(Data memWriteSignal) {
         this.memWriteSignal = memWriteSignal;
-        getInputs().put("memWriteSignal", this.memWriteSignal);
+        getInputs().put(MEM_WRITE_SIGNAL, this.memWriteSignal);
     }
     
-    public void clearMemory() { memory.clear(); }
+    public void clearMemory() {
+        memory.clear();
+    }
 }
