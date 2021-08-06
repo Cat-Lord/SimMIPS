@@ -75,4 +75,16 @@ public class CPU {
         }
         return ret;
     }
+    
+    /**
+     * Calculates number of bytes for this CPU's architecture. Example:
+     *      Bit size: 32
+     *      One byte: 8 bits
+     *
+     *      returned byte size: 32 / 8 == 4 bytes
+     * @return Byte size of this  CPU's architecture
+     */
+    public static int getByteSize() {
+        return CPU.getBitSize()/Byte.SIZE;
+    }
 }
