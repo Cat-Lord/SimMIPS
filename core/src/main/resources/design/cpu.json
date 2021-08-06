@@ -106,7 +106,7 @@
       },
       {
         "InstructionMemory": {
-          "label": "Instruction\nMemory",
+          "label": "Instruction Memory",
           "style": {
             "x": 200,
             "y": 528,
@@ -177,11 +177,7 @@
               "immediateValue"
             ]
           },
-          "selectors": {
-            "bubble": {
-              "bitSize": 1
-            }
-          },
+          "bubble": { "bitSize": 1 },
           "description": "Latch register between Fetch and Decode phase"
         }
       },
@@ -216,31 +212,15 @@
               "bitSize": "11"
             }
           },
-          "controlCodes": {
-            "RegDest": {
-              "bitSize": "1"
-            },
-            "AluSrc": {
-              "bitSize": "1"
-            },
-            "AluOp": {
-              "bitSize": "4"
-            },
-            "Branch": {
-              "bitSize": "1"
-            },
-            "MemRead": {
-              "bitSize": "1"
-            },
-            "MemWrite": {
-              "bitSize": "1"
-            },
-            "RegWrite": {
-              "bitSize": "1"
-            },
-            "MemToReg": {
-              "bitSize": "1"
-            }
+          "controlSignal": {
+            "RegDest":  { "bitSize": "1" },
+            "AluSrc":   { "bitSize": "1" },
+            "AluOp":    { "bitSize": "4" },
+            "Branch":   { "bitSize": "1" },
+            "MemRead":  { "bitSize": "1" },
+            "MemWrite": { "bitSize": "1" },
+            "RegWrite": { "bitSize": "1" },
+            "MemToReg": { "bitSize": "1" }
           },
           "opcodeToControlSignals": {
             "0": [
@@ -463,21 +443,21 @@
             },
             "rt": {
               "bitSize": 5
-            },
-            "destReg": {
-              "bitSize": 5
-            },
-            "destRegValue": {}
+            }
           },
           "outputs": {
             "reg1Value": {},
             "reg2Value": {}
           },
-          "selectors": {
-            "regWriteSignal": {
-              "bitSize": 1
-            }
+          "inputsToOutputs": {
+            "rs": "reg1Value",
+            "rt": "reg2Value"
           },
+
+          "destReg": { "bitSize": 5 },
+          "destRegValue": {},
+          "regWriteSignal": { "bitSize": 1 },
+
           "description": "Bank of registers of fixed size. Can be used as temporary storage."
         }
       },
@@ -775,16 +755,10 @@
             "aluInputB": {}
           },
           "outputs": {
-            "aluResult": {},
-            "zeroResultSignal": {
-              "bitSize": 1
-            }
+            "aluResult": {}
           },
-          "selectors": {
-            "aluOp": {
-              "bitSize": 4
-            }
-          },
+          "aluOp": { "bitSize": 4 },
+          "zeroResultSignal": { "bitSize": 1 },
           "operations": {
             "0": {
               "label": "ADD"
@@ -1135,10 +1109,8 @@
           "outputs": {
             "memData": {}
           },
-          "selectors": {
-            "memReadSignal": { "bitSize": 1 },
-            "memWriteSignal": { "bitSize": 1 }
-          },
+          "memReadSignal":  { "bitSize": 1 },
+          "memWriteSignal": { "bitSize": 1 },
           "description": "Saves data, extra CPU storage and typically much bigger in size than register bank."
         }
       },
@@ -1258,7 +1230,7 @@
       },
       {
         "from": "AF",
-        "to": "Instruction\nMemory",
+        "to": "Instruction Memory",
         "selector": "address",
         "wireType": "normal",
         "nodes": [
@@ -1377,7 +1349,7 @@
         ]
       },
       {
-        "from": "Instruction\nMemory",
+        "from": "Instruction Memory",
         "to": "IF_ID",
         "selector": "iCode",
         "wireType": "normal",
