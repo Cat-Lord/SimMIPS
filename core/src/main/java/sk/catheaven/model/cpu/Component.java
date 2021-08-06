@@ -3,12 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.catheaven.model.components;
+package sk.catheaven.model.cpu;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.Style;
+import sk.catheaven.model.cpu.components.ALU;
+import sk.catheaven.model.cpu.components.AND;
+import sk.catheaven.model.cpu.components.Adder;
+import sk.catheaven.model.cpu.components.ConstAdder;
+import sk.catheaven.model.cpu.components.ConstMUX;
+import sk.catheaven.model.cpu.components.ControlUnit;
+import sk.catheaven.model.cpu.components.DataMemory;
+import sk.catheaven.model.cpu.components.Fork;
+import sk.catheaven.model.cpu.components.InstructionMemory;
+import sk.catheaven.model.cpu.components.LatchRegister;
+import sk.catheaven.model.cpu.components.MUX;
+import sk.catheaven.model.cpu.components.PC;
+import sk.catheaven.model.cpu.components.RegBank;
+import sk.catheaven.model.cpu.components.SignExtend;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +44,9 @@ import java.util.Map;
 		@JsonSubTypes.Type(value = RegBank.class),
 		@JsonSubTypes.Type(value = SignExtend.class),
 })
-public abstract class Component {
+public abstract class Component implements Executable {
+	
+	public static String IGNORED_LABEL = "";
 	
 	protected String label = "";
 	private Style style;
@@ -39,6 +55,43 @@ public abstract class Component {
 	protected Map<String, Data> inputs = new HashMap<>();
 	protected Map<String, Data> outputs = new HashMap<>();
 	protected Map<String, Data> selectors = new HashMap<>();
+	
+
+	//@Override
+	public boolean setInput(String targetLabel, Data data) {
+		if (getInputs().get(targetLabel) != null) {
+			getInputs().get(targetLabel).setData(data);
+			return true;
+		}
+		
+		if (getSelectors().get(targetLabel) != null) {
+			getSelectors().get(targetLabel).setData(data);
+			return true;
+		}
+		
+		return false;
+	}
+	
+//	@Override
+	public boolean setOutput(String targetLabel, Data data) {
+		if (getOutputs().get(targetLabel) != null) {
+			getOutputs().get(targetLabel).setData(data);
+			return true;
+		}
+		
+		return false;
+	}
+	
+//	@Override
+	public Data getInput(String inputLabel) {
+		return getInputs().get(inputLabel);
+	}
+	
+//	@Override
+	public Data getOutput(String outputLabel) {
+		return getOutputs().get(outputLabel);
+	}
+	
 	
 	public String getLabel() {
 		return label;
