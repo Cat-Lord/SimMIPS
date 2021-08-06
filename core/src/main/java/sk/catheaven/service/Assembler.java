@@ -5,8 +5,11 @@ import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.SyntaxErrorsContainer;
 import sk.catheaven.model.cpu.components.CPU;
+import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
 import sk.catheaven.utils.DataFormatter;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class Assembler {
     public final static String DATA_CHAR = ".";				// if present, the string containing this symbol is a data reference (.base or .offset)
     public final static String COMMENT_CHAR = ";";			// comment in user code
     public final static String POSITIONAL_CHAR = "#";		// denotes position (can be found in field values of instruction).
+    public final static String REGISTER_SYMBOL = "r";
     
     private final static Logger log = LogManager.getLogger();
     private final Map<String, Instruction> instructionSet;
@@ -98,7 +102,7 @@ public class Assembler {
      * @param instructionMnemo Instruction mnemo.
      * @param args Array of arguments provided for the instruction.
      */
-    private boolean isValidInstruction(String instructionMnemo, String args[]) {
+    private boolean isValidInstruction(String instructionMnemo, String[] args) {
         Instruction instruction = instructionSet.get(instructionMnemo);
         
         if (instruction == null) {
@@ -116,14 +120,22 @@ public class Assembler {
             return false;
         }
         
-        // check each argument against arguments in instruction (if are correcty formatted)
+        // check each argument against arguments in instruction (if are correctly formatted)
         for(int i = 0; i < args.length; i++) {
-            instruction.getArguments().get(i).parse(args[i]);
+            ArgumentType type = instruction.getArguments().get(i);
+            if (type.isValidArgument(args[i]) == false) {
+                syntaxErrors.addError("Invalid argument:" +
+                                                  type.getClass().getSimpleName() +
+                                                  " returned error for " +
+                                                  args[i]
+                                              );
+                return false;
+            }
             
             // check if the label argument exists in labels
             if (instruction.getArguments().get(i) instanceof LabelArgumentType)
                 if (labels.get(args[i]) == null) {
-                    syntaxErrors.addError("Label `" + args[i] + "` branches to an undefined label");
+                    syntaxErrors.addError("Argument `" + args[i] + "` branches to an undefined label");
                     return false;
                 }
         }
@@ -142,7 +154,7 @@ public class Assembler {
         Instruction instruction = instructionSet.get(instructionMnemo);
         List<Field> fields = instruction.getType().getFields();
         
-        int shiftBy = 0;
+        int shiftBy;
         for (Field field : fields) {
             String fieldValue = instruction.getFields().get(field.getLabel());
             int tempCode = iCode.getData();
@@ -161,10 +173,18 @@ public class Assembler {
                 if (fieldValue.contains(DATA_CHAR)) {
                     // get the argument type, because it knows how to parse the argument to get specific parts of that argument
                     // For example: Ask the data argument to get ".base" and it knows, how to get it.
-                    int value = dat.getPart(args[extractPositionalNumber(fieldValue)], fieldValue);
-                    log.info("Data value for `{}` is {}", fieldValue, value);
-                
-                    tempCode |= value;
+                    Data value = DataArgumentType.getPart(
+                                    args[extractPositionalNumber(fieldValue)],
+                                    DataArgumentType.Part.of(fieldValue)
+                                 );
+                    
+                    if (value == null)
+                        log.warn("Data value for `{}` is NULL", fieldValue);
+                    else {
+                        log.info("Data value for `{}` is {}", fieldValue, value.getData());
+                        tempCode |= value.getData();
+                    }
+                    
                 } else {
                     int seq = extractPositionalNumber(fieldValue);
                 
@@ -176,9 +196,9 @@ public class Assembler {
                     } else {
                         try {
                             // get the data from argument according to its type
-                            int value = instruction.getArguments().get(seq).getData(args[seq]);
-                            log.info("Positional value for `{}` is {}", fieldValue, value);
-                            tempCode |= value;
+                            Data value = instruction.getArguments().get(seq).getData(args[seq]);
+                            log.info("Positional value for `{}` is {}", fieldValue, value.getData());
+                            tempCode |= value.getData();
                         } catch (IndexOutOfBoundsException e) {
                             log.warn("Argument data car: Index out of bounds ! Index: {}, number of args: {}",
                                     seq, args.length);
@@ -217,7 +237,7 @@ public class Assembler {
                 int labelEndPosition = codeLines[lineIndex].indexOf(LABEL_TRAILING_CHAR);
                 String label = codeLines[lineIndex].substring(0, labelEndPosition);			// extract the label
                 
-                lat.parse(label);										// check if the label is correctly formatted
+                LabelArgumentType.isValidLabel(label);
                 
                 // throw an exception if there is a label without any instruction following it
                 if (labelEndPosition + 1  >=  codeLines[lineIndex].length()) {
@@ -256,16 +276,21 @@ public class Assembler {
             return new String[0];							// return empty array, there are no arguments
         
         // remove mnemo and get arguments as one string (remove any spaces, they won't be needed)
-        String argArr[] = instruction.substring(indexOfFirstSpace+1, instruction.length())
+        String[] argArr = instruction.substring(indexOfFirstSpace+1, instruction.length())
                                      .replaceAll(" ", "")
                                      .split(",");
         return argArr;
     }
     
     /**
-     * Extracts positional number from field value.
-     * @param fieldValue Field value as defined in layout, for example "#2" or "#3.base".
-     * @return
+     * Extracts positional number from field value. Example:
+     *   Field value: "#2"
+     *       returns: 2
+     *   Field value: "#3.base"
+     *       returns: 3
+     *
+     * @param fieldValue Field value as defined in layout.
+     * @return From field value gets the actual position as integer.
      */
     private int extractPositionalNumber(String fieldValue) {
         String seqString = "";
