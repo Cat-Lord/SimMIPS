@@ -1,5 +1,7 @@
-package sk.catheaven.model;
+package sk.catheaven.model.cpu;
 
+import sk.catheaven.model.Data;
+import sk.catheaven.model.Tuple;
 import sk.catheaven.utils.Node;
 
 import java.util.List;
