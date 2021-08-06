@@ -7,7 +7,7 @@ package sk.catheaven.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.components.CPU;
+import sk.catheaven.model.cpu.components.CPU;
 
 /**
  * Basic numbering object in the application. Has a mask, which prohibits overflows. Provides 
@@ -60,7 +60,7 @@ public class Data {
     public void setData(int data){
         this.data = data;
     }
-    
+    public void setData(Data data) { setData(data.getData());}
     /**
      * Returns data appropriately adjusted by the mask. If range is set,
 	 * data will get truncated accordingly.
