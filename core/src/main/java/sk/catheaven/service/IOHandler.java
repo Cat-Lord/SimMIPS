@@ -5,19 +5,30 @@ import sk.catheaven.model.Data;
 import java.util.Map;
 
 public class IOHandler {
-    public static Data getInputA(Map<?,?> ioMap) {
-        return ((Data[]) ioMap.values().toArray())[0];
+    public static Data getInputA(Map<String, Data> ioMap) {
+        Data[] data = getArrayFromMap(ioMap);
+        return data[0];
     }
     
-    public static Data getInputB(Map<?,?> ioMap) {
-        return ((Data[]) ioMap.values().toArray())[1];
+    public static Data getInputB(Map<String, Data> ioMap) {
+        Data[] data = getArrayFromMap(ioMap);
+        return data[1];
     }
     
-    public static Data getSingleOutput(Map<?,?> ioMap) {
-        return ((Data[]) ioMap.values().toArray())[0];
+    public static Data getSingleOutput(Map<String, Data> ioMap) {
+        Data[] data = getArrayFromMap(ioMap);
+        return data[0];
     }
-    public static Data getSingleInput(Map<?,?> ioMap) {
-        return ((Data[]) ioMap.values().toArray())[0];
+    public static Data getSingleInput(Map<String, Data> ioMap) {
+        Data[] data = getArrayFromMap(ioMap);
+        return data[0];
     }
-    public static Data getSingleSelector(Map<?,?> selectorMap) { return ((Data[]) selectorMap.values().toArray())[0]; }
+    public static Data getSingleSelector(Map<String, Data> selectorMap) {
+        Data[] data = getArrayFromMap(selectorMap);
+        return data[0];
+    }
+    
+    private static Data[] getArrayFromMap(Map<String, Data> map) {
+        return map.values().toArray(Data[]::new);
+    }
 }

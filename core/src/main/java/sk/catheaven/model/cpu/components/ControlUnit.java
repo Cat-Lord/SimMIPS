@@ -92,7 +92,7 @@ public class ControlUnit extends Component {
      */
     private void assignValuesToSignals() {
         Integer[] signalValues = opcodeToControlSignals.get(opCode.getData());
-        Data[] signals = (Data[]) controlSignal.values().toArray();
+        Data[] signals = controlSignal.values().toArray(Data[]::new);
     
         if (signals.length != signalValues.length)
             log.error("Number of control codes differs from respective values ! {} code != {} values",
