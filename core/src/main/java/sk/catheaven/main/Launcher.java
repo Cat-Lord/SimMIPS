@@ -7,8 +7,8 @@ package sk.catheaven.main;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.instructions.Instruction;
 
 import java.io.InputStream;

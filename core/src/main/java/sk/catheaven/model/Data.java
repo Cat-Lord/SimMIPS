@@ -49,8 +49,10 @@ public class Data {
 		return range;
 	}
 	
-	public void setRange(Tuple<Integer, Integer> range) {
-		this.range = range;
+	// integer values get loaded by jackson as strings
+	public void setRange(Tuple<?, ?> range) {
+		this.range = new Tuple<>(Integer.parseInt((String) range.getLeft()),
+								Integer.parseInt((String) range.getRight()));
 	}
 	    
     /**

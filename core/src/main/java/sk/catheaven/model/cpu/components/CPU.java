@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.Connector;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

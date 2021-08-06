@@ -3,12 +3,10 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.Tuple;
 import sk.catheaven.model.cpu.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class LatchRegister extends Component {
     private final static Logger log = LogManager.getLogger();

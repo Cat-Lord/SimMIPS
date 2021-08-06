@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Component;
+
 import java.util.Map;
 
 /**

@@ -14,7 +14,6 @@ import sk.catheaven.utils.DataFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Data storage unit. InputA represents target address (to read from or write to)

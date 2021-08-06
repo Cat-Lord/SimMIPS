@@ -14,7 +14,6 @@ import sk.catheaven.model.cpu.Component;
 import sk.catheaven.service.IOHandler;
 
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Component used for mathematical operations. Operations are defined by the <i>aluOp</i> 
