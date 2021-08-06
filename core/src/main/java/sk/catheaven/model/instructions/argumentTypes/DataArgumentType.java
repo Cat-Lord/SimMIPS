@@ -11,8 +11,6 @@ import sk.catheaven.model.Data;
 import sk.catheaven.model.instructions.ArgumentType;
 
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -25,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class DataArgumentType extends ArgumentType {
     private static Logger log = LogManager.getLogger();
-    private static RegArgumentType regArg;		// inside of the braces there is register, so we need to know, how to get value from register. This way we just call the proper class to do it
+    private static RegisterArgumentType regArg;		// inside of the braces there is register, so we need to know, how to get value from register. This way we just call the proper class to do it
     private static Data offset;
     
     /**
@@ -39,7 +37,7 @@ public class DataArgumentType extends ArgumentType {
     
         private String providedPart;
     
-        public Part of(String argumentPart) {
+        public static Part of(String argumentPart) {
             if (argumentPart.toUpperCase(Locale.ROOT).contains(Part.BASE.toString()))
                 return create(Part.BASE, argumentPart);
         
@@ -49,7 +47,7 @@ public class DataArgumentType extends ArgumentType {
             return create(Part.UNKNOWN, argumentPart);
         }
     
-        private Part create(Part part, String origin) {
+        private static Part create(Part part, String origin) {
             part.setProvidedPart(origin);
             return part;
         }
@@ -64,7 +62,7 @@ public class DataArgumentType extends ArgumentType {
     }
     
     public DataArgumentType(){
-        regArg  = new RegArgumentType();
+        regArg  = new RegisterArgumentType();
         offset = new Data(16);      // todo - why is this hard-coded
         pattern = Pattern.compile(DATA_REGEX);
     }
@@ -75,13 +73,18 @@ public class DataArgumentType extends ArgumentType {
         return  pattern.matcher(arg.toLowerCase()).matches();
     }
     
+    @Override
+    public Data getData(String argument) {
+        return null;
+    }
+    
     /**
      * From argument, which is data-valid cuts of part specified by <b>part</b>.
      * @param validArgument User-written argument, for example '0030(r6)' from "sw r1, 0030(r6)"
      * @param part Specifies part of data argument. Either base or offset.
      * @return
      */
-    public Data getPart(String validArgument, Part part){
+    public static Data getPart(String validArgument, Part part){
         switch (part) {
             case BASE -> {
                 // cut off the register specified in brackets and call for
@@ -98,6 +101,6 @@ public class DataArgumentType extends ArgumentType {
             default -> log.error("Unknown argument part ! Provided: {}", part.getProvidedPart());
         }
         
-        return new Data();
+        return null;
     }
 }

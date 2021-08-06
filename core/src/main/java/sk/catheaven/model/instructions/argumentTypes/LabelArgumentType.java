@@ -28,7 +28,11 @@ public class LabelArgumentType extends ArgumentType {
      */
     @Override
     public boolean isValidArgument(String argument) {
-        return pattern.matcher(argument).matches();
+        return isValidLabel(argument);
+    }
+    
+    public static boolean isValidLabel(String label) {
+        return pattern.matcher(label).matches();
     }
     
     @Override
