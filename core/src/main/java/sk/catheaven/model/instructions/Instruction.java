@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.IntArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
-import sk.catheaven.model.instructions.argumentTypes.RegArgumentType;
+import sk.catheaven.model.instructions.argumentTypes.RegisterArgumentType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class Instruction {
     public void setArguments(String[] arguments) {
         for (String argument : arguments)
             switch (argument) {
-                case "reg"   -> this.arguments.add(new RegArgumentType());
+                case "reg"   -> this.arguments.add(new RegisterArgumentType());
                 case "int"   -> this.arguments.add(new IntArgumentType());
                 case "label" -> this.arguments.add(new LabelArgumentType());
                 case "data"  -> this.arguments.add(new DataArgumentType());
