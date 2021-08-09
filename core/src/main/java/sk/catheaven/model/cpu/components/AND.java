@@ -21,10 +21,12 @@ public class AND extends Component {
     
     public void execute() {
         Data output = this.getOutput(Component.IGNORED_LABEL);
+        Data inputA = IOHandler.getInputA(getInputs());
+        Data inputB = IOHandler.getInputB(getInputs());
         
         for (Data input : getInputs().values())
             output.setData(
-                output.getData() & input.getData()
+                inputA.getData() & inputB.getData()
             );
     }
     
