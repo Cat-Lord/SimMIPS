@@ -9,6 +9,7 @@ import sk.catheaven.model.Data;
 import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.service.Assembler;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ public class RegisterArgumentType extends ArgumentType {
     
     @Override
     public boolean isValidArgument(String argument) {
-        return pattern.matcher(argument).matches();
+        return pattern.matcher(argument.toLowerCase(Locale.ROOT)).matches();
     }
     
     /**
