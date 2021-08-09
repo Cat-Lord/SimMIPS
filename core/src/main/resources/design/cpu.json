@@ -182,18 +182,14 @@
           "inputs": {
             "input": {}
           },
-          "opCode": {
-            "range": { "0": "26" }
-          },
-          "func": {
-            "range": { "27": "27" }
-          },
-          "funcDependant": "AluOp",
           "outputs": {
             "controlSignals": {
               "bitSize": "11"
             }
           },
+          "opCode": { "range": { "0": "26" } },
+          "func":   { "range": { "27": "27" } },
+          "funcDependant": "AluOp",
           "controlSignal": {
             "RegDest":  { "bitSize": "1" },
             "AluSrc":   { "bitSize": "1" },
