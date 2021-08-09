@@ -56,31 +56,43 @@ public class Data {
 	}
 	    
     /**
-     * Sets data according to the input parameter.
-     * @param data input data to set 
+     * Sets data according to the input parameter. If a range is specified, data will get truncated.
+	 * Example:
+	 * 	range: 4-5 (shift first 4 to the left and then 5 to the right)
+	 * 	data:   '1101 0101 0000 1111'
+	 * 	result: 'xxxx 0101 0000 111x' ('x' represents 0, used for better visually differentiation)
+	 *
+	 * 	We need to be careful though. If our number has 10 bits, but we store it inside an int, which
+	 * 	has 32 bits, then shift to the right could 'bring' more unnecessary numbers into the action.
+	 * 	Explanation:
+	 * 		bit size: 12 bits
+	 * 		our int data storage in binary: ... 1111 0101 0101 0101 (shortened version of 32 bit number)
+	 * 		range: 0-1		(so we want to cut only the last '1')
+	 *
+	 * 		BUT shifting right (data >>> 1) would look like this:
+	 * 			data: 	1111 0101 0101 0101
+	 * 		expected:		 0010 1010 1010
+	 * actual result:	     1010 1010 1010x		(shift >>> 1)
+	 *
+	 * THEREFORE we need to carefully erase the data with the mask.
+     * @param data input data to set
      */
     public void setData(int data){
         this.data = data;
+	
+		if (range != null) {
+			this.data = (this.data << range.getLeft());
+			this.data &= this.mask;						// erase the shifted part
+			this.data = this.data >>> range.getRight();
+		}
     }
     public void setData(Data data) { setData(data.getData());}
     /**
-     * Returns data appropriately adjusted by the mask. If range is set,
-	 * data will get truncated accordingly.
+     * Returns data appropriately adjusted by the mask.
      * @return Integer representation of data.
      */
     public int getData(){
-		int returnData = (data & mask);
-	
-		/*
-		 * If a range is specified, data will get truncated. Example:
-		 * range: 4-5 (shift first 4 to the left and then 5 to the right)
-		 * data:   '1101 0101 0000 1111'
-		 * result: 'xxxx 0101 0000 111x' ('x' represents 0, used for better visually differentiation)
-		 */
-    	if (range != null)
-			returnData = (returnData << range.getLeft()) >>> range.getRight();
-    	
-        return returnData;
+		return data & mask;
     }
     
 	/**
