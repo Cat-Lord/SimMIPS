@@ -4,8 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.components.CPU;
-import sk.catheaven.utils.DataFormatter;
+import sk.catheaven.model.cpu.components.CPU;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,7 +22,15 @@ class DataFormatterTest {
     @Test
     void getBinary() {
         System.out.println(DataFormatter.getBinary(data));
-        assertEquals("0000 0100 0010 0111 0111 1101 1100 1001", DataFormatter.getBinary(data));
+        assertEquals("0000 0100 0010 0111 0111 1101 1100 1001",
+                DataFormatter.getBinary(data));
+    }
+    
+    @Test
+    void getLimitedBinary() {
+        System.out.println(DataFormatter.getBinary(data, 10));
+        assertEquals("01 1100 1001",
+                DataFormatter.getBinary(data, 10));
     }
     
     @Test

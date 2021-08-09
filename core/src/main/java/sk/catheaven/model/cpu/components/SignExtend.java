@@ -21,9 +21,18 @@ import sk.catheaven.service.IOHandler;
 public class SignExtend extends Component {
     private Logger log = LogManager.getLogger();
     
-    // initial value of 0, so the bit difference doesnt make sense
+    // initial value of 0, so the bit difference doesn't make sense
     // and thus it is possible to see if it was already set or no.
     private int bitDifference = 0;
+    
+    @Override
+    public boolean setInput(String targetLabel, Data data) {
+        if (this.getInput(Component.IGNORED_LABEL) != null) {
+            this.getInput(Component.IGNORED_LABEL).setData(data);
+            return true;
+        }
+        return false;
+    }
     
     @Override
     public Data getInput(String inputLabel) {
