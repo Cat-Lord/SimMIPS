@@ -77,6 +77,7 @@ public class ForkTest extends CPUContainer {
 	}
 	
 	@Test
+	@DisplayName("fork specific parts (ranges) of input into multiple separate outputs")
 	public void forkWithRangeTest() {
 		final var bitSize = 10;
 		
@@ -113,13 +114,9 @@ public class ForkTest extends CPUContainer {
 		assertEquals(15, forkWithRange.getOutput(extraOutput).getData());
 		assertEquals(1, forkWithRange.getOutput(signalOutput).getData());
 	}
-	/**
-	 * Testing a fork which has the ability to reduce the input. Key process Example:
-	 * 	  Input: 11 bits
-	 * Output A: 5 bits		- can be for example further split into more signals later
-	 * Output B: 1 bit		- can represent for example control signal in datapath
-	 */
+	
 	@Test
+	@DisplayName("fork the input into simple output and an output with specific range")
 	public void descendingForkTest(){
 		final var bitSize = 11;
 		
