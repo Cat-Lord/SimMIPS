@@ -126,8 +126,8 @@ public class Assembler {
             if (type.isValidArgument(args[i]) == false) {
                 syntaxErrors.addError("Invalid argument:" +
                                                   type.getClass().getSimpleName() +
-                                                  " returned error for " +
-                                                  args[i]
+                                                  " returned error for `" +
+                                                  args[i] + "`"
                                               );
                 return false;
             }
@@ -164,7 +164,7 @@ public class Assembler {
             // there is no positional character
             if (!fieldValue.contains(POSITIONAL_CHAR)) {
                 int value = Integer.parseInt(fieldValue);
-                log.info("Int value for `{}` is {}", fieldValue, value);
+                log.debug("Int value for `{}` is {}", fieldValue, value);
                 tempCode |= value;
             } else {
                 // there is a positional character
@@ -209,7 +209,7 @@ public class Assembler {
             iCode.setData(tempCode);
         }
         
-        log.info("{}: instruction code `{}`", String.format("%4s", instructionMnemo), DataFormatter.getBinary(iCode));
+        log.info("Assembled {}: iCode `{}`", String.format("%4s", instructionMnemo), DataFormatter.getBinary(iCode));
         return iCode;
     }
     
@@ -250,7 +250,7 @@ public class Assembler {
                 
                 if (labels.get(label) == null) {
                     labels.put(label, Assembler.computeAddress(instructionIndex));
-                    log.info("\tCreated label `{}` (address {})",
+                    log.debug("\tCreated label `{}` (address {})",
                             label, DataFormatter.getHex(Assembler.computeAddress(instructionIndex - 1)));
                 }
                 else {
@@ -355,5 +355,9 @@ public class Assembler {
      */
     public static int computeIndex(int address) {
         return address / CPU.getByteSize();
+    }
+    
+    public SyntaxErrorsContainer getSyntaxErrors() {
+        return syntaxErrors;
     }
 }

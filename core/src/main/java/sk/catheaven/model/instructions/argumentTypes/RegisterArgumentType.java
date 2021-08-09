@@ -24,12 +24,12 @@ public class RegisterArgumentType extends ArgumentType {
     private final Data registerIndex;
     
     public RegisterArgumentType(){
-        registerIndex = new Data(5);
-        pattern = Pattern.compile(REGISTER_REGEX);  // todo - again, why this hard-coded value ?
+        registerIndex = new Data(5); // todo - again, why this hard-coded value ?
     }
     
     @Override
     public boolean isValidArgument(String argument) {
+        pattern = Pattern.compile(REGISTER_REGEX);
         return pattern.matcher(argument.toLowerCase(Locale.ROOT)).matches();
     }
     

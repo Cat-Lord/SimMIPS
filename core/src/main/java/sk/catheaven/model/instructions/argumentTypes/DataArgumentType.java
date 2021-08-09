@@ -64,7 +64,6 @@ public class DataArgumentType extends ArgumentType {
     public DataArgumentType(){
         regArg  = new RegisterArgumentType();
         offset = new Data(16);      // todo - why is this hard-coded
-        pattern = Pattern.compile(DATA_REGEX);
     }
     
     @Override

@@ -14,81 +14,74 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package sk.catheaven.codeTests;
+package sk.catheaven.cpu.codeTests;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import sk.catheaven.cpu.CPUContainer;
+import sk.catheaven.model.Tuple;
+import sk.catheaven.service.Assembler;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import sk.catheaven.exceptions.SyntaxException;
-import sk.catheaven.hardware.CPU;
-import sk.catheaven.instructionEssentials.Assembler;
-import sk.catheaven.main.Loader;
-import sk.catheaven.utils.Tuple;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests for different comment positions to validate commentary trimming 
  * and code adjustment on compilation.
  * @author catlord
  */
-public class CommentaryTest {
-	private List<String> codeLines;
-	private Assembler assembler;
+@DisplayName("Assembler should be able to")
+public class CommentaryTest extends CPUContainer {
+	private static List<String> codeLines;
 	
-	public CommentaryTest() throws IOException, URISyntaxException {
+	@BeforeAll
+	static void prepareCode() {
 		codeLines = createCodeLines();
-		Loader l = new Loader("design/instructions.json", "design/cpu.json");
-		CPU cpu = l.getCPU();
-		assembler = cpu.getAssembler();
 	}
 	
 	@Test
-	public void test(){
-		for(int i = 0; i < 50; i++){
-			try{
-				assembler.assembleCode(modifyCode());
-			}
-			catch(SyntaxException se){
-				for(Tuple<Integer, String> t : se.getErrors())
-					System.out.println("Line " + t.getLeft() + ": " + t.getRight());
+	@DisplayName("correctly assemble user code with randomly generated comments")
+	public void correctlyAssembleCodeWithRandomlyGeneratedComments() {
+		
+		for (int i = 0; i < 50; i++) {
+			assembler.assembleCode(generateRandomComments());
+			assertTrue(assembler.getSyntaxErrors().isEmpty(), () -> {
+				StringBuilder errors = new StringBuilder("\n");
+				for (Tuple<Integer, String> error : assembler.getSyntaxErrors().getLineErrors())
+					errors.append("\t").append(error.getLeft()).append(": ").append(error.getRight()).append("\n");
 				
-				fail("Syntax excpetion cought !");
-			}
-			catch(Exception e){ System.err.println("EXCEPTION: " + e.getMessage()); e.printStackTrace(); fail("Exception cought !");  }
+				for (String error : assembler.getSyntaxErrors().getMessageErrors())
+					errors.append("\t").append(error).append("\n");
+				return errors.toString();
+			});
 		}
-		System.out.println("SUCCESSFULLY RUN COMMENTARY TESTS");
+		
 	}
 
 	/** 
 	 * Traverse through the sample code and either add a comment line
 	 * or append comment at the end of the line.
 	*/
-	private String modifyCode(){
+	private String generateRandomComments(){
 		boolean modified = false;
 		String comment = "".concat(Assembler.COMMENT_CHAR + "This is comment");
 		String wholeCode = "";
 		
-		for(int i = 0; i < codeLines.size(); i++){
-			String lineOfCode = codeLines.get(i);
+		for (String lineOfCode : codeLines) {
 			String modifiedLine = requestChange(lineOfCode, comment);
 			
-			if( ! modifiedLine.isEmpty()){
+			if (!modifiedLine.isEmpty()) {
 				wholeCode = wholeCode.concat(modifiedLine);
-				modifiedLine = "";
 				modified = true;
-			}
-			else
+			} else
 				wholeCode = wholeCode.concat(lineOfCode + "\n");
 		}
 		
 		// if there were no modified line, force modification on a random amount of lines (at least 3)
 		if( ! modified)
 			wholeCode = comment.concat("\n").concat(wholeCode);
-		
-		System.out.println("CODE AFTER MODIFICATION");
-		System.out.println("$" + wholeCode + "$\n--------------------------------------------------------\n");
 		
 		return wholeCode;
 	}
@@ -120,7 +113,7 @@ public class CommentaryTest {
 		return modifiedLine;
 	}
 	
-	private List<String> createCodeLines() {
+	private static List<String> createCodeLines() {
 		List<String> code = new ArrayList<>();
 		code.add("subi r1, r8, 6");
 		code.add("li r6, 6");

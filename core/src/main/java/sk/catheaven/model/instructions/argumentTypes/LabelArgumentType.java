@@ -18,9 +18,6 @@ import java.util.regex.Pattern;
  * @author catlord
  */
 public class LabelArgumentType extends ArgumentType {
-    public LabelArgumentType() {
-        pattern = Pattern.compile(LABEL_REGEX);
-    }
     
     /**
      * Parses argument to detect possible label malformation.
@@ -32,6 +29,7 @@ public class LabelArgumentType extends ArgumentType {
     }
     
     public static boolean isValidLabel(String label) {
+        pattern = Pattern.compile(LABEL_REGEX);
         return pattern.matcher(label).matches();
     }
     

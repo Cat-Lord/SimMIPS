@@ -44,4 +44,8 @@ public class SyntaxErrorsContainer {
         lineErrors.clear();
         messageErrors.clear();
     }
+    
+    public boolean isEmpty() {
+        return lineErrors.isEmpty() && messageErrors.isEmpty();
+    }
 }
