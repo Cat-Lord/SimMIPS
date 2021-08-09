@@ -47,19 +47,19 @@ public class RegBank extends Component {
      */
     @Override
     public void execute() {
-        for (String inputLabel : inputsToOutputs.keySet()) {
-            String outputLabel = inputsToOutputs.get(inputLabel);
-            
-            int registerIndex = getInput(inputLabel).getData();
-            
-            getOutput(outputLabel).setData(registers[registerIndex]);
-        }
-        
         if (getRegWriteSignal().getData() == 1) {
-            
+        
             // register with index 0 is read-only
             if (destReg.getData() != 0)
                 registers[destReg.getData()].setData( destRegValue );
+        }
+        
+        for (String inputLabel : inputsToOutputs.keySet()) {
+            String outputLabel = inputsToOutputs.get(inputLabel);
+    
+            int registerIndex = getInput(inputLabel).getData();
+    
+            getOutput(outputLabel).setData(registers[registerIndex]);
         }
     }
     
