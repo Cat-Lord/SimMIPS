@@ -73,13 +73,16 @@ public class Assembler {
     }
     
     /**
-     * Assembles the instruction and creates an instance of <code>AssembledInstruction</code>.     *
+     * Assembles the instruction and creates an instance of <code>AssembledInstruction</code>.
+     * <bold>Note: </bold> This method is necessary to be private to ensure proper code formatting before actually
+     * trying to assemble line of code. Whole code must be cleaned up before trying to use its lines for assembling.
+     *
      * @param lineIndex The index (number) of line in code this instruction is from.
      * @param instruction Instruction to parse (as entered by user).
      * @param instructionIndex Number representing the order of instruction to parse. Used to calculate instruction address.
      * @return Assembled instruction
      */
-    public AssembledInstruction assembleInstruction(int lineIndex, String instruction, int instructionIndex) {
+    private AssembledInstruction assembleInstruction(int lineIndex, String instruction, int instructionIndex) {
         log.debug("Assembling `{}`", instruction);
         
         String[] args = getInstructionArguments(instruction);
@@ -125,13 +128,14 @@ public class Assembler {
         }
         
         // check each argument against arguments in instruction (if are correctly formatted)
-        for(int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
             ArgumentType type = instruction.getArguments().get(i);
-            if (type.isValidArgument(args[i]) == false) {
+            String currentArgument = args[i].trim();
+            if (type.isValidArgument(currentArgument.trim()) == false) {
                 syntaxErrors.addError("Invalid argument:" +
                                                   type.getClass().getSimpleName() +
                                                   " returned error for `" +
-                                                  args[i] + "`"
+                                                  currentArgument + "`"
                                               );
                 return false;
             }
@@ -317,15 +321,18 @@ public class Assembler {
      */
     private String[] adjustCode(String code) {
         final String singleSpace = " ";
+        final String emptyReplacement = "";
         
         // add newline at the end of code, to allow commentary regex matching at the end of code
         code = code + System.lineSeparator();
         
-        code = code.replaceAll(COMMENT_CHAR + ".*\\R", System.lineSeparator());   // erase comments ('\R' matches multiple versions of newline characters)
-        code = code.replaceAll("[ \t]+", singleSpace);							// and merge multiple tabs and spaces
-        code = code.replaceAll("\n +", System.lineSeparator());					// remove empty characters at the beginning of each line
-        code = code.replaceAll("[ \t]*:\\s*", LABEL_TRAILING_CHAR);				// connect label with instruction closest to it (\s  is whitespace character)
-        code = code.trim();											                    // and finally trim any leading/trailing newlines/spaces in code
+        code = code.replaceAll(COMMENT_CHAR + ".*", emptyReplacement);      // erase comments
+        code = code.replaceAll("[ \t]+", singleSpace);                      // and merge multiple tabs and spaces
+        code = code.replaceAll("^[ \t]+", emptyReplacement);                // remove empty characters at the beginning of each line
+        code = code.replaceAll("^\\s*\\R*$", emptyReplacement);             // remove empty lines
+        code = code.replaceAll("\\R+", System.lineSeparator());             // remove empty lines
+        code = code.replaceAll("[ \t]*:\\s*", LABEL_TRAILING_CHAR);         // connect label with instruction closest to it (\s  is whitespace character)
+        code = code.trim();											              // and finally trim any leading/trailing newlines/spaces in code
         
         log.info("CODE after adjustment:\n{}\n", code);
         return code.split(System.lineSeparator());
