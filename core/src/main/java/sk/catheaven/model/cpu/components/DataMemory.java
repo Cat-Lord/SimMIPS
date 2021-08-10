@@ -16,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Data storage unit. InputA represents target address (to read from or write to)
+ * Data storage unit. Can store up to the CPU architecture bit size.
+ * InputA represents target address (to read from or write to)
  * and inputB represent actual data. Only one of the control signals (memRead or
  * memWrite) can be active at one time, but inactivity of those signals is allowed.
  * Memory is efficiently stored in a map in a address (number) and data (Data) combination.
@@ -37,18 +38,21 @@ import java.util.Map;
  * content:     ;   |   |   | X  ; YZ |   |   |   ;
  * -----------------------------------
  * <p>
- *
- * todo - needs testing
  * @author catlord
  */
 public class DataMemory extends Component {
     private static final Logger log = LogManager.getLogger();
     private static final String MEM_READ_SIGNAL = "memReadSignal";
     private static final String MEM_WRITE_SIGNAL = "memWriteSignal";
+    private static final int BIT_WIDTH = calculateBitWidth();           // maximal number of bits used to differentiate between a memory cell and a following cell
     
     private final Map<Integer, Data> memory = new HashMap<>();        // maps addresses represented as data to data values
-    private Data memoryBlock = new Data(CPU.getBitSize());            // to avoid overflows, this will be container, which will manage input/output from memory
     private Data memReadSignal, memWriteSignal;
+    
+    private final Data memoryBlock = new Data();                            // to avoid overflows, this will be container, which will manage input/output from memory
+    private final Data baseAddress = new Data();
+    private final Data nextAddress = new Data();
+    private final Data addressShiftExtractor = new Data(BIT_WIDTH);                // used to distribute input value between base and next address, see class-level javadoc
     
     // todo - validate and test
     @Override
@@ -60,66 +64,69 @@ public class DataMemory extends Component {
             log.error("Inconsistent state, both control signals (read & write) are active !");
             return;
         }
+    
+        Data inputAddress = IOHandler.getInputA(getInputs());
+        Data inputValue   = IOHandler.getInputB(getInputs());
+    
+        baseAddress.setData(inputAddress);
+        nextAddress.setData(inputAddress);
+    
+        // clear the last BIT_WIDTH bits
+        baseAddress.setData( (baseAddress.getData() >>> BIT_WIDTH) << BIT_WIDTH );
+        nextAddress.setData(baseAddress.getData() + CPU.getByteSize());
         
-        int bitWidth = 2;        // maximal number of bits used to differentiate between a memory cell and a following cell
-        Data inputA = IOHandler.getInputA(getInputs());
-        Data inputB = IOHandler.getInputB(getInputs());
+        addressShiftExtractor.setData(inputAddress); // will extract only value of BIT_WIDTH bit size
+    
+        log.debug("Input Value:  {}", DataFormatter.getHex(inputValue));
+        log.debug("Address:      {}", DataFormatter.getHex(baseAddress));
+        log.debug("Next address: {}", DataFormatter.getHex(nextAddress));
+        log.debug("Shifting input by: {}", addressShiftExtractor.getData());
         
-        Data address = inputA.newInstance();
-        Data nextAddress = inputA.newInstance();
-        address.setData(inputA);
-        nextAddress.setData(inputA);
-        
-        // contains the amount we need to shift data while having 4-byte alignment // todo -- - possible refactor, to allow not only 32 bit architecture
-        Data dataShift = new Data(bitWidth);
-        dataShift.setData(address.getData());
-        
-        // remove last 2 bits // todo - possible refactor, to allow not only 32 bit architecture
-        address.setData(((address.getData() >>> bitWidth) << bitWidth));
-        nextAddress.setData(address.getData() + (int) Math.pow(bitWidth, 2));             // todo - refactor
-        
-        log.debug("InputA:     {}" + DataFormatter.getHex(inputA));
-        log.debug("InputB:     {}" + DataFormatter.getHex(inputB));
-        log.debug("Address:    {}" + DataFormatter.getHex(address));
-        log.debug("Next addr:  {}" + DataFormatter.getHex(nextAddress));
-        log.debug("Data shift: {}" + DataFormatter.getHex(dataShift));
-        
+        // TODO - test correctness
         if (memReadSignal.getData() == 1) {
-            Data testBlock = memory.get(nextAddress.getData());        // first fetch data from following address
+            Data nextAddressValue = memory.get(nextAddress.getData());        // first fetch data from following baseAddress
             
-            output.setData(0);
-            
-            if (testBlock != null) {
-                // first read the following block and shift left (to make room for next number
-                memoryBlock.setData((testBlock.getData() << ((int) Math.pow(bitWidth, 2) - dataShift.getData())));
-                
-                // and then get the next part of the result (could be zero)
-                testBlock = memory.get(address.getData());
-                if (testBlock != null)
-                    memoryBlock.setData(memoryBlock.getData() | (testBlock.getData() >>> dataShift.getData()));
-                
-                output.setData(memoryBlock.getData());
+            if (nextAddressValue != null) {
+                // first read the following block and shift left (to make room for next number)
+                memoryBlock.setData(
+                        (nextAddressValue.getData() <<
+                                (CPU.BIT_SIZE - addressShiftExtractor.getData() * Byte.SIZE))
+                );
             }
-            log.info("Reading from memory address 0x{}, got number 0x{}",
-                    DataFormatter.getHex(address), DataFormatter.getHex(output));
+                
+            // and then get the next part of the result (could be zero)
+            Data baseAddressValue = memory.get(baseAddress.getData());
+            if (baseAddressValue != null)
+                memoryBlock.setData(
+                        memoryBlock.getData() |
+                                (baseAddressValue.getData() >>> addressShiftExtractor.getData() * Byte.SIZE)
+                );
             
-        } else if (memWriteSignal.getData() == 1) {
-            // write first memory block
-            memoryBlock.setData(inputB.getData() << dataShift.getData());            // first perform possible bit size adjustment of the input
-            memory.put(address.getData(), memoryBlock.newInstance());
+            output.setData(memoryBlock.getData());
+            log.info("Reading from memory baseAddress 0x{}, got number 0x{}",
+                    DataFormatter.getHex(baseAddress), DataFormatter.getHex(output));
+        }
+        else if (memWriteSignal.getData() == 1) {
+            
+            // write first memory block -> Shift by the amount of bytes it is required
+            memoryBlock.setData(inputValue.getData() << addressShiftExtractor.getData() * Byte.SIZE);            // first perform possible bit size adjustment of the input
+            memory.put(baseAddress.getData(), memoryBlock.newInstance());
             
             // write next memory block (if any)
-            if (dataShift.getData() != 0) {
-                memoryBlock.setData(inputB.getData() >>> ((int) Math.pow(bitWidth, 2) - dataShift.getData()));            // first perform possible bit size adjustment of the input
+            if (addressShiftExtractor.getData() != 0) {
+                memoryBlock.setData(inputValue.getData() >>>
+                        (CPU.getBitSize() - (addressShiftExtractor.getData() * Byte.SIZE))
+                );
                 memory.put(nextAddress.getData(), memoryBlock.newInstance());
             }
             
             // reset memory block for next usage
             memoryBlock.setData(0);
-            log.info("Writing to memory address 0x{} value of {}",
-                    DataFormatter.getHex(address), DataFormatter.getHex(inputB));
-        } else
-            log.info("Memory inactive");
+            log.info("Writing to memory baseAddress 0x{} value of {}",
+                    DataFormatter.getHex(baseAddress), DataFormatter.getHex(inputValue));
+        }
+        else
+            log.debug("Memory inactive");
     }
     
     public Data getMemReadSignal() {
@@ -142,5 +149,41 @@ public class DataMemory extends Component {
     
     public void clearMemory() {
         memory.clear();
+    }
+    
+    /**
+     * Calculate by how many bits do we need to shift in order to get base address.
+     * Example:
+     *  4 byte alignment addresses: 0, 4, 8, 12, ...
+     *  If we have address 10, our base address is 8
+     *  How do we know that ?
+     *
+     *  10 in binary: 1010
+     *   8 in binary: 1000
+     *
+     *   So by 'erasing' the last 2 bits we got our base address.
+     *   But for a general architecture... how many bits do we need to shift with ?
+     *
+     *   Depends on our architecture.
+     *
+     *   32-bit architecture is a 4 byte architecture. We need to
+     *   calculate 2^X = 4 (which is 2) and shift by this value.
+     *
+     *   For a 64-bit (8 byte) architecture this would be 3 and so on. We can help
+     *   ourselves with a little bit of logarithm arithmetics.
+     *
+     *  2 to the power of what is our N-byte architecture ?
+     *        2 ^ X = N
+     *  X * log2(2) = log2(N)
+     *        X * 1 = log2(N)
+     *
+     *  Logarithm base b of number N = log10(N) / log10(b)
+     *  For logarithm of base 2 => log10(N) / log10(2)
+     *
+     * @return number of bits we need to shift left and right to get base address
+     * from any number.
+     */
+    private static int calculateBitWidth() {
+        return (int) (Math.log(CPU.getByteSize()) / Math.log(2));
     }
 }

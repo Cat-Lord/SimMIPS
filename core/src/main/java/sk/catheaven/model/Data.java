@@ -120,6 +120,11 @@ public class Data {
 	}
 	
 	public Data newInstance() {
-		return new Data(getBitSize());
+		Data copy = new Data(getBitSize());
+		if (this.range != null)
+			copy.setRange(this.range);
+		copy.setData(this.getDataUnmasked());
+		
+		return copy;
 	}
 }
