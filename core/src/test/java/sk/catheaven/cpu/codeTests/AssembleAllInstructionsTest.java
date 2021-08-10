@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
 import sk.catheaven.service.AssembledInstruction;
@@ -24,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * codes are tested against code obtained from MipSIM.
  * @author catlord
  */
+@DisplayName("Assembler should")
 public class AssembleAllInstructionsTest extends CPUContainer {
 	
 	@Test
+	@DisplayName("correctly assemble every instruction in the supplied instruction set")
 	public void test(){
 		String code = getCode();
 		List<String> expectedICodes = getExpectedICodes();

@@ -47,15 +47,7 @@ public class CommentaryTest extends CPUContainer {
 		
 		for (int i = 0; i < 50; i++) {
 			assembler.assembleCode(generateRandomComments());
-			assertTrue(assembler.getSyntaxErrors().isEmpty(), () -> {
-				StringBuilder errors = new StringBuilder("\n");
-				for (Tuple<Integer, String> error : assembler.getSyntaxErrors().getLineErrors())
-					errors.append("\t").append(error.getLeft()).append(": ").append(error.getRight()).append("\n");
-				
-				for (String error : assembler.getSyntaxErrors().getMessageErrors())
-					errors.append("\t").append(error).append("\n");
-				return errors.toString();
-			});
+			assertTrue(assembler.getSyntaxErrors().isEmpty(), assemblerErrorSupplier());
 		}
 		
 	}

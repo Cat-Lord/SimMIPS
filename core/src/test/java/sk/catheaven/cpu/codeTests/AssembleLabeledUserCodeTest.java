@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author catlord
  */
-public class AssembleWholeCodeTest extends CPUContainer {
+public class AssembleLabeledUserCodeTest extends CPUContainer {
 	
 	@Test
 	public void assembleCodeAndTestInstructionAndLabelValidity() {

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import sk.catheaven.main.Launcher;
 import sk.catheaven.main.Loader;
+import sk.catheaven.model.Tuple;
 import sk.catheaven.model.cpu.Executable;
 import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.instructions.Instruction;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,5 +40,17 @@ public class CPUContainer {
         
         InputStream cpuJsonResource = Launcher.class.getResourceAsStream("/design/cpu.json");
         cpu = Loader.getCPU(cpuJsonResource);
+    }
+    
+    protected Supplier<String> assemblerErrorSupplier() {
+        return () -> {
+            StringBuilder errors = new StringBuilder("\n");
+            for (Tuple<Integer, String> error : assembler.getSyntaxErrors().getLineErrors())
+                errors.append("\t").append(error.getLeft()).append(": ").append(error.getRight()).append("\n");
+    
+            for (String error : assembler.getSyntaxErrors().getMessageErrors())
+                errors.append("\t").append(error).append("\n");
+            return errors.toString();
+        };
     }
 }
