@@ -36,7 +36,7 @@ public class DataFormatter {
         String numberAsString = Long.toBinaryString(num);
         StringBuilder output = new StringBuilder(numberAsString);
         output.reverse();
-        appendZero(output, maxNumberOfDigits);
+        appendZero(output, Math.max(spacingFrequency, maxNumberOfDigits));
         addWhiteSpaces(output);
         
         StringBuilder result = new StringBuilder(output.substring(0, getLengthIncludingSpaces(maxNumberOfDigits)));
@@ -116,7 +116,7 @@ public class DataFormatter {
     
     /**
      * Calculates number of characters a string including white spaces would have. Uses <code>spacing frequency</code>
-     * to calculate the result.
+     * to calculate the result. Always returns at least bitSize.
      * @param bitSize number of bits of initial number
      * @return length of number as string with white spaces
      */
@@ -124,6 +124,6 @@ public class DataFormatter {
         int limit = bitSize / spacingFrequency;
         if (limit % spacingFrequency == 0)
             limit -= 1;
-        return bitSize + limit;
+        return Math.max(bitSize, bitSize + limit);
     }
 }
