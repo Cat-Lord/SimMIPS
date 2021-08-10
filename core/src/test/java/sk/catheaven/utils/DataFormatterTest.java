@@ -42,6 +42,6 @@ class DataFormatterTest {
     @Test
     void getOct() {
         System.out.println(DataFormatter.getOct(data));
-        assertEquals("00411676711", DataFormatter.getOct(data));
+        assertEquals("0411676711", DataFormatter.getOct(data));
     }
 }

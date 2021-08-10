@@ -362,6 +362,10 @@ public class Assembler {
         return address / CPU.getByteSize();
     }
     
+    public Map<String, Data> getLabels() {
+        return labels;
+    }
+    
     public SyntaxErrorsContainer getSyntaxErrors() {
         return syntaxErrors;
     }
