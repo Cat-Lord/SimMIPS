@@ -45,6 +45,10 @@ public class SyntaxErrorsContainer {
         messageErrors.clear();
     }
     
+    public int size() {
+        return lineErrors.size() + messageErrors.size();
+    }
+    
     public boolean isEmpty() {
         return lineErrors.isEmpty() && messageErrors.isEmpty();
     }

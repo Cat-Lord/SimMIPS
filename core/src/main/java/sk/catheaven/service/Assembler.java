@@ -59,9 +59,9 @@ public class Assembler {
         // since we are skipping empty lines, we need to keep track of current (instruction) line
         int instructionIndex = 0;
     
-        for (String codeLine : codeLines) {
-            if (! codeLine.isEmpty()) {
-                AssembledInstruction assembledInstruction = assembleInstruction(instructionIndex, codeLine, instructionIndex);
+        for (int lineNumber = 0; lineNumber < codeLines.length; lineNumber++) {
+            if (! codeLines[lineNumber].isEmpty()) {
+                AssembledInstruction assembledInstruction = assembleInstruction(lineNumber, codeLines[lineNumber], instructionIndex);
             
                 if (assembledInstruction != null)
                     assembled.add(assembledInstruction);
@@ -80,7 +80,7 @@ public class Assembler {
      * @return Assembled instruction
      */
     public AssembledInstruction assembleInstruction(int lineIndex, String instruction, int instructionIndex) {
-        log.info("Assembling `{}`", instruction);
+        log.debug("Assembling `{}`", instruction);
         
         String[] args = getInstructionArguments(instruction);
         
@@ -88,11 +88,15 @@ public class Assembler {
         String mnemo = instruction.split(" ")[0];
         mnemo = mnemo.toLowerCase().trim();
         
-        if (isValidInstruction(mnemo, args) == false)
+        if (isValidInstruction(mnemo, args) == false) {
+            log.debug("Failed: Invalid instruction or arguments");
             return null;
+        }
         
         Data address = computeAddress(instructionIndex);
         Data iCode = createICode(mnemo, args, address);
+        
+        log.debug("..Done ! Errors: " + syntaxErrors.size());
         
         return new AssembledInstruction(lineIndex, this.instructionSet.get(mnemo), instruction, iCode, address);
     }
@@ -164,7 +168,6 @@ public class Assembler {
             // there is no positional character
             if (!fieldValue.contains(POSITIONAL_CHAR)) {
                 int value = Integer.parseInt(fieldValue);
-                log.debug("Int value for `{}` is {}", fieldValue, value);
                 tempCode |= value;
             } else {
                 // there is a positional character
@@ -200,7 +203,7 @@ public class Assembler {
                             log.info("Positional value for `{}` is {}", fieldValue, value.getData());
                             tempCode |= value.getData();
                         } catch (IndexOutOfBoundsException e) {
-                            log.warn("Argument data car: Index out of bounds ! Index: {}, number of args: {}",
+                            log.warn("Argument data char: Index out of bounds ! Index: {}, number of args: {}",
                                     seq, args.length);
                         }
                     }
@@ -223,13 +226,13 @@ public class Assembler {
     private void extractLabels(String[] codeLines) {
         labels.clear();
         
+        log.debug("Extracting labels..");
+        
         int instructionIndex = 0;
         for (int lineIndex = 0; lineIndex < codeLines.length; lineIndex++) {
             
             if (codeLines[lineIndex].isEmpty())
                 continue;
-            
-            log.info("{}: <{}>", lineIndex, codeLines[lineIndex]);
             
             // if there is a label, remember it along with the address
             // of that instruction to allow assembling of the code.
@@ -261,6 +264,8 @@ public class Assembler {
             
             instructionIndex++;		// increase address with each instruction !
         }
+        
+        log.debug("..Done ! Errors: " + syntaxErrors.size());
     }
     
     /**

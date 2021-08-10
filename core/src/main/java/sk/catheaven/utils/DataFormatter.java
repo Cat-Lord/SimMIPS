@@ -1,6 +1,7 @@
 package sk.catheaven.utils;
 
 import sk.catheaven.model.Data;
+import sk.catheaven.model.cpu.components.CPU;
 
 import java.util.Locale;
 
@@ -10,6 +11,8 @@ import java.util.Locale;
 public class DataFormatter {
     
     private static final int spacingFrequency = 4;
+    private static final int hexDigitLimit = 8;
+    private static final int octDigitLimit = 10;
     
     /**
      * Returns binary representation of data in nicer formatting style.
@@ -46,7 +49,7 @@ public class DataFormatter {
      * @return Hexadecimal representation of data.
      */
     public static String getHex(Data data){
-        return getHex(data.getData(), data.getBitSize());
+        return getHex(data.getData(), hexDigitLimit);
     }
     
     public static String getHex(Data data, int bitSize) {
@@ -55,10 +58,14 @@ public class DataFormatter {
     
     public static String getHex(long num, int maxNumberOfDigits) {
         String dataString = Long.toHexString(num);
-    
-        String output = "0".repeat(Math.max(0, maxNumberOfDigits / spacingFrequency - dataString.length()))
-                            + dataString;
-        return output.toUpperCase(Locale.ROOT);
+        StringBuilder outputFormatter = new StringBuilder(dataString);
+        
+        outputFormatter.reverse();
+        appendZero(outputFormatter, maxNumberOfDigits);
+        StringBuilder outputBuilder = new StringBuilder(outputFormatter.substring(0, maxNumberOfDigits));
+        outputBuilder.reverse();
+        
+        return outputBuilder.toString().toUpperCase(Locale.ROOT);
     }
     
     /**
@@ -66,7 +73,7 @@ public class DataFormatter {
      * @return Hexadecimal representation of data.
      */
     public static String getOct(Data data){
-        return getOct(data.getData(), data.getBitSize());
+        return getOct(data.getData(), octDigitLimit);
     }
     
     public static String getOct(Data data, int bitSize) {
@@ -75,10 +82,14 @@ public class DataFormatter {
     
     public static String getOct(long num, int maxNumberOfDigits) {
         String dataString = Long.toOctalString(num);
+        StringBuilder outputFormatter = new StringBuilder(dataString);
     
-        String output = "0".repeat(Math.max(0, (maxNumberOfDigits / 3 + 1) - dataString.length()))
-                            + dataString;
-        return output;
+        outputFormatter.reverse();
+        appendZero(outputFormatter, maxNumberOfDigits);
+        StringBuilder outputBuilder = new StringBuilder(outputFormatter.substring(0, maxNumberOfDigits));
+        outputBuilder.reverse();
+    
+        return outputBuilder.toString().toUpperCase(Locale.ROOT);
     }
     
     /**

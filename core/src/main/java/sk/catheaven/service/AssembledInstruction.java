@@ -19,7 +19,7 @@ public class AssembledInstruction {
     }
     
     public Data getIcode() {
-        return new Data();
+        return instructionCode;
     }
     
     public int getLineIndex() {
