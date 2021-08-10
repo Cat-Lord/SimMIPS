@@ -30,47 +30,47 @@ public class DataTest {
 	
 	@Test
 	public void limitedBitSizeOfOneTest() {
-		Data d1 = new Data(1);
+		Data bitSizeOne = new Data(1);
 		
-		d1.setData(0);
-		assertEquals(0, d1.getData());
-		assertEquals("0", DataFormatter.getBinary(d1));
+		bitSizeOne.setData(0);
+		assertEquals(0, bitSizeOne.getData());
+		assertEquals("0", DataFormatter.getBinary(bitSizeOne));
 		
-		d1.setData(1);
-		assertEquals(1, d1.getData());
-		assertEquals("1", DataFormatter.getBinary(d1));
+		bitSizeOne.setData(1);
+		assertEquals(1, bitSizeOne.getData());
+		assertEquals("1", DataFormatter.getBinary(bitSizeOne));
 		
-		d1.setData(-1);
-		assertNotEquals(-1, d1.getData());	// bit size 1, so result should be 1
+		bitSizeOne.setData(-1);
+		assertNotEquals(-1, bitSizeOne.getData());	// bit size 1, so result should be 1
 		
-		d1.setData(2); // binary: 10
-		assertEquals(0, d1.getData());
-		assertNotEquals(2, d1.getData());		// should not be equal, since number is only 1 bit
+		bitSizeOne.setData(2); // binary: 10
+		assertEquals(0, bitSizeOne.getData());
+		assertNotEquals(2, bitSizeOne.getData());		// should not be equal, since number is only 1 bit
 	}
 	
 	@Test
 	public void limitedBitSizeOfTwoTest() {
-		Data dataWithBitSize2 = new Data(2);
+		Data bitSize2 = new Data(2);
 		
-		dataWithBitSize2.setData(0);
-		assertEquals(0, dataWithBitSize2.getData());
-		assertEquals("00", DataFormatter.getBinary(dataWithBitSize2));
+		bitSize2.setData(0);
+		assertEquals(0, bitSize2.getData());
+		assertEquals("00", DataFormatter.getBinary(bitSize2));
 		
-		dataWithBitSize2.setData(1);
-		assertEquals(1, dataWithBitSize2.getData());
-		assertEquals("01", DataFormatter.getBinary(dataWithBitSize2));
+		bitSize2.setData(1);
+		assertEquals(1, bitSize2.getData());
+		assertEquals("01", DataFormatter.getBinary(bitSize2));
 		
-		dataWithBitSize2.setData(2);
-		assertEquals(2, dataWithBitSize2.getData());
-		assertEquals("10", DataFormatter.getBinary(dataWithBitSize2));
+		bitSize2.setData(2);
+		assertEquals(2, bitSize2.getData());
+		assertEquals("10", DataFormatter.getBinary(bitSize2));
 		
-		dataWithBitSize2.setData(3);
-		assertEquals(3, dataWithBitSize2.getData());
-		assertEquals("11", DataFormatter.getBinary(dataWithBitSize2));
+		bitSize2.setData(3);
+		assertEquals(3, bitSize2.getData());
+		assertEquals("11", DataFormatter.getBinary(bitSize2));
 		
-		dataWithBitSize2.setData(4);
-		assertNotEquals(4, dataWithBitSize2.getData());
-		assertEquals("00", DataFormatter.getBinary(dataWithBitSize2));
+		bitSize2.setData(4);
+		assertNotEquals(4, bitSize2.getData());
+		assertEquals("00", DataFormatter.getBinary(bitSize2));
 	}
 	
 	@Test
