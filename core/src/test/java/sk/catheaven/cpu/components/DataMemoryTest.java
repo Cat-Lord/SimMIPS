@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.cpu.components.DataMemory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DataMemoryTest extends CPUContainer {
 	private static DataMemory memory;
 	
+	private static final int NOT_IMPORTANT = 69;
 	private static final String dataToStoreLabel = "reg2Value";
 	private static final String addressLabel = "aluResult";				// result from alu is a calculated address
 	private static final String readSignalLabel = "memReadSignal";
@@ -90,7 +92,7 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(0);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -129,42 +131,42 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(234237);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(4326);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(342);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(234237);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(4326);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(342);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -183,7 +185,7 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 
 		address.setData(0);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -198,7 +200,7 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(234237);
-		dataToStore.setData(4125);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -213,7 +215,7 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(4326);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -228,7 +230,7 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(342);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
@@ -269,35 +271,62 @@ public class DataMemoryTest extends CPUContainer {
 		assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		
-		
 		// READ STORED VALUES
 		address.setData(6969);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(69, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(97531);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(9155, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(66666);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(666, memory.getOutput(Component.IGNORED_LABEL).getData());
 		
 		address.setData(124578);
-		dataToStore.setData(0);
+		dataToStore.setData(NOT_IMPORTANT);
 		readSignal.setData(1);
 		writeSignal.setData(0);
 		setInputsAndExecute();
 		assertEquals(966311, memory.getOutput(Component.IGNORED_LABEL).getData());
+	}
+	
+	@Test
+	@DisplayName("be able to byte-align correctly a number to store")
+	public void testNumberStoringAtDifferentByteAlignments() {
+		int numberToStore = 0xf1f2f3f4;		// 32-bit number
+		int addressValue = 0x5000000;
+
+		// shift the address by 0, 1, 2, ..., 4 bytes
+		for (int byteShift = 0; byteShift < CPU.getByteSize(); byteShift++, memory.clearMemory()) {
+			address.setData(addressValue + byteShift);
+			dataToStore.setData(numberToStore);
+			readSignal.setData(0);
+			writeSignal.setData(1);
+			setInputsAndExecute();
+			assertEquals(0, memory.getOutput(Component.IGNORED_LABEL).getData());
+			
+			address.setData(addressValue + byteShift);
+			dataToStore.setData(numberToStore);
+			readSignal.setData(1);
+			writeSignal.setData(0);
+			setInputsAndExecute();
+			assertEquals(numberToStore, memory.getOutput(Component.IGNORED_LABEL).getData());
+		}
+	}
+	
+	private int getShiftInBits(int bytes) {
+		return Byte.SIZE * bytes;
 	}
 	
 	// private method to easily set all memory data. Immediately calls "execute()"

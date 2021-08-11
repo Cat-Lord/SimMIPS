@@ -129,6 +129,11 @@ public class DataMemory extends Component {
             log.debug("Memory inactive");
     }
     
+    @Override
+    public Data getOutput(String outputLabel) {
+        return IOHandler.getSingleOutput(getOutputs());
+    }
+    
     public Data getMemReadSignal() {
         return memReadSignal;
     }
