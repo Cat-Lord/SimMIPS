@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
 import sk.catheaven.model.Tuple;
-import sk.catheaven.service.AssembledInstruction;
+import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.utils.DataFormatter;
 
 import java.util.ArrayList;

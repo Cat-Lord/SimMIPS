@@ -18,6 +18,7 @@ public class CPU {
     public static int BIT_SIZE = 32;
     private Map<String, Component> components = new LinkedHashMap<>();
     private List<Connector> connectors = new ArrayList<>();
+    private List<List<Component>> phases;
     
     public CPU() {
     }
@@ -28,6 +29,8 @@ public class CPU {
     
     public void setComponents(Map<String, Component> components) {
         this.components = components;
+        
+        this.phases = splitComponentsIntoPhases();
     }
     
     @JsonGetter
@@ -47,6 +50,10 @@ public class CPU {
     public void setConnectors(List<Connector> connectors) {
         if (areValidConnectors(connectors))
             this.connectors = connectors;
+    }
+    
+    public List<List<Component>> getPhases() {
+        return phases;
     }
     
     private boolean areValidConnectors(List<Connector> connectors) {
@@ -86,5 +93,26 @@ public class CPU {
      */
     public static int getByteSize() {
         return CPU.getBitSize()/Byte.SIZE;
+    }
+    
+    /**
+     * Assign list of components to every phase and then store those phases. A phase consists of all components up to
+     * the first appearance of a Latch Register. Phases (except the first one) always start with a latch register.
+     */
+    private List<List<Component>> splitComponentsIntoPhases() {
+        List<List<Component>> phasesList = new ArrayList<>();
+        List<Component> currentPhase = new ArrayList<>();
+        
+        for (Component component : components.values()) {
+            if (component instanceof LatchRegister) {
+                phasesList.add(currentPhase);
+                currentPhase = new ArrayList<>();
+            }
+            
+            currentPhase.add(component);
+        }
+        phasesList.add(currentPhase);
+
+        return phasesList;
     }
 }

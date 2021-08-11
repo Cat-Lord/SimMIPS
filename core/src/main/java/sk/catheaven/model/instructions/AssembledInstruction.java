@@ -1,7 +1,6 @@
-package sk.catheaven.service;
+package sk.catheaven.model.instructions;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.model.instructions.Instruction;
 
 public class AssembledInstruction {
     private final int lineIndex;

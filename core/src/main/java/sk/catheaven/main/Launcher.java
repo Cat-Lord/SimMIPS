@@ -12,6 +12,7 @@ import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.instructions.Instruction;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -46,6 +47,10 @@ public class Launcher {
 			
 			log.debug("Successfully initiated CPU with {} components and {} connectors\n",
 					cpu.getComponents().size(), cpu.getConnectors().size());
+			
+			int phaseIndex = 1;
+			for (List<Component> phase : cpu.getPhases())
+				log.debug("Phase {}: {} Components", phaseIndex++, phase.size());
 		} catch (Exception exception) {
 			log.error(exception.getMessage());
 			exception.printStackTrace();

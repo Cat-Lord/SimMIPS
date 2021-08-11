@@ -8,7 +8,7 @@ package sk.catheaven.cpu.codeTests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
-import sk.catheaven.service.AssembledInstruction;
+import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.utils.DataFormatter;
 
 import java.util.ArrayList;

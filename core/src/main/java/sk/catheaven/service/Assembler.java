@@ -6,6 +6,7 @@ import sk.catheaven.model.Data;
 import sk.catheaven.model.SyntaxErrorsContainer;
 import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.instructions.ArgumentType;
+import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
