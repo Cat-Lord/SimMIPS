@@ -5,7 +5,6 @@
  */
 package sk.catheaven.dataTests;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.model.Data;
 import sk.catheaven.utils.DataFormatter;

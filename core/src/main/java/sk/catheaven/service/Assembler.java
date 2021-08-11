@@ -60,6 +60,8 @@ public class Assembler {
         int instructionIndex = 0;
     
         for (int lineNumber = 0; lineNumber < codeLines.length; lineNumber++) {
+            codeLines[lineNumber] = codeLines[lineNumber].trim();
+            
             if (! codeLines[lineNumber].isEmpty()) {
                 AssembledInstruction assembledInstruction = assembleInstruction(lineNumber, codeLines[lineNumber], instructionIndex);
             

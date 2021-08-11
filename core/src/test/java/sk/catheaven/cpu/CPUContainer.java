@@ -1,12 +1,10 @@
 package sk.catheaven.cpu;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import sk.catheaven.main.Launcher;
 import sk.catheaven.main.Loader;
 import sk.catheaven.model.Tuple;
-import sk.catheaven.model.cpu.Executable;
 import sk.catheaven.model.cpu.components.CPU;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.service.Assembler;
@@ -17,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

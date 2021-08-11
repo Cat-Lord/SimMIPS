@@ -13,8 +13,7 @@ import sk.catheaven.cpu.CPUContainer;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Component;
 import sk.catheaven.model.cpu.components.SignExtend;
-import sk.catheaven.utils.
-											DataFormatter;
+import sk.catheaven.utils.DataFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

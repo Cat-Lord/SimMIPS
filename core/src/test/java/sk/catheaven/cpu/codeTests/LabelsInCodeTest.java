@@ -5,12 +5,11 @@
  */
 package sk.catheaven.cpu.codeTests;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
-import sk.catheaven.model.Tuple;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,15 +26,7 @@ public class LabelsInCodeTest extends CPUContainer {
 	public void testCorrectCodes() {
 		for (String code : getCorrectCodes()) {
 			assembler.assembleCode(code);
-			assertTrue(assembler.getSyntaxErrors().isEmpty(), () -> {
-				StringBuilder errors = new StringBuilder("\n");
-				for (Tuple<Integer, String> error : assembler.getSyntaxErrors().getLineErrors())
-					errors.append("\t").append(error.getLeft()).append(": ").append(error.getRight()).append("\n");
-				
-				for (String error : assembler.getSyntaxErrors().getMessageErrors())
-					errors.append("\t").append(error).append("\n");
-				return errors.toString();
-			});
+			assertTrue(assembler.getSyntaxErrors().isEmpty(), assemblerErrorSupplier());
 		}
 	}
 	

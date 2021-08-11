@@ -10,7 +10,6 @@ import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.service.Assembler;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

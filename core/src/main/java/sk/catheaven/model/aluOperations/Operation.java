@@ -3,7 +3,20 @@ package sk.catheaven.model.aluOperations;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.aluOperations.operations.*;
+import sk.catheaven.model.aluOperations.operations.ADD;
+import sk.catheaven.model.aluOperations.operations.AND;
+import sk.catheaven.model.aluOperations.operations.BNEQ;
+import sk.catheaven.model.aluOperations.operations.DIV;
+import sk.catheaven.model.aluOperations.operations.DIVU;
+import sk.catheaven.model.aluOperations.operations.LUI;
+import sk.catheaven.model.aluOperations.operations.MUL;
+import sk.catheaven.model.aluOperations.operations.MULU;
+import sk.catheaven.model.aluOperations.operations.NOR;
+import sk.catheaven.model.aluOperations.operations.OR;
+import sk.catheaven.model.aluOperations.operations.SLLV;
+import sk.catheaven.model.aluOperations.operations.SRLV;
+import sk.catheaven.model.aluOperations.operations.SUB;
+import sk.catheaven.model.aluOperations.operations.XOR;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "label")
 @JsonSubTypes({

@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 package sk.catheaven.argumentTypeTests;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 /**
  *
  * @author catlord

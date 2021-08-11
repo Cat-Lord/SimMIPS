@@ -12,7 +12,6 @@ import sk.catheaven.model.Data;
 import sk.catheaven.model.Tuple;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *

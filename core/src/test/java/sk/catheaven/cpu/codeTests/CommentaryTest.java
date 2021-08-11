@@ -20,8 +20,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
-import sk.catheaven.model.Tuple;
 import sk.catheaven.service.Assembler;
+
 import java.util.ArrayList;
 import java.util.List;
 
