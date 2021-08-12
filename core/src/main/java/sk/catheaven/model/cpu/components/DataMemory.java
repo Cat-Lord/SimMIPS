@@ -57,7 +57,7 @@ public class DataMemory extends Component {
     // todo - validate and test
     @Override
     public void execute() {
-        Data output = IOHandler.getSingleOutput(getOutputs());
+        Data output = IOHandler.getSingleValue(getOutputs());
         output.setData(0);
         
         if (memReadSignal.getData() == 1 && memWriteSignal.getData() == 1) {
@@ -131,7 +131,7 @@ public class DataMemory extends Component {
     
     @Override
     public Data getOutput(String outputLabel) {
-        return IOHandler.getSingleOutput(getOutputs());
+        return IOHandler.getSingleValue(getOutputs());
     }
     
     public Data getMemReadSignal() {

@@ -23,6 +23,7 @@ import sk.catheaven.model.cpu.components.MUX;
 import sk.catheaven.model.cpu.components.PC;
 import sk.catheaven.model.cpu.components.RegBank;
 import sk.catheaven.model.cpu.components.SignExtend;
+import sk.catheaven.service.IOHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +58,15 @@ public abstract class Component implements Executable {
 	protected Map<String, Data> selectors = new HashMap<>();
 	
 
-	//@Override
+	@Override
 	public boolean setInput(String targetLabel, Data data) {
+		if (this.isSingleInputComponent()) {
+			if (IOHandler.getSingleValue(getInputs()) != null) {
+				IOHandler.getSingleValue(getInputs()).setData(data);
+				return true;
+			}
+		}
+		
 		if (getInputs().get(targetLabel) != null) {
 			getInputs().get(targetLabel).setData(data);
 			return true;
@@ -72,8 +80,15 @@ public abstract class Component implements Executable {
 		return false;
 	}
 	
-//	@Override
+	@Override
 	public boolean setOutput(String targetLabel, Data data) {
+		if (this.isSingleOutputComponent()) {
+			if (IOHandler.getSingleValue(getOutputs()) != null) {
+				IOHandler.getSingleValue(getOutputs()).setData(data);
+				return true;
+			}
+		}
+		
 		if (getOutputs().get(targetLabel) != null) {
 			getOutputs().get(targetLabel).setData(data);
 			return true;
@@ -82,12 +97,12 @@ public abstract class Component implements Executable {
 		return false;
 	}
 	
-//	@Override
+	@Override
 	public Data getInput(String inputLabel) {
 		return getInputs().get(inputLabel);
 	}
 	
-//	@Override
+	@Override
 	public Data getOutput(String outputLabel) {
 		return getOutputs().get(outputLabel);
 	}
@@ -139,6 +154,22 @@ public abstract class Component implements Executable {
 	
 	public void setSelectors(Map<String, Data> selectors) {
 		this.selectors = selectors;
+	}
+	
+	/**
+	 * Having single input means that we are ignoring input label when setting/getting input
+	 * @return true when this component has only one single input
+	 */
+	public boolean isSingleInputComponent() {
+		return getInputs().size() == 1;
+	}
+	
+	/**
+	 * Having single output means that we are ignoring output label when setting/getting output
+	 * @return true when this component has only one single output
+	 */
+	public boolean isSingleOutputComponent() {
+		return getOutputs().size() == 1;
 	}
 	
 	@Override

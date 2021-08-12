@@ -24,16 +24,16 @@ import sk.catheaven.service.IOHandler;
 public class Fork extends Component {
     @Override
     public boolean setInput(String targetLabel, Data data) {
-        if (IOHandler.getSingleInput(getInputs()) == null)
+        if (IOHandler.getSingleValue(getInputs()) == null)
             return false;
         
-        IOHandler.getSingleInput(getInputs()).setData(data);
+        IOHandler.getSingleValue(getInputs()).setData(data);
         return true;
     }
     
     @Override
     public Data getInput(String inputLabel) {
-        return IOHandler.getSingleInput(getInputs());
+        return IOHandler.getSingleValue(getInputs());
     }
     
     @Override

@@ -19,7 +19,7 @@ public class Adder extends Component {
     
     @Override
     public Data getOutput(String outputLabel) {
-        return IOHandler.getSingleOutput(getOutputs());
+        return IOHandler.getSingleValue(getOutputs());
     }
     
     @Override

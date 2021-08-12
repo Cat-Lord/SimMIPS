@@ -16,7 +16,7 @@ import sk.catheaven.service.IOHandler;
 public class AND extends Component {
     
     public Data getOutput(String outputLabel) {
-        return IOHandler.getSingleOutput(getOutputs());
+        return IOHandler.getSingleValue(getOutputs());
     }
     
     public void execute() {

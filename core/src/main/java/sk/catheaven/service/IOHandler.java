@@ -14,15 +14,12 @@ public class IOHandler {
         Data[] data = getArrayFromMap(ioMap);
         return data[1];
     }
+
+    public static Data getSingleValue(Map<String, Data> ioMap) {
+        Data[] data = getArrayFromMap(ioMap);
+        return data[0];
+    }
     
-    public static Data getSingleOutput(Map<String, Data> ioMap) {
-        Data[] data = getArrayFromMap(ioMap);
-        return data[0];
-    }
-    public static Data getSingleInput(Map<String, Data> ioMap) {
-        Data[] data = getArrayFromMap(ioMap);
-        return data[0];
-    }
     public static Data getSingleSelector(Map<String, Data> selectorMap) {
         Data[] data = getArrayFromMap(selectorMap);
         return data[0];

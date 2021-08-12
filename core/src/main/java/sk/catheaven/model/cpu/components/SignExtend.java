@@ -36,12 +36,12 @@ public class SignExtend extends Component {
     
     @Override
     public Data getInput(String inputLabel) {
-        return IOHandler.getSingleInput(getInputs());
+        return IOHandler.getSingleValue(getInputs());
     }
     
     @Override
     public Data getOutput(String outputLabel) {
-        return IOHandler.getSingleOutput(getOutputs());
+        return IOHandler.getSingleValue(getOutputs());
     }
     
     @Override

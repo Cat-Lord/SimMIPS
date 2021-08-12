@@ -20,7 +20,7 @@ public class MUX extends Component {
     
     @Override
     public Data getOutput(String outputLabel) {
-        return IOHandler.getSingleInput(getOutputs());
+        return IOHandler.getSingleValue(getOutputs());
     }
     
     @Override

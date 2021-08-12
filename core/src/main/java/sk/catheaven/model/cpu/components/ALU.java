@@ -40,7 +40,7 @@ public class ALU extends Component {
 		Data inputA = IOHandler.getInputA(getInputs());
 		Data inputB = IOHandler.getInputB(getInputs());
 		
-		Data output = IOHandler.getSingleOutput(getOutputs());
+		Data output = IOHandler.getSingleValue(getOutputs());
 		output.setData(
 			operation.perform(inputA, inputB)
 		);
