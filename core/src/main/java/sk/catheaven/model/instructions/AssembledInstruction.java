@@ -5,14 +5,14 @@ import sk.catheaven.model.Data;
 public class AssembledInstruction {
     private final int lineIndex;
     private final Instruction instruction;
-    private final String instructionMnemo;
+    private final String lineOfCode;        // line of code as entered by the user (for example 'sw r4,0(r3)
     private final Data instructionCode;
     private final Data address;
     
-    public AssembledInstruction(int lineIndex, Instruction instruction, String instructionMnemo, Data instructionCode, Data address) {
+    public AssembledInstruction(int lineIndex, String lineOfCode, Instruction instruction, Data instructionCode, Data address) {
         this.lineIndex = lineIndex;
         this.instruction = instruction;
-        this.instructionMnemo = instructionMnemo;
+        this.lineOfCode = lineOfCode;
         this.instructionCode = instructionCode;
         this.address = address;
     }
@@ -29,8 +29,8 @@ public class AssembledInstruction {
         return instruction;
     }
     
-    public String getInstructionMnemo() {
-        return instructionMnemo;
+    public String getLineOfCode() {
+        return lineOfCode;
     }
     
     public Data getInstructionCode() {
@@ -45,8 +45,8 @@ public class AssembledInstruction {
     public static AssembledInstruction getNOPInstructionInstance() {
         return new AssembledInstruction(
                 0,
-                null,
                 "NOP",
+                null,
                 new Data(),
                 new Data()
         );

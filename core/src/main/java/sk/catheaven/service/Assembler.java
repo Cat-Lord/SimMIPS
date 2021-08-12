@@ -81,17 +81,17 @@ public class Assembler {
      * trying to assemble line of code. Whole code must be cleaned up before trying to use its lines for assembling.
      *
      * @param lineIndex The index (number) of line in code this instruction is from.
-     * @param instruction Instruction to parse (as entered by user).
+     * @param lineOfCode Instruction to parse (as entered by user).
      * @param instructionIndex Number representing the order of instruction to parse. Used to calculate instruction address.
      * @return Assembled instruction
      */
-    private AssembledInstruction assembleInstruction(int lineIndex, String instruction, int instructionIndex) {
-        log.debug("Assembling `{}`", instruction);
+    private AssembledInstruction assembleInstruction(int lineIndex, String lineOfCode, int instructionIndex) {
+        log.debug("Assembling `{}`", lineOfCode);
         
-        String[] args = getInstructionArguments(instruction);
+        String[] args = getInstructionArguments(lineOfCode);
         
         // example: "mul"
-        String mnemo = instruction.split(" ")[0];
+        String mnemo = lineOfCode.split(" ")[0];
         mnemo = mnemo.toLowerCase().trim();
         
         if (isValidInstruction(mnemo, args) == false) {
@@ -104,7 +104,7 @@ public class Assembler {
         
         log.debug("..Done ! Errors: " + syntaxErrors.size());
         
-        return new AssembledInstruction(lineIndex, this.instructionSet.get(mnemo), instruction, iCode, address);
+        return new AssembledInstruction(lineIndex, lineOfCode, this.instructionSet.get(mnemo), iCode, address);
     }
     
     /**
@@ -278,17 +278,17 @@ public class Assembler {
     /**
      * Form user-entered instruction remove instruction mnemo
      * and return array of arguments after the mnemo.
-     * @param instruction String representation of one instruction with arguments entered by user
+     * @param lineOfCode String representation of one instruction with arguments entered by user
      * @return If there are no arguments after mnemo, returns empty array. Otherwise returns array of strings representing individual arguments.
      */
-    private String[] getInstructionArguments(String instruction) {
-        instruction = instruction.trim();					// in case there are spaces after the mnemo, dont confuse it as arguments
-        int indexOfFirstSpace = instruction.indexOf(" ");
+    private String[] getInstructionArguments(String lineOfCode) {
+        lineOfCode = lineOfCode.trim();					// in case there are spaces after the mnemo, dont confuse it as arguments
+        int indexOfFirstSpace = lineOfCode.indexOf(" ");
         if (indexOfFirstSpace < 0)
             return new String[0];							// return empty array, there are no arguments
         
         // remove mnemo and get arguments as one string (remove any spaces, they won't be needed)
-        String[] argArr = instruction.substring(indexOfFirstSpace+1, instruction.length())
+        String[] argArr = lineOfCode.substring(indexOfFirstSpace+1, lineOfCode.length())
                                      .replaceAll(" ", "")
                                      .split(",");
         return argArr;
