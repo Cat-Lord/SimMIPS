@@ -48,9 +48,14 @@ public class Launcher {
 			log.debug("Successfully initiated CPU with {} components and {} connectors\n",
 					cpu.getComponents().size(), cpu.getConnectors().size());
 			
+			for (String sourceLabel: cpu.getConnectors().keySet())
+				log.debug("Component `{}` has {} connections",
+						sourceLabel, cpu.getConnectors().get(sourceLabel).size());
+			
 			int phaseIndex = 1;
 			for (List<Component> phase : cpu.getPhases())
 				log.debug("Phase {}: {} Components", phaseIndex++, phase.size());
+
 		} catch (Exception exception) {
 			log.error(exception.getMessage());
 			exception.printStackTrace();

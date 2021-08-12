@@ -154,6 +154,10 @@ public abstract class Component implements Executable {
 	
 	public void setSelectors(Map<String, Data> selectors) {
 		this.selectors = selectors;
+		
+		// selectors are special input
+		if (inputs != null)
+			inputs.putAll(selectors);
 	}
 	
 	/**

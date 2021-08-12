@@ -21,7 +21,9 @@ import sk.catheaven.model.instructions.InstructionType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,16 +47,34 @@ public class Loader {
 			componentMap.put(component.getLabel(), component);
 		}
 		
-		List<Connector> connectorList = objectMapper.readValue(
-				root.path("CPU").path("connectors").toString(),
-				new TypeReference<List<Connector>>() {}
-		);
+		Map<String, List<Connector>> connectorsMap = getConnectorsMap(root.path("CPU").path("connectors"));
 		
 		CPU cpu = new CPU();
 		cpu.setBitSize(bitSize);
 		cpu.setComponents(componentMap);
-		cpu.setConnectors(connectorList);
+		cpu.setConnectors(connectorsMap);
 		return cpu;
+	}
+	
+	private static Map<String, List<Connector>> getConnectorsMap(JsonNode connectors) throws JsonProcessingException {
+		List<Connector> connectorList = objectMapper.readValue( connectors.toString(), new TypeReference<>() {} );
+		
+		Map<String, List<Connector>> sourceToTargetConnectors = new HashMap<>();
+		
+		for (Connector connector : connectorList) {
+			List<Connector> connectorsToTargetComponents = sourceToTargetConnectors.get(connector.getFrom());
+			
+			if (connectorsToTargetComponents == null) {
+				List<Connector> connectedTo = new ArrayList<>();
+				connectedTo.add(connector);
+				sourceToTargetConnectors.put(connector.getFrom(), connectedTo);
+				continue;
+			}
+			
+			connectorsToTargetComponents.add(connector);
+		}
+		
+		return sourceToTargetConnectors;
 	}
 	
 	public static Instruction[] getInstructionSet(InputStream jsonResource) throws IOException {
