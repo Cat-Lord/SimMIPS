@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sk.catheaven.model.cpu;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -55,9 +50,20 @@ public abstract class Component implements Executable {
 	
 	protected Map<String, Data> inputs = new HashMap<>();
 	protected Map<String, Data> outputs = new HashMap<>();
+	/**
+	 * Selectors are input signals that somehow affect the component behaviour.
+	 * At the point of setting selectors all of them are also added to the input map.
+	 */
 	protected Map<String, Data> selectors = new HashMap<>();
 	
-
+	
+	/**
+	 * If the component has only one input, sets it no matter the <i>targetLabel</i>. Otherwise tries to
+	 * set the input pointed at by the <bold>targetLabel</bold> parameter and tries to store data.
+	 * @param targetLabel The label of input we want to set the value to.
+	 * @param data value to set to the target input.
+	 * @return true if the output was found. False if no such input exists.
+	 */
 	@Override
 	public boolean setInput(String targetLabel, Data data) {
 		if (this.isSingleInputComponent()) {
@@ -80,6 +86,13 @@ public abstract class Component implements Executable {
 		return false;
 	}
 	
+	/**
+	 * If the component has only one output, sets it no matter the <i>targetLabel</i>. Otherwise tries to
+	 * set the output pointed at by the <bold>targetLabel</bold> parameter and tries to store data.
+	 * @param targetLabel The label of output we want to set the value to.
+	 * @param data value to set to the target output.
+	 * @return true if the output was found. False if no such output exists.
+	 */
 	@Override
 	public boolean setOutput(String targetLabel, Data data) {
 		if (this.isSingleOutputComponent()) {
@@ -161,11 +174,13 @@ public abstract class Component implements Executable {
 	}
 	
 	/**
-	 * Having single input means that we are ignoring input label when setting/getting input
+	 * Having single input means that we are ignoring input label when setting/getting input.
+	 * We have to subtract the amount of selectors we have, because those are only special
+	 * kind of input.
 	 * @return true when this component has only one single input
 	 */
 	public boolean isSingleInputComponent() {
-		return getInputs().size() == 1;
+		return (getInputs().size() - getSelectors().size()) == 1;
 	}
 	
 	/**

@@ -9,8 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>UI</artifactId>
-
+    <artifactId>ui</artifactId>
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
@@ -58,5 +57,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

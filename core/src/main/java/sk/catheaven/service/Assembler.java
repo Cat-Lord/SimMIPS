@@ -318,7 +318,14 @@ public class Assembler {
     }
     
     /**
-     * Prepares code for assembling by removing redundant spaces, empty lines and comments.
+     * Prepares code for assembling by removing redundant spaces and comments. It is <bold>important to keep
+     * the empty lines</bold> because this way we can show the user what line did we find an error on.
+     * Example code:
+     *  1|  addi r1, 4
+     *  2|
+     *  3|
+     *  4| addi 2,2     <- error on line 4. Without empty lines, this error would end up on line 2 !
+     *
      * @param code Input code as entered by user.
      * @return Code without redundant spaces and comments.
      */
@@ -332,8 +339,6 @@ public class Assembler {
         code = code.replaceAll(COMMENT_CHAR + ".*", emptyReplacement);      // erase comments
         code = code.replaceAll("[ \t]+", singleSpace);                      // and merge multiple tabs and spaces
         code = code.replaceAll("^[ \t]+", emptyReplacement);                // remove empty characters at the beginning of each line
-        code = code.replaceAll("^\\s*\\R*$", emptyReplacement);             // remove empty lines
-        code = code.replaceAll("\\R+", System.lineSeparator());             // remove empty lines
         code = code.replaceAll("[ \t]*:\\s*", LABEL_TRAILING_CHAR);         // connect label with instruction closest to it (\s  is whitespace character)
         code = code.trim();											              // and finally trim any leading/trailing newlines/spaces in code
         

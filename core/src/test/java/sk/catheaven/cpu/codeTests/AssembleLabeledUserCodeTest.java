@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sk.catheaven.cpu.codeTests;
 
 
@@ -27,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author catlord
  */
 public class AssembleLabeledUserCodeTest extends CPUContainer {
+	
+	// todo - add a test where line numbers are evaluated (expected exceptions on line numbers)
 	
 	@Test
 	public void assembleCodeAndTestInstructionAndLabelValidity() {

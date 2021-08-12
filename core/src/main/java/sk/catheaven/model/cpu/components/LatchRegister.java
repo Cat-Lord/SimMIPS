@@ -8,6 +8,18 @@ import sk.catheaven.model.cpu.Component;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents intermediate storage between CPU phases. Is able to simply forward
+ * provided inputs or do extraction via data ranges (bitwise shifting left-right
+ * to extract numbers from provided input). For this reason there is a need to
+ * define the input to output mapping.
+ *
+ * In case a latch register needs to be reset in in datapath a bubble signal is
+ * used. When a bubble is activated, a counter is set and when it reaches 0, the
+ * inputs are ignored and outputs are all 0. This is done in case of a jump
+ * instruction. This is a way to handle data hazard.
+ * @author catlord
+ */
 public class LatchRegister extends Component {
     private final static Logger log = LogManager.getLogger();
     private final static String BUBBLE_LABEL = "bubble";

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sk.catheaven.model.instructions.argumentTypes;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +9,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * Data argument has syntax of 'offset(base)'. Offset is 16-bit
+ * Data argument has syntax of 'offset(base)'. Offset is 16-bit // todo - generify this for other architecture
  * number and base is register. Final value (address) is calculated
  * by adding these values together.
  * Since this syntax varies from others significantly, it requires

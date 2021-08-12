@@ -18,6 +18,10 @@ import sk.catheaven.model.aluOperations.operations.SRLV;
 import sk.catheaven.model.aluOperations.operations.SUB;
 import sk.catheaven.model.aluOperations.operations.XOR;
 
+/**
+ * Operation on 2 inputs. Label denotes the name of this operation and perform
+ * is the execution of that operation.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "label")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ADD.class),

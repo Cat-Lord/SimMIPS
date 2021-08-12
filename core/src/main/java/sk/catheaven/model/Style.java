@@ -2,6 +2,9 @@ package sk.catheaven.model;
 
 import java.util.Locale;
 
+/**
+ * Styling of a component - position, dimensions and colour.
+ */
 public class Style {
     private final static String DEFAULT_COLOUR = "#98999a";
     

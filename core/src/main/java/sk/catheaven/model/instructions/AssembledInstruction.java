@@ -2,6 +2,11 @@ package sk.catheaven.model.instructions;
 
 import sk.catheaven.model.Data;
 
+/**
+ * Stores original line of code along with its instruction code, instruction format, line number and address.
+ * Used to represent assembled program instruction. Can be stored in instruction memory component.
+ * @author catlord
+ */
 public class AssembledInstruction {
     private final int lineIndex;
     private final Instruction instruction;

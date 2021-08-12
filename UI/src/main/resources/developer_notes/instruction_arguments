@@ -1,6 +1,0 @@
-Instruction arguments definition:
-
-Name    Translates to           Allowed
-reg     register                allowed format is rX, where X is a 5-bit number
-int     integer                 any 16-bit number
-data    data with offset        offset of 4-bits and register. The format is off(reg)

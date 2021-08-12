@@ -4,6 +4,9 @@ import sk.catheaven.model.Data;
 
 import java.util.Map;
 
+/**
+ * Input/output hangler -> provides a way of requesting input from maps.
+ */
 public class IOHandler {
     public static Data getInputA(Map<String, Data> ioMap) {
         Data[] data = getArrayFromMap(ioMap);

@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Instruction dictates a format of written instruction and its representation in instruction code.
+ * @author catlord
+ */
 @JsonIgnoreProperties(value = { "type" })
 public class Instruction {
     private final static Logger log = LogManager.getLogger();
