@@ -17,6 +17,8 @@ public class CPU {
     
     public static int BIT_SIZE = 32;
     private Map<String, Component> components = new LinkedHashMap<>();
+    
+    // maps source component to a list of target components via Connectors (basically a wire in CPU)
     private Map<String, List<Connector>> connectors;
     private List<List<Component>> phases;
     
@@ -56,6 +58,30 @@ public class CPU {
         return phases;
     }
     
+    /**
+     * Executing cycle means first passing output values of components to inputs of
+     * target components. After this step the components are ready to handle input
+     * values and construct output values themselves, hence calling <code>execute</code>.
+     * <bold>Note:</bold> Execution starts from the last phase down to the first one - so
+     * we traverse the CPU 'backwards', when it comes to component execution !
+     */
+    public void executeCycle() {
+
+        for (int i = phases.size()-1; i >= 0; i--) {
+            for (Component sourceComponent : phases.get(i)) {
+
+                // execute first, to handle the input values and AFTER pass the output to other components
+                sourceComponent.execute();
+
+                // for every possible target component that is connected to this source component component
+                for (Connector connector : connectors.get(sourceComponent.getLabel())) {
+                    String selector = connector.getSelector();
+    
+                    components.get(connector.getTo()).setInput(selector, sourceComponent.getOutput(selector));
+                }
+            }
+        }
+    }
     
     /**
      * Calculates number of bytes for this CPU's architecture. Example:
