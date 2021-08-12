@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Component;
 import sk.catheaven.model.cpu.Connector;
+import sk.catheaven.model.instructions.AssembledInstruction;
+import sk.catheaven.model.instructions.Instruction;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,6 +24,9 @@ public class CPU {
     // maps source component to a list of target components via Connectors (basically a wire in CPU)
     private Map<String, List<Connector>> connectors;
     private List<List<Component>> phases;
+    
+    private InstructionMemory instructionMemory;
+    private RegBank regBank;
     
     public CPU() {
     }
@@ -58,6 +64,52 @@ public class CPU {
         return phases;
     }
     
+    public void setInstructionMemory(InstructionMemory instructionMemory) {
+        this.instructionMemory = instructionMemory;
+    }
+    
+    public void setRegBank(RegBank regBank) {
+        this.regBank = regBank;
+    }
+    
+    public Data[] getRegisters() {
+        return regBank.getRegisters();
+    }
+    
+    /**
+     * Return list of components for a specific pipeline phase.
+     * @param index Index of specific pipeline phase. List of phases goes like this:
+     * 0: Instruction Fetch (IF)
+     * 1: Instruction Decode (ID)
+     * 2: Execute (EX)
+     * 3: Memory (MEM)
+     * 4: WriteBack (WB)
+     * @return List of components of each phase
+     */
+    public List<Component> getComponentsOfPhase(int index){
+        try {
+            return phases.get(index);
+        } catch (Exception ignored) {}
+        
+        return null;
+    }
+    
+    /**
+     * Returns label of the last executed memory from instruction memory component.
+     * For more detailed info, see the <i>InstructionMemory</i> component.
+     * @return Label of the last executed instruction
+     */
+    public String getLastInstructionLabel(){
+        return instructionMemory.getLastInstruction().getInstruction().getMnemo();
+    }
+    
+    /**
+     * Tries to assemble code.
+     * @param program assembled program without errors
+     */
+    public void setAssembledCode(List<AssembledInstruction> program) {
+        instructionMemory.setProgram(program);
+    }
     /**
      * Executing cycle means first passing output values of components to inputs of
      * target components. After this step the components are ready to handle input

@@ -63,6 +63,17 @@ public class RegBank extends Component {
         }
     }
     
+    /**
+     * Returns a copy of all registers.
+     * @return copy of all registers.
+     */
+    public Data[] getRegisters() {
+        Data[] registers = new Data[this.registers.length];
+        for (int i = 0; i < this.registers.length; i++)
+            registers[i] = this.registers[i].newInstance();
+        return registers;
+    }
+    
     public int getDataBitSize() {
         return dataBitSize;
     }

@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.cpu.Component;
 import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.cpu.components.CPU;
+import sk.catheaven.model.cpu.components.InstructionMemory;
+import sk.catheaven.model.cpu.components.RegBank;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.model.instructions.InstructionType;
@@ -42,9 +44,17 @@ public class Loader {
 		int bitSize = root.get("CPU").get("BIT_SIZE").asInt();
 		
 		Map<String, Component> componentMap = new LinkedHashMap<>();
+		InstructionMemory instructionMemory = null;
+		RegBank regBank = null;
 		for (JsonNode node : root.path("CPU").path("components")) {
 			Component component = objectMapper.treeToValue(node, Component.class);
 			componentMap.put(component.getLabel(), component);
+			
+			if (component instanceof InstructionMemory)
+				instructionMemory = (InstructionMemory) component;
+			
+			if (component instanceof RegBank)
+				regBank = (RegBank) component;
 		}
 		
 		Map<String, List<Connector>> connectorsMap = getConnectorsMap(root.path("CPU").path("connectors"));
@@ -53,6 +63,8 @@ public class Loader {
 		cpu.setBitSize(bitSize);
 		cpu.setComponents(componentMap);
 		cpu.setConnectors(connectorsMap);
+		cpu.setRegBank(regBank);
+		cpu.setInstructionMemory(instructionMemory);
 		return cpu;
 	}
 	
