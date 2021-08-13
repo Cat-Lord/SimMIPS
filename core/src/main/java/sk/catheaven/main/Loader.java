@@ -30,8 +30,18 @@ import java.util.Map;
  * @author catlord
  */
 public class Loader {
-	private static Logger log = LogManager.getLogger();
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private static final Logger log = LogManager.getLogger();
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final String cpuResource = "/design/cpu.json";
+	private static final String instructionsResource = "/design/instructions.json";
+	
+	public static CPU getCPU() throws Exception {
+		return Loader.getCPU(Loader.class.getResourceAsStream(cpuResource));
+	}
+	
+	public static Instruction[] getInstructionSet() throws IOException {
+		return Loader.getInstructionSet(Loader.class.getResourceAsStream(instructionsResource));
+	}
 	
 	public static CPU getCPU(InputStream jsonResource) throws Exception {
 		JsonNode root = objectMapper.readTree(jsonResource);
