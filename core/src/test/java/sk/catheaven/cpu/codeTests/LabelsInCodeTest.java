@@ -45,7 +45,7 @@ public class LabelsInCodeTest extends CPUContainer {
 		codes.add("add r6, r1, r0\n\n"
 				+ "	cc: li r16, 130430\n"
 				+ "d0g_com_32_haha: xori r9, r1, 4 \n\n\n\n\n\n\tandi r8,r1,0\n\n\n\n\n");
-		
+
 		codes.add("add r6, r1, r0\n\n"
 				+ "	cc:    li r16, 130430\n"
 				+ "d0g_com_32_haha: xori r9, r1, 4 \n\n\n\n\n\n\tandi r8,r1,0\n\n\n\n\n");

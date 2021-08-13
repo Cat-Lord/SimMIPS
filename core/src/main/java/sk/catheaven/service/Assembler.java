@@ -61,7 +61,6 @@ public class Assembler {
         int instructionIndex = 0;
     
         for (int lineNumber = 0; lineNumber < codeLines.length; lineNumber++) {
-            codeLines[lineNumber] = codeLines[lineNumber].trim();
             
             if (! codeLines[lineNumber].isEmpty()) {
                 AssembledInstruction assembledInstruction = assembleInstruction(lineNumber, codeLines[lineNumber], instructionIndex);
@@ -343,12 +342,16 @@ public class Assembler {
         code = code + System.lineSeparator();
         
         code = code.replaceAll(COMMENT_CHAR + ".*", emptyReplacement);      // erase comments
-        code = code.replaceAll("[ \t]+", singleSpace);                      // and merge multiple tabs and spaces
-        code = code.replaceAll("^[ \t]+", emptyReplacement);                // remove empty characters at the beginning of each line
-        code = code.replaceAll("[ \t]*:\\s*", LABEL_TRAILING_CHAR);         // connect label with instruction closest to it (\s  is whitespace character)
+        code = code.replaceAll("\t", singleSpace);                          // erase tabs
+        code = code.replaceAll("[ ]{2,}", singleSpace);                     // and merge multiple tabs and spaces into single space
+        code = code.replaceAll("[ ]*" + LABEL_TRAILING_CHAR + "\\s*",
+                                     LABEL_TRAILING_CHAR);                        // connect label with instruction closest to it (\s are whitespace character)
         
-        log.info("CODE after adjustment:\n`{}`\n", code);
-        return code.split(System.lineSeparator());
+        // because my regex wont fkin work
+        String[] codeLines = code.split(System.lineSeparator());
+        for (int i = 0; i < codeLines.length; i++)
+            codeLines[i] = codeLines[i].trim();
+        return codeLines;
     }
     
     /**
