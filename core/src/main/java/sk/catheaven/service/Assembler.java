@@ -94,8 +94,9 @@ public class Assembler {
         String mnemo = lineOfCode.split(" ")[0];
         mnemo = mnemo.toLowerCase().trim();
         
-        if (isValidInstruction(mnemo, args) == false) {
-            log.debug("Failed: Invalid instruction or arguments");
+        if (isValidInstruction(lineIndex, mnemo, args) == false) {
+            log.debug("Invalid instruction or arguments: Line {} | Instruction number {} | Mnemo: {} | Arguments: {}",
+                    lineIndex, instructionIndex, mnemo, args);
             return null;
         }
         
@@ -109,24 +110,25 @@ public class Assembler {
     
     /**
      * Only checks instruction by the Instruction class, which dictates its format.
+     * @param lineIndex line number of the provided instruction
      * @param instructionMnemo Instruction mnemo.
      * @param args Array of arguments provided for the instruction.
      */
-    private boolean isValidInstruction(String instructionMnemo, String[] args) {
+    private boolean isValidInstruction(int lineIndex, String instructionMnemo, String[] args) {
         Instruction instruction = instructionSet.get(instructionMnemo);
         
         if (instruction == null) {
-            syntaxErrors.addError("Unknown instruction `" + instructionMnemo + "` !");
+            syntaxErrors.addError(lineIndex, "Unknown instruction `" + instructionMnemo + "` !");
             return false;
         }
         
         if (args.length < instruction.getArguments().size()) {
-            syntaxErrors.addError("Not enough arguments for instruction " + instruction.getMnemo() + " (" + instruction.getArguments().size() + " required)");
+            syntaxErrors.addError(lineIndex, "Not enough arguments for instruction " + instruction.getMnemo() + " (" + instruction.getArguments().size() + " required)");
             return false;
         }
         
         if (args.length > instruction.getArguments().size()) {
-            syntaxErrors.addError("Too many arguments for instruction " + instruction.getMnemo() + " (" + instruction.getArguments().size() + " required)");
+            syntaxErrors.addError(lineIndex, "Too many arguments for instruction " + instruction.getMnemo() + " (" + instruction.getArguments().size() + " required)");
             return false;
         }
         
@@ -135,7 +137,7 @@ public class Assembler {
             ArgumentType type = instruction.getArguments().get(i);
             String currentArgument = args[i].trim();
             if (type.isValidArgument(currentArgument.trim()) == false) {
-                syntaxErrors.addError("Invalid argument:" +
+                syntaxErrors.addError(lineIndex, "Invalid argument:" +
                                                   type.getClass().getSimpleName() +
                                                   " returned error for `" +
                                                   currentArgument + "`"
@@ -146,7 +148,7 @@ public class Assembler {
             // check if the label argument exists in labels
             if (instruction.getArguments().get(i) instanceof LabelArgumentType)
                 if (labels.get(args[i]) == null) {
-                    syntaxErrors.addError("Argument `" + args[i] + "` branches to an undefined label");
+                    syntaxErrors.addError(lineIndex, "Argument `" + args[i] + "` branches to an undefined label");
                     return false;
                 }
         }
@@ -247,7 +249,11 @@ public class Assembler {
                 int labelEndPosition = codeLines[lineIndex].indexOf(LABEL_TRAILING_CHAR);
                 String label = codeLines[lineIndex].substring(0, labelEndPosition);			// extract the label
                 
-                LabelArgumentType.isValidLabel(label);
+                if (LabelArgumentType.isValidLabel(label) == false) {
+                    syntaxErrors.addError(lineIndex, "Label `" + label + "` has invalid format");
+                    continue;
+                }
+                
                 
                 // throw an exception if there is a label without any instruction following it
                 if (labelEndPosition + 1  >=  codeLines[lineIndex].length()) {
@@ -340,9 +346,8 @@ public class Assembler {
         code = code.replaceAll("[ \t]+", singleSpace);                      // and merge multiple tabs and spaces
         code = code.replaceAll("^[ \t]+", emptyReplacement);                // remove empty characters at the beginning of each line
         code = code.replaceAll("[ \t]*:\\s*", LABEL_TRAILING_CHAR);         // connect label with instruction closest to it (\s  is whitespace character)
-        code = code.trim();											              // and finally trim any leading/trailing newlines/spaces in code
         
-        log.info("CODE after adjustment:\n{}\n", code);
+        log.info("CODE after adjustment:\n`{}`\n", code);
         return code.split(System.lineSeparator());
     }
     

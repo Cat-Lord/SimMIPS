@@ -1,9 +1,11 @@
 package sk.catheaven.cpu.codeTests;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sk.catheaven.cpu.CPUContainer;
 import sk.catheaven.model.Data;
+import sk.catheaven.model.Tuple;
 import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.utils.DataFormatter;
 
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author catlord
  */
+@DisplayName("Assembler should")
 public class AssembleLabeledUserCodeTest extends CPUContainer {
 	
-	// todo - add a test where line numbers are evaluated (expected exceptions on line numbers)
-	
 	@Test
+	@DisplayName("correctly parse instructions to instruction codes (iCodes) and labels to correct addresses")
 	public void assembleCodeAndTestInstructionAndLabelValidity() {
 		List<AssembledInstruction> instructionsList = assembler.assembleCode(loadCode());
 		
@@ -124,5 +127,87 @@ public class AssembleLabeledUserCodeTest extends CPUContainer {
 				nop
 				ending:add r1, r1, r7
 				beq r0, r0, cat""";
+	}
+
+	@Test
+	@DisplayName("correctly point out line numbers with errors on randomly generated")
+	public void displayCorrectLineNumbersWithErrors() {
+		for (int i = 0; i < 100; i++) {
+			Tuple<String, List<Integer>> codeWithErrors = loadCodeWithErrors();
+			List<Integer> errorLineNumbers = codeWithErrors.getRight();
+			List<AssembledInstruction> assembledInstructions = assembler.assembleCode(codeWithErrors.getLeft());
+			
+			assertFalse(assembler.getSyntaxErrors().getLineErrors().isEmpty(), assemblerErrorSupplier());
+			assertEquals(errorLineNumbers.size(), assembler.getSyntaxErrors().size(), assemblerErrorSupplier());
+			
+			System.out.println("Expecting errors on lines:");
+			for (Integer errorLineIndex : errorLineNumbers)
+				System.out.println("\t" + errorLineIndex);
+			
+			System.out.println("Assembler found errors on lines:");
+			System.out.println(assemblerErrorSupplier().get());
+			
+			for (Tuple<Integer, String> lineError : assembler.getSyntaxErrors().getLineErrors()) {
+				assertTrue(errorLineNumbers.contains(lineError.getLeft()));
+			}
+			
+			assembler.getSyntaxErrors().clear();
+		}
+	}
+	
+	private Tuple<String, List<Integer>> loadCodeWithErrors() {
+		String[] codeLines = createCodeLines();
+		List<Integer> errorLineNumbers = new ArrayList<>();
+		StringBuilder wholeCode = new StringBuilder();
+		int currentLine = 0;		// keep track of the line the generated code is currently on
+		
+		// ensure AT LEAST some errors
+		while (errorLineNumbers.size() < 5) {
+			int randomLineIndex = (int) (Math.random() * codeLines.length);		// get random code line
+			
+			if (Math.random() <= 0.11) {
+				wholeCode.append("ERROR ").append(codeLines[randomLineIndex]).append("\n");		// modify line and add error
+				errorLineNumbers.add(currentLine);
+			}
+			else {
+				if (Math.random() < 0.25)
+					wholeCode.append("\n");        // append empty line
+				else
+					wholeCode.append(codeLines[randomLineIndex]).append("\n"); // append line without errors
+			}
+			
+			currentLine++;
+		}
+		errorLineNumbers = errorLineNumbers.stream().sorted().collect(Collectors.toList());
+		System.out.println("CODE:\n`"+ wholeCode + "`");
+		return new Tuple<>(wholeCode.toString(), errorLineNumbers);
+	}
+	
+	private static String[] createCodeLines() {
+		List<String> code = new ArrayList<>();
+		code.add("subi r1, r8, 6");
+		code.add("li  r6, 6");
+		code.add(" mul r17, r23,    r2");
+		code.add("sllv r6,    r1, r6");
+		code.add("	sub r1, r1 ,r30");
+		code.add("add r1, r1, r3");
+		code.add("li r7, 154");
+		code.add("sub r1, r1 ,r30");
+		code.add("sub r1, r6 ,r13");
+		code.add("li r1, 951");
+		code.add("lw r6, 123(r6)");
+		code.add("mulu r6, r1, r1");
+		code.add("mulu r1 ,  r1, r1");
+		code.add("nop");
+		code.add("nop");
+		code.add("nop");
+		code.add(" mulu r6,  r1,  r1");
+		code.add("nop         ");
+		code.add("                 nop ");
+		code.add("      nop");
+		code.add("nop ");
+		code.add("add r1, r1, r7");
+		code.add("mulu r6, r1, r1");
+		return code.toArray(new String[0]);
 	}
 }

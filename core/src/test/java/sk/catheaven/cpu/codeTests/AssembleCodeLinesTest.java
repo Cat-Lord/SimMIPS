@@ -143,6 +143,8 @@ public class AssembleCodeLinesTest extends CPUContainer {
 			incorrectInstructions.add("beq r6, r1, incorrect label");
 			incorrectInstructions.add("bNeQ r1r6, r1, flabel");
 			incorrectInstructions.add("bNeQ r1r6, r1, flabel:lavel<>2?");
+			incorrectInstructions.add("label that is surely incorrect: addi r4,r2, 1");
+			
 			return incorrectInstructions;
 		}
 	}
