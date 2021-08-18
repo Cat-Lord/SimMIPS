@@ -1,14 +1,19 @@
 package sk.catheaven.primeWindow;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import sk.catheaven.events.SimulationEvent;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -28,6 +33,8 @@ public class MenuController implements Initializable {
     @FXML private MenuItem zoomInMenuItem;
     @FXML private MenuItem zoomOutMenuItem;
 
+    private Stage aboutStage;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         openMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
@@ -46,4 +53,18 @@ public class MenuController implements Initializable {
         zoomInMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.ZOOM_IN)));
         zoomOutMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.ZOOM_OUT)));
     }
+
+    public void displayAboutWindow() throws IOException {
+        if (aboutStage == null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/About.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            aboutStage = new Stage();
+            aboutStage.setScene(scene);
+        }
+
+        aboutStage.show();
+    }
+
 }

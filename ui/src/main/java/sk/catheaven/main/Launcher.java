@@ -1,6 +1,7 @@
 package sk.catheaven.main;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ import java.util.Properties;
 public class Launcher extends Application {
     private static final Logger log = LogManager.getLogger();
     public static AppProperties properties;
+    private static HostServices localHostServices;
 
     public static void main(String[] args) {
         properties = new AppProperties();
@@ -26,6 +28,8 @@ public class Launcher extends Application {
     
     @Override
     public void start(Stage primaryStage) {
+        Launcher.setLocalHostServices(getHostServices());
+
         primaryStage.setScene(getScene());
         primaryStage.setTitle(properties.get(AppProperties.APPLICATION_NAME));
 
@@ -50,4 +54,11 @@ public class Launcher extends Application {
         return new Scene(root);
     }
 
+    public static void setLocalHostServices(HostServices localHostServices) {
+        Launcher.localHostServices = localHostServices;
+    }
+
+    public static HostServices getLocalHostServices() {
+        return localHostServices;
+    }
 }
