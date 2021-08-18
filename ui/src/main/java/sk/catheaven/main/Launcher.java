@@ -1,8 +1,11 @@
 package sk.catheaven.main;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -25,14 +28,26 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setScene(getScene());
         primaryStage.setTitle(properties.get(AppProperties.APPLICATION_NAME));
+
+        try {
+            primaryStage.getIcons().add(new Image("/simmips.png"));
+        } catch (Exception exception) {
+            log.error("Failed to load application icon: {}", exception.getMessage());
+        }
+
         primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
     private Scene getScene() {
-        Parent root = new VBox();
-        Scene scene = new Scene(root);
-        return scene;
+        Parent root = new AnchorPane();
+        try {
+            root = FXMLLoader.load(getClass().getResource("/fxml/PrimeWindow.fxml"));
+        } catch (Exception exception) {
+            log.error("Failed to load main fxml: {}", exception.getMessage());
+            exception.printStackTrace();
+        }
+        return new Scene(root);
     }
 
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="59.0" prefWidth="789.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.primeWindow.ControlPanel">
+   <children>
+      <HBox fx:id="datapathControl" alignment="CENTER_LEFT" layoutY="10.0" prefHeight="49.0" prefWidth="789.0" spacing="35.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="327.0" spacing="25.0">
+               <children>
+                  <Button fx:id="playSimulationButton" mnemonicParsing="false" text="Play" />
+                  <Button fx:id="stepSimulationButton" mnemonicParsing="false" text="One Step" />
+                  <Button fx:id="playFastSimulationButton" mnemonicParsing="false" text="Play - Fast" />
+                  <Button fx:id="pauseSimulationButton" disable="true" mnemonicParsing="false" text="Pause" />
+                  <Button fx:id="resetSimulationButton" disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Reset" />
+               </children>
+            </HBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="71.0" spacing="15.0">
+               <children>
+                  <Button fx:id="zoomInButton" mnemonicParsing="false" style="-fx-background-radius: 3;" text="Zoom In" />
+                  <Button fx:id="zoomOutButton" mnemonicParsing="false" text="Zoom Out" />
+               </children>
+            </HBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="1073.0">
+               <children>
+                  <Label id="clear_labels" prefWidth="196.0" style="-fx-underline: true;" text="Clear All Popups" textFill="#fefff2">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="15.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </HBox>
+   </children>
+</AnchorPane>
