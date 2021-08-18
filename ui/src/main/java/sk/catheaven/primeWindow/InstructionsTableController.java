@@ -62,4 +62,8 @@ public class InstructionsTableController implements Initializable {
     private boolean isDoubleClick(MouseEvent event) {
         return event.getButton() == MouseButton.PRIMARY  &&  event.getClickCount() == 2;
     }
+
+    public BooleanProperty visibleProperty() {
+        return instructionVbox.visibleProperty();
+    }
 }

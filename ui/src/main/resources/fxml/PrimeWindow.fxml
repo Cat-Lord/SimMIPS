@@ -77,7 +77,8 @@
    <right>
       <AnchorPane style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER_LEFT">
          <children>
-            <fx:include source="InstructionsTable.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <fx:include source="InstructionsTable.fxml" fx:id="instructionsTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <fx:include source="RegistersTable.fxml" fx:id="registersTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
    </right>
