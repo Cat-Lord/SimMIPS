@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox spacing="5.0" VBox.vgrow="NEVER">
+         <children>
+            <GridPane alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="438.3333435058594" minWidth="10.0" prefWidth="368.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="449.3333435058594" minWidth="10.0" prefWidth="358.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="364.0" minWidth="10.0" prefWidth="324.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="306.0" minWidth="10.0" prefWidth="274.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="249.0" minWidth="10.0" prefWidth="235.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="33.0" minHeight="4.0" prefHeight="33.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="Instruction Fetch (IF)">
+                     <font>
+                        <Font name="Abyssinica SIL" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="InstructionFetchLabel" text="Label" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                     </font>
+                  </Label>
+                  <Label text="Instruction Decode (ID)" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="Abyssinica SIL" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="InstructionDecodeLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                     </font>
+                  </Label>
+                  <Label text="Execute (EX)" GridPane.columnIndex="2">
+                     <font>
+                        <Font name="Abyssinica SIL" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="ExecuteLabel" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                     </font>
+                  </Label>
+                  <Label text="Memory (MEM)" GridPane.columnIndex="3">
+                     <font>
+                        <Font name="Abyssinica SIL" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="MemoryLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                     </font>
+                  </Label>
+                  <Label text="Writeback (WB)" GridPane.columnIndex="4">
+                     <font>
+                        <Font name="Abyssinica SIL" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="WritebackLabel" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets left="80.0" right="15.0" top="8.0" />
+               </VBox.margin>
+            </GridPane>
+            <Separator prefWidth="200.0" />
+         </children>
+      </VBox>
+      <ScrollPane fx:id="datapathScrollPane" focusTraversable="false" hbarPolicy="NEVER" hmax="50.0" pannable="true" vbarPolicy="NEVER" vmax="50.0" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

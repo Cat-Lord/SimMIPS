@@ -16,6 +16,7 @@ public class PrimeWindowController implements Initializable {
 
     @FXML private InstructionsTableController instructionsTableController;
     @FXML private RegistersController registersTableController;
+    @FXML private DatapathController datapathController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -24,7 +25,5 @@ public class PrimeWindowController implements Initializable {
         instructionsTableController.visibleProperty().bind(codeTab.selectedProperty());
         // registers are only visible if the datapath is being viewed
         registersTableController.visibleProperty().bind(datapathTab.selectedProperty());
-
-
     }
 }
