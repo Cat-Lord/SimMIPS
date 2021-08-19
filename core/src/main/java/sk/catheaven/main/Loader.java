@@ -34,42 +34,60 @@ public class Loader {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String cpuResource = "/design/cpu.json";
 	private static final String instructionsResource = "/design/instructions.json";
-	
+
+	private static Instruction[] instructionSet;
+	private static CPU cpu;
+
 	public static CPU getCPU() throws Exception {
-		return Loader.getCPU(Loader.class.getResourceAsStream(cpuResource));
+		if (cpu == null)
+			cpu = Loader.getCPU(Loader.class.getResourceAsStream(cpuResource));
+		return cpu;
 	}
 	
-	public static Instruction[] getInstructionSet() throws IOException {
-		return Loader.getInstructionSet(Loader.class.getResourceAsStream(instructionsResource));
+	public static Instruction[] getInstructionSet() {
+		if (instructionSet == null) {
+			try {
+				instructionSet = Loader.getInstructionSet(Loader.class.getResourceAsStream(instructionsResource));
+			} catch (Exception exception) {
+				log.error(exception.getMessage());
+				instructionSet = new Instruction[0];
+			}
+		}
+		return instructionSet;
 	}
 	
 	public static CPU getCPU(InputStream jsonResource) throws Exception {
-		JsonNode root = objectMapper.readTree(jsonResource);
-		
-		int bitSize = root.get("CPU").get("BIT_SIZE").asInt();
-		
-		Map<String, Component> componentMap = new LinkedHashMap<>();
-		InstructionMemory instructionMemory = null;
-		RegBank regBank = null;
-		for (JsonNode node : root.path("CPU").path("components")) {
-			Component component = objectMapper.treeToValue(node, Component.class);
-			componentMap.put(component.getLabel(), component);
-			
-			if (component instanceof InstructionMemory)
-				instructionMemory = (InstructionMemory) component;
-			
-			if (component instanceof RegBank)
-				regBank = (RegBank) component;
+
+		if (cpu == null) {
+			JsonNode root = objectMapper.readTree(jsonResource);
+
+			int bitSize = root.get("CPU").get("BIT_SIZE").asInt();
+
+			Map<String, Component> componentMap = new LinkedHashMap<>();
+			InstructionMemory instructionMemory = null;
+			RegBank regBank = null;
+			for (JsonNode node : root.path("CPU").path("components")) {
+				Component component = objectMapper.treeToValue(node, Component.class);
+				componentMap.put(component.getLabel(), component);
+
+				if (component instanceof InstructionMemory)
+					instructionMemory = (InstructionMemory) component;
+
+				if (component instanceof RegBank)
+					regBank = (RegBank) component;
+			}
+
+			Map<String, List<Connector>> connectorsMap = getConnectorsMap(root.path("CPU").path("connectors"));
+
+			CPU loadedCPU = new CPU();
+			loadedCPU.setBitSize(bitSize);
+			loadedCPU.setComponents(componentMap);
+			loadedCPU.setConnectors(connectorsMap);
+			loadedCPU.setRegBank(regBank);
+			loadedCPU.setInstructionMemory(instructionMemory);
+			cpu = loadedCPU;
 		}
-		
-		Map<String, List<Connector>> connectorsMap = getConnectorsMap(root.path("CPU").path("connectors"));
-		
-		CPU cpu = new CPU();
-		cpu.setBitSize(bitSize);
-		cpu.setComponents(componentMap);
-		cpu.setConnectors(connectorsMap);
-		cpu.setRegBank(regBank);
-		cpu.setInstructionMemory(instructionMemory);
+
 		return cpu;
 	}
 	
@@ -94,16 +112,20 @@ public class Loader {
 		return sourceToTargetConnectors;
 	}
 	
-	public static Instruction[] getInstructionSet(InputStream jsonResource) throws IOException {
-		JsonNode root = objectMapper.readTree(jsonResource);
-		JsonNode instructionsRootNode = root.get("instructions");
-		final InstructionType[] instructionTypes = getInstructionTypes(root.get("instructionTypes"));
-		final Instruction[] instructions = objectMapper.treeToValue(instructionsRootNode, Instruction[].class);
-		
-		assignInstructionTypesToInstructions(instructionsRootNode, instructions, instructionTypes);
-		Arrays.stream(instructions).forEach(Loader::isValidInstruction);
-		
-		return instructions;
+	public static Instruction[] getInstructionSet(InputStream jsonResource)  {
+		try {
+			JsonNode root = objectMapper.readTree(jsonResource);
+			JsonNode instructionsRootNode = root.get("instructions");
+			final InstructionType[] instructionTypes = getInstructionTypes(root.get("instructionTypes"));
+			final Instruction[] instructions = objectMapper.treeToValue(instructionsRootNode, Instruction[].class);
+
+			assignInstructionTypesToInstructions(instructionsRootNode, instructions, instructionTypes);
+			Arrays.stream(instructions).forEach(Loader::isValidInstruction);
+
+			return instructions;
+		} catch (Exception exception) { log.error(exception.getMessage()); }
+
+		return new Instruction[0];
 	}
 	
 	private static InstructionType[] getInstructionTypes(JsonNode root) throws JsonProcessingException {

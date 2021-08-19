@@ -1,0 +1,20 @@
+.label {
+    -fx-fill: #747474;
+    -fx-font-weight: lighter;
+}
+
+.comment {
+    -fx-fill: #0fa810;
+    -fx-font-style: italic;
+}
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bolder;
+}
+
+.register {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+

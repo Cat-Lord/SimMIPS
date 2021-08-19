@@ -11,7 +11,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.greenrobot.eventbus.EventBus;
 import sk.catheaven.AppProperties;
+import sk.catheaven.events.ApplicationEvent;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -30,7 +32,12 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) {
         Launcher.setLocalHostServices(getHostServices());
 
-        primaryStage.setScene(getScene());
+        Scene scene = getScene();
+        try {
+            scene.getStylesheets().add(getClass().getResource("/css/codeEditor.css").toExternalForm());
+        } catch (Exception exception) { log.error(exception.getMessage()); }
+
+        primaryStage.setScene(scene);
         primaryStage.setTitle(properties.get(AppProperties.APPLICATION_NAME));
 
         try {
@@ -52,6 +59,12 @@ public class Launcher extends Application {
             exception.printStackTrace();
         }
         return new Scene(root);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        EventBus.getDefault().post(new ApplicationEvent(ApplicationEvent.Action.SHUTDOWN));
+        super.stop();
     }
 
     public static void setLocalHostServices(HostServices localHostServices) {

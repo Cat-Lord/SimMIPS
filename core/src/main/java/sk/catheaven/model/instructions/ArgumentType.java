@@ -19,4 +19,12 @@ public abstract class ArgumentType {
     
     public abstract boolean isValidArgument(String argument);
     public abstract Data getData(String argument);
+
+    public static String getRegisterRegex() {
+        return REGISTER_REGEX;
+    }
+
+    public static String getLabelRegex() {
+        return LABEL_REGEX;
+    }
 }

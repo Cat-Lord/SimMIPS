@@ -39,11 +39,20 @@
             <version>11.0.2</version>
             <type>jar</type>
         </dependency>
+
+        <!-- code area and code highlighting -->
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.4</version>
+            <version>0.10.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.fxmisc.flowless</groupId>
+            <artifactId>flowless</artifactId>
+            <version>0.6.5</version>
+        </dependency>
+
         <dependency>
             <groupId>org.greenrobot</groupId>
             <artifactId>eventbus</artifactId>
