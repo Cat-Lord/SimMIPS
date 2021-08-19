@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="59.0" prefWidth="789.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.primeWindow.ControlPanel">
+<AnchorPane prefHeight="59.0" prefWidth="789.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.primeWindow.uiComponents.ControlPanel">
    <children>
       <HBox fx:id="datapathControl" alignment="CENTER_LEFT" layoutY="10.0" prefHeight="49.0" prefWidth="789.0" spacing="35.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

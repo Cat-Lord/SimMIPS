@@ -1,4 +1,4 @@
-package sk.catheaven.primeWindow;
+package sk.catheaven.primeWindow.uiComponents;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;

@@ -11,7 +11,7 @@
       alignment="TOP_CENTER"
       xmlns="http://javafx.com/javafx/16"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="sk.catheaven.primeWindow.InstructionsTableController">
+      fx:controller="sk.catheaven.primeWindow.uiComponents.InstructionsTableController">
    <opaqueInsets>
       <Insets />
    </opaqueInsets>
