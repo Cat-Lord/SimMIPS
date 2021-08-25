@@ -7,16 +7,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.greenrobot.eventbus.EventBus;
 import sk.catheaven.AppProperties;
 import sk.catheaven.events.ApplicationEvent;
-
-import java.io.InputStream;
-import java.util.Properties;
 
 public class Launcher extends Application {
     private static final Logger log = LogManager.getLogger();
@@ -63,7 +59,7 @@ public class Launcher extends Application {
 
     @Override
     public void stop() throws Exception {
-        EventBus.getDefault().post(new ApplicationEvent(ApplicationEvent.Action.SHUTDOWN));
+        EventBus.getDefault().post(new ApplicationEvent.SHUTDOWN());
         super.stop();
     }
 

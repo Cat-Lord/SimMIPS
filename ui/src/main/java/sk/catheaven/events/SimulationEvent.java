@@ -2,27 +2,12 @@ package sk.catheaven.events;
 
 public class SimulationEvent {
 
-    private Action action;
-    public SimulationEvent(Action action) {
-        this.action = action;
-    }
-
-    public Action getAction() {
-        return action;
-    }
-
-    public void setAction(Action action) {
-        this.action = action;
-    }
-
-    public enum Action {
-        PLAY,
-        STOP,
-        PAUSE,
-        RESET,
-        STEP,
-        PLAY_FAST,
-        ZOOM_IN,
-        ZOOM_OUT
-    }
+    public static class PLAY {}
+    public static class STOP {}
+    public static class PAUSE {}
+    public static class RESET {}
+    public static class STEP {}
+    public static class PLAY_FAST {}
+    public static class ZOOM_IN {}
+    public static class ZOOM_OUT {}
 }

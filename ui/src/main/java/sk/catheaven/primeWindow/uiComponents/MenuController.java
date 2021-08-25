@@ -44,14 +44,14 @@ public class MenuController implements Initializable {
         zoomInMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.PLUS, KeyCombination.CONTROL_DOWN));
         zoomOutMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN));
 
-        playMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.PLAY)));
-        stepMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.STEP)));
-        resetMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.RESET)));
-        playFastMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.PLAY_FAST)));
-        pauseMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.PAUSE)));
+        playMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.PLAY()));
+        stepMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.STEP()));
+        resetMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.RESET()));
+        playFastMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.PLAY_FAST()));
+        pauseMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.PAUSE()));
 
-        zoomInMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.ZOOM_IN)));
-        zoomOutMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent(SimulationEvent.Action.ZOOM_OUT)));
+        zoomInMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.ZOOM_IN()));
+        zoomOutMenuItem.setOnAction(event -> EventBus.getDefault().post(new SimulationEvent.ZOOM_OUT()));
     }
 
     public void displayAboutWindow() throws IOException {
