@@ -1,6 +1,6 @@
 package sk.catheaven.utils;
 
-public class Node {
+public class Coordinates2D {
     private int x;
     private int y;
     

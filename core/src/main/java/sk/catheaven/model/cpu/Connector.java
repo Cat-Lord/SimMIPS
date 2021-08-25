@@ -2,7 +2,7 @@ package sk.catheaven.model.cpu;
 
 import sk.catheaven.model.Data;
 import sk.catheaven.model.Tuple;
-import sk.catheaven.utils.Node;
+import sk.catheaven.utils.Coordinates2D;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class Connector {
     private String to;
     private String selector;
     private WireType wireType;
-    private List<Node> nodes;
+    private List<Coordinates2D> nodes;
     private List<Tuple<String, Data>> content;
     
     public String getFrom() {
@@ -78,11 +78,11 @@ public class Connector {
         this.wireType = WireType.of(wireType);
     }
     
-    public List<Node> getNodes() {
+    public List<Coordinates2D> getNodes() {
         return nodes;
     }
     
-    public void setNodes(List<Node> nodes) {
+    public void setNodes(List<Coordinates2D> nodes) {
         this.nodes = nodes;
     }
     
