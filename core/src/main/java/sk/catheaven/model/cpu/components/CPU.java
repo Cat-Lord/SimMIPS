@@ -4,22 +4,24 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Component;
 import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.instructions.AssembledInstruction;
-import sk.catheaven.model.instructions.Instruction;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@org.springframework.stereotype.Component
 public class CPU {
     private static Logger log = LogManager.getLogger();
     
     public static int BIT_SIZE = 32;
-    private Map<String, Component> components = new LinkedHashMap<>();
+    private Map<String, Component> components;
     
     // maps source component to a list of target components via Connectors (basically a wire in CPU)
     private Map<String, List<Connector>> connectors;
@@ -27,49 +29,42 @@ public class CPU {
     
     private InstructionMemory instructionMemory;
     private RegBank regBank;
-    
-    public CPU() {
+
+    @Autowired
+    public CPU(int bitSize, Map<String, Component> components, Map<String, List<Connector>> connectors) {
+        CPU.BIT_SIZE = bitSize;
+        this.components = components;
+        if (areValidConnectors(connectors))
+            this.connectors = connectors;
+
+        parseComponents();
+        phases = splitComponentsIntoPhases();
     }
-    
+
+    private void parseComponents() {
+        for (Component component : getComponents().values()) {
+            if (component instanceof RegBank)
+                this.regBank = (RegBank) component;
+            else if (component instanceof InstructionMemory)
+                this.instructionMemory = (InstructionMemory) component;
+        }
+    }
+
     public Map<String, Component> getComponents() {
         return components;
-    }
-    
-    public void setComponents(Map<String, Component> components) {
-        this.components = components;
-        
-        this.phases = splitComponentsIntoPhases();
     }
     
     @JsonGetter
     public static int getBitSize() {
         return CPU.BIT_SIZE;
     }
-    
-    @JsonSetter("BIT_SIZE")
-    public void setBitSize(int bitSize) {
-        CPU.BIT_SIZE = bitSize;
-    }
-    
+
     public Map<String, List<Connector>> getConnectors() {
         return connectors;
     }
     
-    public void setConnectors(Map<String, List<Connector>> connectors) {
-        if (areValidConnectors(connectors))
-            this.connectors = connectors;
-    }
-    
     public List<List<Component>> getPhases() {
         return phases;
-    }
-    
-    public void setInstructionMemory(InstructionMemory instructionMemory) {
-        this.instructionMemory = instructionMemory;
-    }
-    
-    public void setRegBank(RegBank regBank) {
-        this.regBank = regBank;
     }
     
     public Data[] getRegisters() {
