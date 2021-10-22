@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * two outputs, as well as regWrite signal.
  * @author catlord
  */
-public class RegBank extends Component {
+public class RegBank extends ComponentImpl {
     private final static Logger log = LogManager.getLogger();
     private final static String REG_WRITE_SIGNAL_LABEL = "regWriteSignal";
     private final static String DEST_REG_LABEL = "destReg";

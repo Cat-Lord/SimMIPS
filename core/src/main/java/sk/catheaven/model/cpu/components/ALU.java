@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.aluOperations.Operation;
 import sk.catheaven.model.aluOperations.operations.BNEQ;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
  * control signal. ALU producer <i>zeroResult</i>, if the result of any operation was zero.
  * @author catlord
  */
-public class ALU extends Component {
+public class ALU extends ComponentImpl {
 	private static Logger log = LogManager.getLogger();
 	
 	private Map<Integer, Operation> operations;		// maps numbers to specific mathematical operations

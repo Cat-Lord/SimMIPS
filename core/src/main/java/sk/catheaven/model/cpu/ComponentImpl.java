@@ -2,6 +2,7 @@ package sk.catheaven.model.cpu;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import sk.catheaven.core.Component;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.Style;
 import sk.catheaven.model.cpu.components.ALU;
@@ -40,7 +41,7 @@ import java.util.Map;
 		@JsonSubTypes.Type(value = RegBank.class),
 		@JsonSubTypes.Type(value = SignExtend.class),
 })
-public abstract class Component implements Executable {
+public abstract class ComponentImpl implements Component {
 	
 	public static String IGNORED_LABEL = "";
 	
@@ -66,7 +67,7 @@ public abstract class Component implements Executable {
 	 */
 	@Override
 	public boolean setInput(String targetLabel, Data data) {
-		if (this.isSingleInputComponent()) {
+		if (this.isSingleInput()) {
 			if (IOHandler.getSingleValue(getInputs()) != null) {
 				IOHandler.getSingleValue(getInputs()).setData(data);
 				return true;
@@ -95,7 +96,7 @@ public abstract class Component implements Executable {
 	 */
 	@Override
 	public boolean setOutput(String targetLabel, Data data) {
-		if (this.isSingleOutputComponent()) {
+		if (this.isSingleOutput()) {
 			if (IOHandler.getSingleValue(getOutputs()) != null) {
 				IOHandler.getSingleValue(getOutputs()).setData(data);
 				return true;
@@ -179,7 +180,7 @@ public abstract class Component implements Executable {
 	 * kind of input.
 	 * @return true when this component has only one single input
 	 */
-	public boolean isSingleInputComponent() {
+	public boolean isSingleInput() {
 		return (getInputs().size() - getSelectors().size()) == 1;
 	}
 	
@@ -187,10 +188,21 @@ public abstract class Component implements Executable {
 	 * Having single output means that we are ignoring output label when setting/getting output
 	 * @return true when this component has only one single output
 	 */
-	public boolean isSingleOutputComponent() {
+	public boolean isSingleOutput() {
 		return getOutputs().size() == 1;
 	}
-	
+
+	/**
+	 * Prepares component to be used again as if just initialized.
+	 */
+	public void reset(){
+		for (Data data : getInputs().values())
+			data.setData(0);
+
+		for (Data data : getOutputs().values())
+			data.setData(0);
+	}
+
 	@Override
 	public String toString() {
 		return "Component {" +

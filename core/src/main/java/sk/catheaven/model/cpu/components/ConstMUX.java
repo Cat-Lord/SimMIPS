@@ -1,7 +1,7 @@
 package sk.catheaven.model.cpu.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 /**
@@ -10,8 +10,8 @@ import sk.catheaven.service.IOHandler;
  * On default, the first input (<i>input</i> in this case) will be selected.
  * @author catlord
  */
-public class ConstMUX extends Component {
-    private Data constant = new Data(CPU.getBitSize() / Byte.SIZE); // default size of constant
+public class ConstMUX extends ComponentImpl {
+    private Data constant = new Data(CPUBase.getBitSize() / Byte.SIZE); // default size of constant
     
     @Override
     public Data getInput(String inputLabel) {
@@ -25,10 +25,10 @@ public class ConstMUX extends Component {
     
     @Override
     public void execute() {
-        Data input = this.getInput(Component.IGNORED_LABEL);
+        Data input = this.getInput(ComponentImpl.IGNORED_LABEL);
         Data selector = IOHandler.getSingleSelector(getSelectors());
     
-        this.getOutput(Component.IGNORED_LABEL).setData(
+        this.getOutput(ComponentImpl.IGNORED_LABEL).setData(
             (selector.getData() == 0) ? input : constant
         );
     }

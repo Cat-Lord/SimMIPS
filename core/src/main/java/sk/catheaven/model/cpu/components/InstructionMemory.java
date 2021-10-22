@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.service.IOHandler;
 import sk.catheaven.utils.DataFormatter;
@@ -16,7 +16,7 @@ import java.util.List;
  * assembled instruction code and its multiple representations (binary, hex, decimal).
  * @author catlord
  */
-public class InstructionMemory extends Component {
+public class InstructionMemory extends ComponentImpl {
     private static final Logger log = LogManager.getLogger();
     
     private final List<AssembledInstruction> program = new ArrayList<>();
@@ -48,8 +48,8 @@ public class InstructionMemory extends Component {
         if (program.isEmpty())
             log.warn("Executing instruction memory with NO program specified ! Returning empty data");
     
-        Data input = this.getInput(Component.IGNORED_LABEL);
-        Data output = this.getOutput(Component.IGNORED_LABEL);
+        Data input = this.getInput(ComponentImpl.IGNORED_LABEL);
+        Data output = this.getOutput(ComponentImpl.IGNORED_LABEL);
         try {
             output.setData(program.get(index).getIcode());
             log.info("Setting output iCode, address of 0x{} resulting in index {}",

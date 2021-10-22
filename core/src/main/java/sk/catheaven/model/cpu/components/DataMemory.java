@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 import sk.catheaven.utils.DataFormatter;
 
@@ -35,7 +35,7 @@ import java.util.Map;
  * <p>
  * @author catlord
  */
-public class DataMemory extends Component {
+public class DataMemory extends ComponentImpl {
     private static final Logger log = LogManager.getLogger();
     private static final String MEM_READ_SIGNAL = "memReadSignal";
     private static final String MEM_WRITE_SIGNAL = "memWriteSignal";
@@ -68,7 +68,7 @@ public class DataMemory extends Component {
     
         // clear the last BIT_WIDTH bits
         baseAddress.setData( (baseAddress.getData() >>> BIT_WIDTH) << BIT_WIDTH );
-        nextAddress.setData(baseAddress.getData() + CPU.getByteSize());
+        nextAddress.setData(baseAddress.getData() + CPUBase.getByteSize());
         
         addressShiftExtractor.setData(inputAddress); // will extract only value of BIT_WIDTH bit size
     
@@ -85,7 +85,7 @@ public class DataMemory extends Component {
                 // first read the following block and shift left (to make room for next number)
                 memoryBlock.setData(
                         (nextAddressValue.getData() <<
-                                (CPU.BIT_SIZE - addressShiftExtractor.getData() * Byte.SIZE))
+                                (CPUBase.BIT_SIZE - addressShiftExtractor.getData() * Byte.SIZE))
                 );
             }
                 
@@ -110,7 +110,7 @@ public class DataMemory extends Component {
             // write next memory block (if any)
             if (addressShiftExtractor.getData() != 0) {
                 memoryBlock.setData(inputValue.getData() >>>
-                        (CPU.getBitSize() - (addressShiftExtractor.getData() * Byte.SIZE))
+                        (CPUBase.getBitSize() - (addressShiftExtractor.getData() * Byte.SIZE))
                 );
                 memory.put(nextAddress.getData(), memoryBlock.newInstance());
             }
@@ -184,6 +184,6 @@ public class DataMemory extends Component {
      * from any number.
      */
     private static int calculateBitWidth() {
-        return (int) (Math.log(CPU.getByteSize()) / Math.log(2));
+        return (int) (Math.log(CPUBase.getByteSize()) / Math.log(2));
     }
 }

@@ -1,7 +1,7 @@
 package sk.catheaven.model.cpu.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 /**
@@ -16,7 +16,7 @@ import sk.catheaven.service.IOHandler;
  * each separate request.
  * @author catlord
  */
-public class Fork extends Component {
+public class Fork extends ComponentImpl {
     @Override
     public boolean setInput(String targetLabel, Data data) {
         if (IOHandler.getSingleValue(getInputs()) == null)
@@ -37,7 +37,7 @@ public class Fork extends Component {
             // every output knows how to handle the input because
             // they have specific range which they apply to input
             // see the method:   Data.getData()
-            output.setData(this.getInput(Component.IGNORED_LABEL));
+            output.setData(this.getInput(ComponentImpl.IGNORED_LABEL));
         }
     }
 }

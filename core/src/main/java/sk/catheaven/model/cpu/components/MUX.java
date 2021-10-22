@@ -1,7 +1,7 @@
 package sk.catheaven.model.cpu.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 /**
@@ -11,7 +11,7 @@ import sk.catheaven.service.IOHandler;
  * If the value of the selector is 1, output is set to inputB.
  * @author catlord
  */
-public class MUX extends Component {
+public class MUX extends ComponentImpl {
     
     @Override
     public Data getOutput(String outputLabel) {
@@ -24,7 +24,7 @@ public class MUX extends Component {
         Data inputA = IOHandler.getInputA(getInputs());
         Data inputB = IOHandler.getInputB(getInputs());
         
-        this.getOutput(Component.IGNORED_LABEL).setData(
+        this.getOutput(ComponentImpl.IGNORED_LABEL).setData(
             (selector.getData() == 0) ? inputA : inputB
         );
     }

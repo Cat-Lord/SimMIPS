@@ -1,7 +1,7 @@
 package sk.catheaven.model.cpu.components;
 
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 /**
@@ -10,8 +10,8 @@ import sk.catheaven.service.IOHandler;
  * loaded.
  * @author catlord
  */
-public class ConstAdder extends Component {
-    private Data constant = new Data(CPU.getBitSize() / Byte.SIZE); // default size of constant
+public class ConstAdder extends ComponentImpl {
+    private Data constant = new Data(CPUBase.getBitSize() / Byte.SIZE); // default size of constant
     
     @Override
     public Data getInput(String inputLabel) {
@@ -25,8 +25,8 @@ public class ConstAdder extends Component {
     
     @Override
     public void execute() {
-        this.getOutput(Component.IGNORED_LABEL).setData(
-            this.getInput(Component.IGNORED_LABEL).getData() + constant.getData()
+        this.getOutput(ComponentImpl.IGNORED_LABEL).setData(
+            this.getInput(ComponentImpl.IGNORED_LABEL).getData() + constant.getData()
         );
     }
     

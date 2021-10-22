@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 /**
@@ -13,7 +13,7 @@ import sk.catheaven.service.IOHandler;
  * extended with 0's.
  * @author catlord
  */
-public class SignExtend extends Component {
+public class SignExtend extends ComponentImpl {
     private Logger log = LogManager.getLogger();
     
     // initial value of 0, so the bit difference doesn't make sense
@@ -22,8 +22,8 @@ public class SignExtend extends Component {
     
     @Override
     public boolean setInput(String targetLabel, Data data) {
-        if (this.getInput(Component.IGNORED_LABEL) != null) {
-            this.getInput(Component.IGNORED_LABEL).setData(data);
+        if (this.getInput(ComponentImpl.IGNORED_LABEL) != null) {
+            this.getInput(ComponentImpl.IGNORED_LABEL).setData(data);
             return true;
         }
         return false;
@@ -41,9 +41,9 @@ public class SignExtend extends Component {
     
     @Override
     public void execute() {
-        Data input = this.getInput(Component.IGNORED_LABEL);
+        Data input = this.getInput(ComponentImpl.IGNORED_LABEL);
     
-        this.getOutput(Component.IGNORED_LABEL).setData(
+        this.getOutput(ComponentImpl.IGNORED_LABEL).setData(
             // first shift to the left and then sign-shift to the right to preserve the sign
             ((input.getData() << getBitDifference()) >> getBitDifference())
         );
@@ -53,8 +53,8 @@ public class SignExtend extends Component {
     private int getBitDifference() {
         
         if (this.bitDifference == 0) {
-            Data input = this.getInput(Component.IGNORED_LABEL);
-            Data output = this.getOutput(Component.IGNORED_LABEL);
+            Data input = this.getInput(ComponentImpl.IGNORED_LABEL);
+            Data output = this.getOutput(ComponentImpl.IGNORED_LABEL);
             
             this.bitDifference = Math.abs(input.getBitSize() - output.getBitSize());
             if (this.bitDifference == 0) {

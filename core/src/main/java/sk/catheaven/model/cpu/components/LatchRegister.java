@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
  * instruction. This is a way to handle data hazard.
  * @author catlord
  */
-public class LatchRegister extends Component {
+public class LatchRegister extends ComponentImpl {
     private final static Logger log = LogManager.getLogger();
     private final static String BUBBLE_LABEL = "bubble";
     

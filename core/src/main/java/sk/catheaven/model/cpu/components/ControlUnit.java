@@ -3,7 +3,7 @@ package sk.catheaven.model.cpu.components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Map;
  *      and output gets concatenated in binary like this: 101 11011
  * @author catlord
  */
-public class ControlUnit extends Component {
+public class ControlUnit extends ComponentImpl {
     private Logger log = LogManager.getLogger();
     
     private Data opCode;
@@ -59,7 +59,7 @@ public class ControlUnit extends Component {
     }
     
     private void setOutputValue() {
-        Data output = this.getOutput(Component.IGNORED_LABEL);
+        Data output = this.getOutput(ComponentImpl.IGNORED_LABEL);
         
         // sanity set, prepare output 'default' value
         output.setData(0);
@@ -75,7 +75,7 @@ public class ControlUnit extends Component {
      * Get input and let the Data variables parse this input and extract necessary values.
      */
     private void parseInput() {
-        Data input = this.getInput(Component.IGNORED_LABEL);
+        Data input = this.getInput(ComponentImpl.IGNORED_LABEL);
     
         opCode.setData(input);
         func.setData(input);
