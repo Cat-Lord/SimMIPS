@@ -4,6 +4,7 @@ import sk.catheaven.model.Data;
 import sk.catheaven.model.Tuple;
 import sk.catheaven.utils.Coordinates2D;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,6 +89,13 @@ public class Connector {
     
     public List<Tuple<String, Data>> getContent() {
         return content;
+    }
+
+    public List<Data> getContentDataList() {
+        List<Data> contentData = new ArrayList<>();
+        for (Tuple<?, Data> contentTuple : getContent())
+            contentData.add(contentTuple.getRight());
+        return contentData;
     }
     
     public void setContent(List<Tuple<String, Data>> content) {

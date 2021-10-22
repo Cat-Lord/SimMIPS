@@ -2,7 +2,7 @@ package sk.catheaven.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.cpu.components.CPU;
+import sk.catheaven.model.cpu.components.CPUBase;
 
 /**
  * Basic numbering object in the application. Has a mask, which prohibits overflows. Provides 
@@ -19,12 +19,12 @@ public class Data {
 	
     private static Logger log = LogManager.getLogger();
  
-    public Data() { this(CPU.BIT_SIZE); }
+    public Data() { this(CPUBase.BIT_SIZE); }
 	public Data(int bitSize) { setBitSize(bitSize); }
  
 	public void setBitSize(int bitSize) {
-		if (bitSize > CPU.getBitSize())
-			this.bitSize = CPU.getBitSize();            // assign highest possible value
+		if (bitSize > CPUBase.BIT_SIZE)
+			this.bitSize = CPUBase.BIT_SIZE;            // assign highest possible value
 		else if (bitSize <= 0)
 			this.bitSize = 1;                       // lowest possible value of one bit
 		else
@@ -37,7 +37,7 @@ public class Data {
 	 * According to bit-size of this objects data creates a mask.
 	 */
 	public void createMask() {
-		this.mask = (-1 >>> (CPU.getBitSize() - bitSize));
+		this.mask = (-1 >>> (CPUBase.BIT_SIZE - bitSize));
 	}
 	
 	public Tuple<Integer, Integer> getRange() {

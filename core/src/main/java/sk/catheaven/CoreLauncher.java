@@ -2,12 +2,12 @@ package sk.catheaven;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import sk.catheaven.model.cpu.Component;
-import sk.catheaven.model.cpu.components.CPU;
+import sk.catheaven.core.Component;
+import sk.catheaven.model.cpu.ComponentImpl;
+import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.Instruction;
 
 import java.util.List;
@@ -17,11 +17,11 @@ import java.util.List;
  * @author catlord
  */
 @SpringBootApplication
-public class Launcher {
+public class CoreLauncher {
 	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args){
-		ApplicationContext context = SpringApplication.run(Launcher.class, args);
+		ApplicationContext context = SpringApplication.run(CoreLauncher.class, args);
 
 		StringBuilder beans = new StringBuilder("====== Available beans ======\n");
 		for (String beanName : context.getBeanDefinitionNames())
@@ -29,7 +29,7 @@ public class Launcher {
 		log.debug(beans);
 
 		instructionsCheck(context.getBean(Instruction[].class));
-		CPUCheck(context.getBean(CPU.class));
+		CPUCheck(context.getBean(CPUBase.class));
 	}
 
 	static void instructionsCheck(Instruction[] instructions) {
@@ -40,7 +40,7 @@ public class Launcher {
 		log.debug("Successfully loaded {} instructions\n", instructions.length);
 	}
 
-	static void CPUCheck(CPU cpu) {
+	static void CPUCheck(CPUBase cpu) {
 		for (Component component: cpu.getComponents().values())
 			log.debug("{}\n{}\n {} input(s) | {} output(s) | {} selector(s)",
 					component.getLabel(), component,

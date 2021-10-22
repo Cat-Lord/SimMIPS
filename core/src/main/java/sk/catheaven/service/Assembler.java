@@ -2,9 +2,11 @@ package sk.catheaven.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.SyntaxErrorsContainer;
-import sk.catheaven.model.cpu.components.CPU;
+import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.model.instructions.Field;
@@ -26,6 +28,7 @@ import java.util.Map;
  * or an index from a given address.
  * @author catlord
  */
+@Component
 public class Assembler {
     public final static String LABEL_TRAILING_CHAR = ":";   // represents the last character that ends a label
     public final static String DATA_CHAR = ".";				// if present, the string containing this symbol is a data reference (.base or .offset)
@@ -38,7 +41,7 @@ public class Assembler {
     private final Map<String, Data> labels = new HashMap<>();
     private final SyntaxErrorsContainer syntaxErrors = new SyntaxErrorsContainer();
     
-    
+    @Autowired
     public Assembler(Map<String, Instruction> instructionSet) {
         this.instructionSet = instructionSet;
     }
@@ -202,7 +205,7 @@ public class Assembler {
                     // if this arguments is a label argument, calculate offset (this address - target address)
                     if (seq < instruction.getArguments().size() && instruction.getArguments().get(seq) instanceof LabelArgumentType) {
                         Data offset = new Data(shiftBy);        // we calculate offset that should be only this size wide
-                        offset.setData(labels.get(args[seq]).getData() - address.getData() - CPU.getByteSize());
+                        offset.setData(labels.get(args[seq]).getData() - address.getData() - CPUBase.getByteSize());
                         tempCode |= offset.getData();
                     } else {
                         try {
@@ -293,10 +296,9 @@ public class Assembler {
             return new String[0];							// return empty array, there are no arguments
         
         // remove mnemo and get arguments as one string (remove any spaces, they won't be needed)
-        String[] argArr = lineOfCode.substring(indexOfFirstSpace+1, lineOfCode.length())
+        return lineOfCode.substring(indexOfFirstSpace+1, lineOfCode.length())
                                      .replaceAll(" ", "")
                                      .split(",");
-        return argArr;
     }
     
     /**
@@ -362,7 +364,7 @@ public class Assembler {
      */
     public static Data computeAddress(int index) {
         Data d = new Data();
-        d.setData(( (CPU.getByteSize() * index) << 2) >>> 2);        // todo - 2 is derived from the amount of data bytes... it should be somehow calculated
+        d.setData(( (CPUBase.getByteSize() * index) << 2) >>> 2);        // todo - 2 is derived from the amount of data bytes... it should be somehow calculated
         return d;
     }
     
@@ -382,7 +384,7 @@ public class Assembler {
      * @return Index, that would normally correspond to that address value
      */
     public static int computeIndex(int address) {
-        return address / CPU.getByteSize();
+        return address / CPUBase.getByteSize();
     }
     
     public Map<String, Data> getLabels() {
