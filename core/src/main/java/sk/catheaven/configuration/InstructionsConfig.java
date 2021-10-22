@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.model.instructions.InstructionType;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

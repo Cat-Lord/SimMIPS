@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.catheaven.core.CPU;
 import sk.catheaven.core.Component;
-import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.service.Assembler;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

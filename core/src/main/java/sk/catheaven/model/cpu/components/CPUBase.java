@@ -8,6 +8,7 @@ import sk.catheaven.core.Component;
 import sk.catheaven.model.Data;
 import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.instructions.AssembledInstruction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

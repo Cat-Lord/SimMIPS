@@ -1,6 +1,5 @@
 package sk.catheaven.core;
 
-import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.instructions.AssembledInstruction;
 

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import sk.catheaven.core.Component;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.Connector;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

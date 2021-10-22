@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import sk.catheaven.core.Component;
-import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.Instruction;
 
