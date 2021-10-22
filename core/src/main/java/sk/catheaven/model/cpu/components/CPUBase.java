@@ -1,23 +1,19 @@
 package sk.catheaven.model.cpu.components;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import sk.catheaven.core.Component;
 import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Component;
 import sk.catheaven.model.cpu.Connector;
 import sk.catheaven.model.instructions.AssembledInstruction;
-
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @org.springframework.stereotype.Component
-public class CPU {
+public class CPUBase {
     private static Logger log = LogManager.getLogger();
     
     public static int BIT_SIZE = 32;
@@ -31,8 +27,8 @@ public class CPU {
     private RegBank regBank;
 
     @Autowired
-    public CPU(int bitSize, Map<String, Component> components, Map<String, List<Connector>> connectors) {
-        CPU.BIT_SIZE = bitSize;
+    public CPUBase(int bitSize, Map<String, Component> components, Map<String, List<Connector>> connectors) {
+        CPUBase.BIT_SIZE = bitSize;
         this.components = components;
         if (areValidConnectors(connectors))
             this.connectors = connectors;
@@ -56,13 +52,13 @@ public class CPU {
     
     @JsonGetter
     public static int getBitSize() {
-        return CPU.BIT_SIZE;
+        return CPUBase.BIT_SIZE;
     }
 
     public Map<String, List<Connector>> getConnectors() {
         return connectors;
     }
-    
+
     public List<List<Component>> getPhases() {
         return phases;
     }
@@ -105,6 +101,11 @@ public class CPU {
     public void setAssembledCode(List<AssembledInstruction> program) {
         instructionMemory.setProgram(program);
     }
+
+    public List<AssembledInstruction> getProgram() {
+        return instructionMemory.getProgram();
+    }
+
     /**
      * Executing cycle means first passing output values of components to inputs of
      * target components. After this step the components are ready to handle input
@@ -123,7 +124,7 @@ public class CPU {
                 // for every possible target component that is connected to this source component component
                 for (Connector connector : connectors.get(sourceComponent.getLabel())) {
                     String selector = connector.getSelector();
-    
+
                     components.get(connector.getTo()).setInput(selector, sourceComponent.getOutput(selector));
                 }
             }
@@ -139,7 +140,7 @@ public class CPU {
      * @return Byte size of this  CPU's architecture
      */
     public static int getByteSize() {
-        return CPU.getBitSize()/Byte.SIZE;
+        return CPUBase.getBitSize()/Byte.SIZE;
     }
     
     /**
@@ -180,7 +181,7 @@ public class CPU {
             for (Connector connector : connectors.get(sourceComponentLabel)) {
                 
                 // check if source is multi-output and has the specified output labeled this way
-                if (sourceComponent.isSingleOutputComponent() == false  &&
+                if (sourceComponent.isSingleOutput() == false  &&
                         sourceComponent.getOutput(connector.getSelector()) == null) {
                     
                     log.error("Connector invalid: Source component `{}` doesn't provide output `{}`",
@@ -203,7 +204,7 @@ public class CPU {
                 }
                 
                 // check if selectors in target inputs exist
-                if (targetComponent.isSingleInputComponent() == false &&
+                if (targetComponent.isSingleInput() == false &&
                         targetComponent.getInput(connector.getSelector()) == null) {
                     log.error("Connector invalid: From {} | Target component `{}` doesn't provide specified INPUT `{}`",
                             sourceComponentLabel,
@@ -215,4 +216,6 @@ public class CPU {
         }
         return ret;
     }
+
+
 }
