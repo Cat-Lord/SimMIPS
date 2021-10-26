@@ -12,6 +12,7 @@ public class Style {
     private int y;
     private int width;
     private int height;
+    private boolean drawDistinct = false;
     private String colour = DEFAULT_COLOUR;
     
     public int getX() {
@@ -53,7 +54,19 @@ public class Style {
     public void setColour(String colour) {
         this.colour = colour;
     }
-    
+
+    /**
+     * Determines if an applied style with this feature enabled should be drawn distinctly from others.
+     * @return True if the applied style should visually differ from other style.
+     */
+    public boolean isDrawDistinct() {
+        return drawDistinct;
+    }
+
+    public void setDrawDistinct(boolean drawDistinct) {
+        this.drawDistinct = drawDistinct;
+    }
+
     @Override
     public String toString() {
         return "Style {" +
@@ -62,6 +75,7 @@ public class Style {
                 ", width=" + width +
                 ", height=" + height +
                 ", colour='" + colour.toUpperCase(Locale.ROOT) + '\'' +
+                ", distinct= " + drawDistinct +
                 '}';
     }
 }

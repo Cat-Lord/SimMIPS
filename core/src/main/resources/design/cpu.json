@@ -177,7 +177,8 @@
             "y": 260,
             "width": 35,
             "height": 70,
-            "colour": "#d1eaff"
+            "colour": "#d1eaff",
+            "drawDistinct": true
           },
           "inputs": {
             "input": {}
@@ -447,7 +448,8 @@
             "y": 745,
             "width": 30,
             "height": 50,
-            "colour": "#e87b7b"
+            "colour": "#e87b7b",
+            "drawDistinct": true
           },
           "inputs": {
             "input": {
