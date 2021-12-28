@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Controller
 public class DatapathController implements Initializable {
     @FXML VBox datapathPane;
     @FXML ScrollPane datapathScrollPane;

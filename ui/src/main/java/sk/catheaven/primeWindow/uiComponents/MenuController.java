@@ -11,12 +11,14 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import org.springframework.stereotype.Controller;
 import sk.catheaven.events.SimulationEvent;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Controller
 public class MenuController implements Initializable {
     @FXML private MenuItem openMenuItem;
     @FXML private MenuItem saveMenuItem;

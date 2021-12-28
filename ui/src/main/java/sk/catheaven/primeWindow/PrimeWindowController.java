@@ -7,8 +7,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import sk.catheaven.codeEditor.CodeEditor;
-import sk.catheaven.main.Loader;
+import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.primeWindow.uiComponents.DatapathController;
 import sk.catheaven.primeWindow.uiComponents.InstructionsTableController;
 import sk.catheaven.primeWindow.uiComponents.RegistersController;
@@ -16,8 +18,13 @@ import sk.catheaven.primeWindow.uiComponents.RegistersController;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Controller
 public class PrimeWindowController implements Initializable {
     private CodeEditor codeEditor;
+
+    // todo: We need to encapsulate instruction in DTO not in model object
+    @Autowired
+    private Instruction[] instructionSet;
 
     @FXML TabPane tabPane;
     @FXML Tab codeTab;
@@ -41,7 +48,7 @@ public class PrimeWindowController implements Initializable {
     }
 
     private void initializeCodeEditor() {
-        codeEditor = new CodeEditor(Loader.getInstructionSet());
+        codeEditor = new CodeEditor(instructionSet);
         CodeArea codeArea = codeEditor.getCodeArea();
 
         VirtualizedScrollPane<CodeArea> editorPane = new VirtualizedScrollPane<>(codeArea);

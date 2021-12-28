@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
+@Controller
 public class ControlPanel implements Initializable {
     private static Logger log = LogManager.getLogger();
     @FXML private Button playSimulationButton;

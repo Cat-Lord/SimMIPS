@@ -2,9 +2,10 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.*?>
-<?import org.fxmisc.flowless.VirtualizedScrollPane?>
-
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.primeWindow.PrimeWindowController">
    <bottom>
       <HBox prefHeight="15.0" prefWidth="1920.0" BorderPane.alignment="CENTER" />

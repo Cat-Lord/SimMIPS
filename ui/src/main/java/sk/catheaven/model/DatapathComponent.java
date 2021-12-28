@@ -5,11 +5,12 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
-public class Component {
+@org.springframework.stereotype.Component
+public class DatapathComponent {
+    private sk.catheaven.core.Component component;
     private Shape shape;
     private Style style;
     private String label;
@@ -19,7 +20,9 @@ public class Component {
      * @return Shape of the component
      */
     protected Shape getShape() {
-        return new Rectangle(style.getWidth(), style.getHeight());
+        return null;    // todo
+//        return style.getIsDrawDistinct() ? new Ellipse(style.getWidth(), style.getHeight())
+//                                        : new Rectangle(style.getWidth(), style.getHeight());
     }
 
     /**
