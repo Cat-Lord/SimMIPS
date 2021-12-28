@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ import sk.catheaven.core.Component;
 import sk.catheaven.model.cpu.CPUImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.components.CPUBase;
+import sk.catheaven.model.cpu.components.RegBank;
 import sk.catheaven.service.Assembler;
 
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ import java.util.Map;
 
 @Configuration
 public class CPUConfig {
+    private static Logger log = LogManager.getLogger();
+
     @Bean
     public int bitSize(@Qualifier("cpuRootNode") JsonNode cpuRootNode) {
         return cpuRootNode.get("CPU").get("BIT_SIZE").asInt();
@@ -71,5 +76,12 @@ public class CPUConfig {
         return new CPUImpl(cpuBase, assembler);
     }
 
+    @Bean
+    public Component registerBank(Map<String, Component> componentsMap) {
+        for (Component component : componentsMap.values())
+            if (component instanceof RegBank)
+                return component;
+        throw new RuntimeException("Register bank not found");
+    }
 
 }
