@@ -13,6 +13,7 @@ import sk.catheaven.model.cpu.CPUImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.service.Assembler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

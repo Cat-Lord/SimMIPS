@@ -3,16 +3,11 @@ package sk.catheaven;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import sk.catheaven.core.CPU;
 import sk.catheaven.core.Component;
 import sk.catheaven.model.cpu.Connector;
-import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.Instruction;
-
-import java.util.List;
 
 /**
  * Main application window. Application entry.

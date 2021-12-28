@@ -1,6 +1,5 @@
 package sk.catheaven.core;
 
-import org.springframework.stereotype.Service;
 import sk.catheaven.model.Data;
 
 import java.util.Map;

@@ -1,7 +1,5 @@
 package sk.catheaven.model.cpu;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import sk.catheaven.core.CPU;
 import sk.catheaven.core.Component;
 import sk.catheaven.model.cpu.components.CPUBase;
