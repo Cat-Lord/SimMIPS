@@ -1,10 +1,14 @@
 package sk.catheaven.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Locale;
 
 /**
  * Styling of a component - position, dimensions and colour.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Style {
     private final static String DEFAULT_COLOUR = "#98999a";
     

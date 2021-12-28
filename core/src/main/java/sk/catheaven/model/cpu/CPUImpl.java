@@ -12,14 +12,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class CPUImpl implements CPU {
 
-    @Autowired
-    CPUBase cpu;
+    private CPUBase cpu;
 
-    @Autowired
-    Assembler assembler;
+    private Assembler assembler;
+
+    public CPUImpl(CPUBase cpu, Assembler assembler) {
+        this.cpu = cpu;
+        this.assembler = assembler;
+    }
 
     @Override
     public Collection<Component> getComponents() {
@@ -27,6 +29,7 @@ public class CPUImpl implements CPU {
     }
 
     @Override
+    // todo - rewrite to NOT create a new list but rather return unmodifiable list instead
     public Collection<Connector> getConnectors() {
         return cpu.getConnectors().values().stream()
                                     .flatMap(List::stream)

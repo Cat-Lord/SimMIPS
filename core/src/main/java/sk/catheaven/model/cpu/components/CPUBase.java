@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@org.springframework.stereotype.Component
 public class CPUBase {
     private static Logger log = LogManager.getLogger();
     
@@ -27,7 +26,6 @@ public class CPUBase {
     private InstructionMemory instructionMemory;
     private RegBank regBank;
 
-    @Autowired
     public CPUBase(int bitSize, Map<String, Component> components, Map<String, List<Connector>> connectors) {
         CPUBase.BIT_SIZE = bitSize;
         this.components = components;

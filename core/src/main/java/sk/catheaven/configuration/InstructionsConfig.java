@@ -5,13 +5,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
+import org.modelmapper.spring.SpringIntegration;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import sk.catheaven.core.CPU;
+import sk.catheaven.core.model.Connector;
 import sk.catheaven.model.instructions.Field;
 import sk.catheaven.model.instructions.Instruction;
 import sk.catheaven.model.instructions.InstructionType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +27,8 @@ import java.util.Map;
 public class InstructionsConfig {
     private static final Logger log = LogManager.getLogger();
 
-    @Bean(name = "instructions;instructionsSet")
-    public Instruction[] getInstructionSet(ObjectMapper objectMapper,
+    @Bean
+    public Instruction[] instructionSet(ObjectMapper objectMapper,
                                            @Qualifier("instructionsRootNode") JsonNode instructionsRootNode
     ) throws JsonProcessingException {
         final InstructionType[] instructionTypes = objectMapper.treeToValue(instructionsRootNode.get("instructionTypes"),

@@ -1,9 +1,11 @@
 package sk.catheaven.core;
 
+import org.springframework.stereotype.Service;
 import sk.catheaven.model.Data;
 
 import java.util.Map;
 
+@org.springframework.stereotype.Component
 public interface Component {
     String getLabel();
     Map<String, Data> getInputs();

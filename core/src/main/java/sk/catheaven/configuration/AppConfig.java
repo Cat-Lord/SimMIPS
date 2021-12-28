@@ -19,15 +19,15 @@ public class AppConfig {
         return new ObjectMapper();
     }
 
-    @Bean(name="cpuRootNode")
+    @Bean(name = "cpuRootNode")
     public JsonNode getCpuRootNode(@Value("classpath:design/cpu.json") InputStream jsonResource,
-                                                                        ObjectMapper objectMapper) throws IOException {
+                                   ObjectMapper objectMapper) throws IOException {
         return objectMapper.readTree(jsonResource);
     }
 
-    @Bean(name="instructionsRootNode")
+    @Bean(name = "instructionsRootNode")
     public JsonNode getInstructionsRootNode(@Value("classpath:design/instructions.json") InputStream jsonResource,
-                                           ObjectMapper objectMapper) throws IOException {
+                                            ObjectMapper objectMapper) throws IOException {
         return objectMapper.readTree(jsonResource);
     }
 

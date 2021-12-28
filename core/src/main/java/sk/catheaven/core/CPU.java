@@ -5,6 +5,7 @@ import sk.catheaven.model.instructions.AssembledInstruction;
 
 import java.util.Collection;
 
+@org.springframework.stereotype.Component
 public interface CPU {
     Collection<Component> getComponents();
     Collection<Connector> getConnectors();
