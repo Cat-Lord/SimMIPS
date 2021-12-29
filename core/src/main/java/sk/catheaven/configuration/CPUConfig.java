@@ -9,12 +9,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sk.catheaven.core.CPU;
-import sk.catheaven.core.Component;
+import org.springframework.context.annotation.Primary;
+import sk.catheaven.core.cpu.CPU;
+import sk.catheaven.core.cpu.Component;
+import sk.catheaven.core.cpu.Connector;
 import sk.catheaven.model.cpu.CPUImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.model.cpu.components.CPUBase;
-import sk.catheaven.model.cpu.components.RegBank;
 import sk.catheaven.service.Assembler;
 
 import java.util.ArrayList;
@@ -33,18 +34,19 @@ public class CPUConfig {
     }
 
     @Bean
-    public Map<String, List<sk.catheaven.model.cpu.Connector>> connectorsMap(ObjectMapper objectMapper,
-                                                                                @Qualifier("cpuRootNode") JsonNode cpuRootNode) throws JsonProcessingException {
+    @Primary
+    public Map<String, List<Connector>> connectorsMap(ObjectMapper objectMapper,
+                                                      @Qualifier("cpuRootNode") JsonNode cpuRootNode) throws JsonProcessingException {
         JsonNode connectors = cpuRootNode.path("CPU").path("connectors");
-        List<sk.catheaven.model.cpu.Connector> connectorList = objectMapper.readValue(connectors.toString(), new TypeReference<>() {});
+        List<Connector> connectorList = objectMapper.readValue(connectors.toString(), new TypeReference<>() {});
 
-        Map<String, List<sk.catheaven.model.cpu.Connector>> sourceToTargetConnectors = new HashMap<>();
+        Map<String, List<Connector>> sourceToTargetConnectors = new HashMap<>();
 
-        for (sk.catheaven.model.cpu.Connector connector : connectorList) {
-            List<sk.catheaven.model.cpu.Connector> connectorsToTargetComponents = sourceToTargetConnectors.get(connector.getFrom());
+        for (Connector connector : connectorList) {
+            List<Connector> connectorsToTargetComponents = sourceToTargetConnectors.get(connector.getFrom());
 
             if (connectorsToTargetComponents == null) {
-                List<sk.catheaven.model.cpu.Connector> connectedTo = new ArrayList<>();
+                List<Connector> connectedTo = new ArrayList<>();
                 connectedTo.add(connector);
                 sourceToTargetConnectors.put(connector.getFrom(), connectedTo);
                 continue;
@@ -57,6 +59,7 @@ public class CPUConfig {
     }
 
     @Bean
+    @Primary
     public Map<String, Component> componentsMap(ObjectMapper objectMapper,
                                                   @Qualifier("cpuRootNode")  JsonNode cpuRootNode) throws JsonProcessingException {
         Map<String, Component> componentMap = new LinkedHashMap<>();
@@ -69,19 +72,19 @@ public class CPUConfig {
 
     @Bean
     public CPU cpu(int bitSize,
-                   Map<String, List<sk.catheaven.model.cpu.Connector>> connectorsMap,
+                   Map<String, List<Connector>> connectorsMap,
                    Map<String, Component> componentsMap,
                    Assembler assembler) {
         CPUBase cpuBase = new CPUBase(bitSize, componentsMap, connectorsMap);
         return new CPUImpl(cpuBase, assembler);
     }
 
-    @Bean
-    public Component registerBank(Map<String, Component> componentsMap) {
-        for (Component component : componentsMap.values())
-            if (component instanceof RegBank)
-                return component;
-        throw new RuntimeException("Register bank not found");
-    }
+//    @Bean
+//    public RegBank registerBank(Map<String, Component> componentsMap) {
+//        for (Component component : componentsMap.values())
+//            if (component instanceof RegBank)
+//                return (RegBank) component;
+//        throw new RuntimeException("Register bank not found");
+//    }
 
 }

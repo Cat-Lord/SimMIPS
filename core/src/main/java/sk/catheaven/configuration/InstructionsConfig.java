@@ -8,10 +8,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sk.catheaven.model.instructions.Field;
-import sk.catheaven.model.instructions.Instruction;
-import sk.catheaven.model.instructions.InstructionType;
+import org.springframework.context.annotation.Primary;
+import sk.catheaven.core.instructions.Field;
+import sk.catheaven.core.instructions.Instruction;
+import sk.catheaven.core.instructions.InstructionType;
+import sk.catheaven.model.instructions.InstructionImpl;
+import sk.catheaven.model.instructions.InstructionTypeImpl;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +25,27 @@ public class InstructionsConfig {
     private static final Logger log = LogManager.getLogger();
 
     @Bean
-    public Instruction[] instructionSet(ObjectMapper objectMapper,
-                                           @Qualifier("instructionsRootNode") JsonNode instructionsRootNode
+    @Primary
+    public Map<String, InstructionType> instructionTypesSet(ObjectMapper objectMapper,
+                                        @Qualifier("instructionsRootNode") JsonNode instructionsRootNode
     ) throws JsonProcessingException {
-        final InstructionType[] instructionTypes = objectMapper.treeToValue(instructionsRootNode.get("instructionTypes"),
-                InstructionType[].class);
+        InstructionType[] instructionTypes = objectMapper.treeToValue(instructionsRootNode.get("instructionTypes"), InstructionTypeImpl[].class);
+        Map<String, InstructionType> instructionTypesMap = new HashMap<>();
+        for (InstructionType type : instructionTypes)
+            instructionTypesMap.put(type.getLabel(), type);
+        return instructionTypesMap;
+    }
 
+    @Bean
+    @Primary
+    public Instruction[] instructionSet(ObjectMapper objectMapper,
+                                        Map<String, InstructionType> instructionTypesSet,
+                                        @Qualifier("instructionsRootNode") JsonNode instructionsRootNode
+    ) throws JsonProcessingException {
         JsonNode instructionsNode = instructionsRootNode.get("instructions");
-        final Instruction[] instructions = objectMapper.treeToValue(instructionsNode, Instruction[].class);
+        final InstructionImpl[] instructions = objectMapper.treeToValue(instructionsNode, InstructionImpl[].class);
 
-        assignInstructionTypesToInstructions(instructionsNode, instructions, instructionTypes);
+        assignInstructionTypesToInstructions(instructionsNode, instructions, instructionTypesSet);
         List<Instruction> allInstructions = new LinkedList<>();
 
         for (Instruction instruction : instructions)
@@ -40,12 +55,14 @@ public class InstructionsConfig {
         return allInstructions.toArray(new Instruction[0]);
     }
 
+    // we need to use InstructionImpl to adjust the Instruction (set its corresponding type) otherwise
+    // we would need to change the interface to allow setting (and this is not ideal in this case)
     private void assignInstructionTypesToInstructions(JsonNode currentInstruction,
-                                                      Instruction[] instructions,
-                                                      InstructionType[] instructionTypes) {
+                                                      InstructionImpl[] instructions,
+                                                      Map<String, InstructionType> instructionTypes) {
         for (int i = 0; i < instructions.length; i++) {
             String type = currentInstruction.get(i).get("type").asText();
-            Instruction instruction = instructions[i];
+            InstructionImpl instruction = instructions[i];
 
             try {
                 instruction.setType(getTypeForInstruction(instructionTypes, type));
@@ -53,8 +70,8 @@ public class InstructionsConfig {
         }
     }
 
-    private InstructionType getTypeForInstruction(InstructionType[] instructionTypes, String expectedType) {
-        for (InstructionType instructionType : instructionTypes) {
+    private InstructionType getTypeForInstruction(Map<String, InstructionType> instructionTypes, String expectedType) {
+        for (InstructionType instructionType : instructionTypes.values()) {
             if (instructionType.getLabel().equalsIgnoreCase(expectedType))
                 return instructionType;
         }

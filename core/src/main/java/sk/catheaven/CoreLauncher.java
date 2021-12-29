@@ -3,16 +3,18 @@ package sk.catheaven;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import sk.catheaven.core.CPU;
-import sk.catheaven.core.Component;
-import sk.catheaven.model.cpu.Connector;
-import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.core.cpu.CPU;
+import sk.catheaven.core.cpu.Component;
+import sk.catheaven.core.cpu.Connector;
+import sk.catheaven.core.instructions.Instruction;
 
 /**
  * Main application window. Application entry.
  * @author catlord
  */
+@SpringBootApplication
 public class CoreLauncher {
 	private static final Logger log = LogManager.getLogger();
 
@@ -20,8 +22,11 @@ public class CoreLauncher {
 		ApplicationContext context = SpringApplication.run(CoreLauncher.class, args);
 
 		StringBuilder beans = new StringBuilder("====== CORE: Available beans ======\n");
-		for (String beanName : context.getBeanDefinitionNames())
+		for (String beanName : context.getBeanDefinitionNames()) {
 			beans.append("     ").append(beanName).append("\n");
+			Object bean = context.getBean(beanName);
+			log.info(bean.toString());
+		}
 		log.debug(beans);
 
 		instructionsCheck(context.getBean(Instruction[].class));
