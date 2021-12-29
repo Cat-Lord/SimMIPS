@@ -4,13 +4,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sk.catheaven.model.Data;
-import sk.catheaven.model.SyntaxErrorsContainer;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.SyntaxErrorsContainer;
+import sk.catheaven.core.instructions.AssembledInstruction;
+import sk.catheaven.core.instructions.Field;
+import sk.catheaven.core.instructions.Instruction;
+import sk.catheaven.model.DataImpl;
+import sk.catheaven.model.SyntaxErrorsContainerImpl;
 import sk.catheaven.model.cpu.components.CPUBase;
 import sk.catheaven.model.instructions.ArgumentType;
-import sk.catheaven.model.instructions.AssembledInstruction;
-import sk.catheaven.model.instructions.Field;
-import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.model.instructions.AssembledInstructionImpl;
 import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
 import sk.catheaven.utils.DataFormatter;
@@ -39,11 +42,13 @@ public class Assembler {
     private final static Logger log = LogManager.getLogger();
     private final Map<String, Instruction> instructionSet;
     private final Map<String, Data> labels = new HashMap<>();
-    private final SyntaxErrorsContainer syntaxErrors = new SyntaxErrorsContainer();
+    private final SyntaxErrorsContainer syntaxErrors = new SyntaxErrorsContainerImpl();
     
     @Autowired
-    public Assembler(Map<String, Instruction> instructionSet) {
-        this.instructionSet = instructionSet;
+    public Assembler(Instruction[] instructionSet) {
+        this.instructionSet = new HashMap<>();
+        for (Instruction instruction : instructionSet)
+            this.instructionSet.put(instruction.getMnemo(), instruction);
     }
     
     /**
@@ -107,7 +112,7 @@ public class Assembler {
         
         log.debug("..Done ! Errors: " + syntaxErrors.size());
         
-        return new AssembledInstruction(lineIndex, lineOfCode, this.instructionSet.get(mnemo), iCode, address);
+        return new AssembledInstructionImpl(lineIndex, lineOfCode, this.instructionSet.get(mnemo), iCode, address);
     }
     
     /**
@@ -164,7 +169,7 @@ public class Assembler {
      * @param args Array of instruction argument labels
      */
     private Data createICode(String instructionMnemo, String[] args, Data address) {
-        Data iCode = new Data();
+        Data iCode = new DataImpl();
         
         Instruction instruction = instructionSet.get(instructionMnemo);
         List<Field> fields = instruction.getType().getFields();
@@ -204,7 +209,7 @@ public class Assembler {
                 
                     // if this arguments is a label argument, calculate offset (this address - target address)
                     if (seq < instruction.getArguments().size() && instruction.getArguments().get(seq) instanceof LabelArgumentType) {
-                        Data offset = new Data(shiftBy);        // we calculate offset that should be only this size wide
+                        Data offset = new DataImpl(shiftBy);        // we calculate offset that should be only this size wide
                         offset.setData(labels.get(args[seq]).getData() - address.getData() - CPUBase.getByteSize());
                         tempCode |= offset.getData();
                     } else {
@@ -363,7 +368,7 @@ public class Assembler {
      * @return Integer representation of computed address.
      */
     public static Data computeAddress(int index) {
-        Data d = new Data();
+        Data d = new DataImpl();
         d.setData(( (CPUBase.getByteSize() * index) << 2) >>> 2);        // todo - 2 is derived from the amount of data bytes... it should be somehow calculated
         return d;
     }

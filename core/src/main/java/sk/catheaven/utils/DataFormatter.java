@@ -1,6 +1,6 @@
 package sk.catheaven.utils;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
 
 import java.util.Locale;
 

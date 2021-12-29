@@ -1,4 +1,4 @@
-package sk.catheaven.utils;
+package sk.catheaven.core;
 
 public class Coordinates2D {
     private int x;

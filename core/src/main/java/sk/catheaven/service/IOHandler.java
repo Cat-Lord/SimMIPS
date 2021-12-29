@@ -1,6 +1,6 @@
 package sk.catheaven.service;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
 
 import java.util.Map;
 

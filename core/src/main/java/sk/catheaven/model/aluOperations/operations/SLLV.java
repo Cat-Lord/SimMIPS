@@ -1,9 +1,9 @@
 package sk.catheaven.model.aluOperations.operations;
 
-import sk.catheaven.model.Data;
-import sk.catheaven.model.aluOperations.Operation;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.aluOperations.OperationImpl;
 
-public class SLLV extends Operation {
+public class SLLV extends OperationImpl {
     
     @Override
     public Data perform(Data inputA, Data inputB) {

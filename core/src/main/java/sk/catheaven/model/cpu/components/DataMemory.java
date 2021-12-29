@@ -2,7 +2,8 @@ package sk.catheaven.model.cpu.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 import sk.catheaven.utils.DataFormatter;
@@ -44,10 +45,10 @@ public class DataMemory extends ComponentImpl {
     private final Map<Integer, Data> memory = new HashMap<>();        // maps addresses represented as data to data values
     private Data memReadSignal, memWriteSignal;
     
-    private final Data memoryBlock = new Data();                            // to avoid overflows, this will be container, which will manage input/output from memory
-    private final Data baseAddress = new Data();
-    private final Data nextAddress = new Data();
-    private final Data addressShiftExtractor = new Data(BIT_WIDTH);                // used to distribute input value between base and next address, see class-level javadoc
+    private final Data memoryBlock = new DataImpl();                            // to avoid overflows, this will be container, which will manage input/output from memory
+    private final Data baseAddress = new DataImpl();
+    private final Data nextAddress = new DataImpl();
+    private final Data addressShiftExtractor = new DataImpl(BIT_WIDTH);                // used to distribute input value between base and next address, see class-level javadoc
     
     // todo - validate and test
     @Override

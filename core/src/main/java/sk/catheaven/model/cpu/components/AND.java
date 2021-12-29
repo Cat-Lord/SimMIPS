@@ -1,6 +1,6 @@
 package sk.catheaven.model.cpu.components;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
 import sk.catheaven.model.cpu.ComponentImpl;
 import sk.catheaven.service.IOHandler;
 

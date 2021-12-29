@@ -2,7 +2,8 @@ package sk.catheaven.model.instructions.argumentTypes;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.instructions.ArgumentType;
 
 import java.util.Locale;
@@ -58,7 +59,7 @@ public class DataArgumentType extends ArgumentType {
     
     public DataArgumentType(){
         regArg  = new RegisterArgumentType();
-        offset = new Data(16);      // todo - why is this hard-coded
+        offset = new DataImpl(16);      // todo - why is this hard-coded
     }
     
     @Override
@@ -76,7 +77,7 @@ public class DataArgumentType extends ArgumentType {
      * From argument, which is data-valid cuts of part specified by <b>part</b>.
      * @param validArgument User-written argument, for example '0030(r6)' from "sw r1, 0030(r6)"
      * @param part Specifies part of data argument. Either base or offset.
-     * @return
+     * @return specified part of argument as Data
      */
     public static Data getPart(String validArgument, Part part){
         switch (part) {

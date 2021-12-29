@@ -2,7 +2,6 @@ package sk.catheaven.core;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import sk.catheaven.model.DataImpl;
-import sk.catheaven.core.Tuple;
 
 @JsonDeserialize(as = DataImpl.class)
 public interface Data {

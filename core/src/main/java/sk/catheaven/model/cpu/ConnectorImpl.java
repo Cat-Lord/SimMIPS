@@ -2,11 +2,10 @@ package sk.catheaven.model.cpu;
 
 import sk.catheaven.core.Coordinates2D;
 import sk.catheaven.core.Data;
+import sk.catheaven.core.Tuple;
 import sk.catheaven.core.cpu.Connector;
 import sk.catheaven.core.cpu.WireType;
-import sk.catheaven.core.Tuple;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -1,8 +1,6 @@
 package sk.catheaven.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import sk.catheaven.core.Tuple;
-import sk.catheaven.utils.TupleDeserializer;
 
 /**
  * Simple storage unit that stores two entities as <i>left</i> and <i>right</i>.

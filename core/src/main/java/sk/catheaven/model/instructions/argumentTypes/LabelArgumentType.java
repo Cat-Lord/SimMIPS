@@ -1,6 +1,6 @@
 package sk.catheaven.model.instructions.argumentTypes;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
 import sk.catheaven.model.instructions.ArgumentType;
 
 import java.util.regex.Pattern;

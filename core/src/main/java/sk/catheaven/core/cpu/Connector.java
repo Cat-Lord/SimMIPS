@@ -2,7 +2,6 @@ package sk.catheaven.core.cpu;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import sk.catheaven.core.Coordinates2D;
-import sk.catheaven.core.cpu.Connector;
 import sk.catheaven.model.cpu.ConnectorImpl;
 
 import java.util.List;

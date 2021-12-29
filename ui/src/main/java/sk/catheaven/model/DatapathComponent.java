@@ -7,12 +7,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import sk.catheaven.core.cpu.Component;
 
 @org.springframework.stereotype.Component
 public class DatapathComponent {
-    private sk.catheaven.core.Component component;
+    private Component component;
     private Shape shape;
-    private Style style;
+    private StyleImpl style;
     private String label;
 
     /**
@@ -69,11 +70,11 @@ public class DatapathComponent {
         this.shape = shape;
     }
 
-    public Style getStyle() {
+    public StyleImpl getStyle() {
         return style;
     }
 
-    public void setStyle(Style style) {
+    public void setStyle(StyleImpl style) {
         this.style = style;
     }
 }

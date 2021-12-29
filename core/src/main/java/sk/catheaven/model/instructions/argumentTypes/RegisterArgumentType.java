@@ -1,6 +1,7 @@
 package sk.catheaven.model.instructions.argumentTypes;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.service.Assembler;
 
@@ -18,7 +19,7 @@ public class RegisterArgumentType extends ArgumentType {
     private final Data registerIndex;
     
     public RegisterArgumentType(){
-        registerIndex = new Data(5); // todo - again, why this hard-coded value ?
+        registerIndex = new DataImpl(5); // todo - again, why this hard-coded value ?
     }
     
     @Override

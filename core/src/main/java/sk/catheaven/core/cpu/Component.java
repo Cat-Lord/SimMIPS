@@ -2,7 +2,6 @@ package sk.catheaven.core.cpu;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.springframework.context.annotation.Scope;
 import sk.catheaven.core.Data;
 import sk.catheaven.model.cpu.ComponentImpl;
 

@@ -2,7 +2,8 @@ package sk.catheaven.model.cpu.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.Map;
@@ -145,6 +146,6 @@ public class RegBank extends ComponentImpl {
     
     private void initRegisters() {
         for (int i = 0; i < regCount; i++)
-            registers[i] =  new Data(dataBitSize);
+            registers[i] =  new DataImpl(dataBitSize);
     }
 }

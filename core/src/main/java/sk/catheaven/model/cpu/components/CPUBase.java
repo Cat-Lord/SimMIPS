@@ -3,10 +3,10 @@ package sk.catheaven.model.cpu.components;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.core.Component;
-import sk.catheaven.model.Data;
-import sk.catheaven.model.cpu.Connector;
-import sk.catheaven.model.instructions.AssembledInstruction;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.cpu.Component;
+import sk.catheaven.core.cpu.Connector;
+import sk.catheaven.core.instructions.AssembledInstruction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ public class CPUBase {
     private InstructionMemory instructionMemory;
     private RegBank regBank;
 
-    public CPUBase(int bitSize, Map<String, Component> components, Map<String, List<Connector>> connectors) {
+    public CPUBase(int bitSize, Map<String, Component> componentsMap, Map<String, List<Connector>> connectors) {
         CPUBase.BIT_SIZE = bitSize;
-        this.components = components;
+        this.components = componentsMap;
         if (areValidConnectors(connectors))
             this.connectors = connectors;
 

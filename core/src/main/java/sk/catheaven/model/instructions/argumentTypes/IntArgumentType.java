@@ -1,6 +1,7 @@
 package sk.catheaven.model.instructions.argumentTypes;
 
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.instructions.ArgumentType;
 
 /**
@@ -11,7 +12,7 @@ public class IntArgumentType extends ArgumentType {
     private final Data integer;
     
     public IntArgumentType() {
-        integer = new Data(16);				// maximal amount of bits per int number // todo - why ?
+        integer = new DataImpl(16);				// maximal amount of bits per int number // todo - why ?
     }
     
     @Override

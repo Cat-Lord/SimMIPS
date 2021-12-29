@@ -2,9 +2,9 @@ package sk.catheaven.model.cpu.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.instructions.AssembledInstruction;
 import sk.catheaven.model.cpu.ComponentImpl;
-import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.service.IOHandler;
 import sk.catheaven.utils.DataFormatter;
 

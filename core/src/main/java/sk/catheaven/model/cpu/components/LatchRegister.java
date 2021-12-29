@@ -2,7 +2,8 @@ package sk.catheaven.model.cpu.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class LatchRegister extends ComponentImpl {
     private final static String BUBBLE_LABEL = "bubble";
     
     private Map<String, List<String>> inputsToOutputs;  // specifies which data input is bound to which data output
-    private Data bubble = new Data(1);            // if branching takes place, we indicate it with counter and then reset all outputs to zero (no matter the input)
+    private Data bubble = new DataImpl(1);            // if branching takes place, we indicate it with counter and then reset all outputs to zero (no matter the input)
     
     // we set this to 1 and lower it every execution. If this
     // value gets to zero, set all outputs to 0.

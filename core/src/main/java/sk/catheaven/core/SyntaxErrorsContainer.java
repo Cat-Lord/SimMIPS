@@ -2,7 +2,6 @@ package sk.catheaven.core;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import sk.catheaven.model.SyntaxErrorsContainerImpl;
-import sk.catheaven.core.Tuple;
 
 import java.util.List;
 

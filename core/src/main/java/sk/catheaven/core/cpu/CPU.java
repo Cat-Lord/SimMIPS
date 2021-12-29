@@ -1,7 +1,6 @@
-package sk.catheaven.core;
+package sk.catheaven.core.cpu;
 
-import sk.catheaven.model.cpu.Connector;
-import sk.catheaven.model.instructions.AssembledInstruction;
+import sk.catheaven.core.instructions.AssembledInstruction;
 
 import java.util.Collection;
 
