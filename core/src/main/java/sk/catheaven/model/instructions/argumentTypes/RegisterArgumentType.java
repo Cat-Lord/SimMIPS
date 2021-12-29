@@ -2,7 +2,7 @@ package sk.catheaven.model.instructions.argumentTypes;
 
 import sk.catheaven.core.Data;
 import sk.catheaven.model.DataImpl;
-import sk.catheaven.model.instructions.ArgumentType;
+import sk.catheaven.model.instructions.ArgumentTypeImpl;
 import sk.catheaven.service.Assembler;
 
 import java.util.Locale;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * (Indexes are stored in Data objects and are properly cut if needed).
  * @author catlord
  */
-public class RegisterArgumentType extends ArgumentType {
+public class RegisterArgumentType extends ArgumentTypeImpl {
     private final Data registerIndex;
     
     public RegisterArgumentType(){

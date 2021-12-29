@@ -1,7 +1,7 @@
 package sk.catheaven.model.instructions.argumentTypes;
 
 import sk.catheaven.core.Data;
-import sk.catheaven.model.instructions.ArgumentType;
+import sk.catheaven.model.instructions.ArgumentTypeImpl;
 
 import java.util.regex.Pattern;
 
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * Valid characters are _0123456789a-zA-Z
  * @author catlord
  */
-public class LabelArgumentType extends ArgumentType {
+public class LabelArgumentType extends ArgumentTypeImpl {
     
     /**
      * Parses argument to detect possible label malformation.

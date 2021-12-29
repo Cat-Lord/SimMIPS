@@ -2,13 +2,13 @@ package sk.catheaven.model.instructions.argumentTypes;
 
 import sk.catheaven.core.Data;
 import sk.catheaven.model.DataImpl;
-import sk.catheaven.model.instructions.ArgumentType;
+import sk.catheaven.model.instructions.ArgumentTypeImpl;
 
 /**
  * Represent a number as argument type. Number is an integer.
  * @author catlord
  */
-public class IntArgumentType extends ArgumentType {
+public class IntArgumentType extends ArgumentTypeImpl {
     private final Data integer;
     
     public IntArgumentType() {

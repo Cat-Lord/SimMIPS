@@ -1,5 +1,6 @@
 package sk.catheaven.model.cpu;
 
+import sk.catheaven.core.Data;
 import sk.catheaven.core.cpu.CPU;
 import sk.catheaven.core.cpu.Component;
 import sk.catheaven.core.cpu.Connector;
@@ -33,6 +34,11 @@ public class CPUImpl implements CPU {
         return cpu.getConnectors().values().stream()
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
+    }
+
+    @Override
+    public Data[] getRegisters() {
+        return cpu.getRegisters();
     }
 
     @Override

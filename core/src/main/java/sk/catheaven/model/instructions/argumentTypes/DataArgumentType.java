@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sk.catheaven.core.Data;
 import sk.catheaven.model.DataImpl;
-import sk.catheaven.model.instructions.ArgumentType;
+import sk.catheaven.model.instructions.ArgumentTypeImpl;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * separate treatment when using.
  * @author catlord
  */
-public class DataArgumentType extends ArgumentType {
+public class DataArgumentType extends ArgumentTypeImpl {
     private static Logger log = LogManager.getLogger();
     private static RegisterArgumentType regArg;		// inside of the braces there is register, so we need to know, how to get value from register. This way we just call the proper class to do it
     private static Data offset;

@@ -1,7 +1,6 @@
 package sk.catheaven.core.instructions;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import sk.catheaven.model.instructions.ArgumentType;
 import sk.catheaven.model.instructions.InstructionImpl;
 
 import java.util.List;

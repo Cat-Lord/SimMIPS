@@ -3,6 +3,7 @@ package sk.catheaven.model.instructions;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sk.catheaven.core.instructions.ArgumentType;
 import sk.catheaven.core.instructions.Instruction;
 import sk.catheaven.core.instructions.InstructionType;
 import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
