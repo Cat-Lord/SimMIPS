@@ -1,9 +1,10 @@
 package sk.catheaven.model.cpu;
 
-import sk.catheaven.core.CPU;
-import sk.catheaven.core.Component;
+import sk.catheaven.core.cpu.CPU;
+import sk.catheaven.core.cpu.Component;
+import sk.catheaven.core.cpu.Connector;
+import sk.catheaven.core.instructions.AssembledInstruction;
 import sk.catheaven.model.cpu.components.CPUBase;
-import sk.catheaven.model.instructions.AssembledInstruction;
 import sk.catheaven.service.Assembler;
 
 import java.util.Collection;
@@ -45,7 +46,7 @@ public class CPUImpl implements CPU {
             component.reset();
 
         for (Connector connector : getConnectors())
-            connector.getContentDataList().forEach((data) -> data.setData(0));
+            connector.reset();
     }
 
     @Override

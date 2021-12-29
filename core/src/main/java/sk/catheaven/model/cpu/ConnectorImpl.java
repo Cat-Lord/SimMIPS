@@ -1,8 +1,10 @@
 package sk.catheaven.model.cpu;
 
-import sk.catheaven.model.Data;
-import sk.catheaven.model.Tuple;
-import sk.catheaven.utils.Coordinates2D;
+import sk.catheaven.core.Coordinates2D;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.cpu.Connector;
+import sk.catheaven.core.cpu.WireType;
+import sk.catheaven.core.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +25,7 @@ import java.util.List;
  * So number `10101101010100` will be split into `101011-0101-0100` in this case.
  *
  */
-public class Connector {
-    
-    public enum WireType {
-        THIN,
-        NORMAL,
-        THICK;
-        
-        // Returns type specified as string or a default of NORMAL
-        public static WireType of(String value) {
-            for (WireType type : values()) {
-                if (type.name().equalsIgnoreCase(value))
-                    return type;
-            }
-            return WireType.NORMAL;
-        }
-    }
+public class ConnectorImpl implements Connector {
     
     private String from;
     private String to;
@@ -91,11 +78,9 @@ public class Connector {
         return content;
     }
 
-    public List<Data> getContentDataList() {
-        List<Data> contentData = new ArrayList<>();
+    public void reset() {
         for (Tuple<?, Data> contentTuple : getContent())
-            contentData.add(contentTuple.getRight());
-        return contentData;
+            contentTuple.getRight().setData(0);
     }
     
     public void setContent(List<Tuple<String, Data>> content) {

@@ -1,6 +1,7 @@
 package sk.catheaven.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import sk.catheaven.core.Style;
 
 import java.util.Locale;
 
@@ -8,7 +9,7 @@ import java.util.Locale;
  * Styling of a component - position, dimensions and colour.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Style {
+public class StyleImpl implements Style {
     private final static String DEFAULT_COLOUR = "#98999a";
     
     private int x;
@@ -18,6 +19,7 @@ public class Style {
     private boolean drawDistinct = false;
     private String colour = DEFAULT_COLOUR;
     
+    @Override
     public int getX() {
         return x;
     }
@@ -26,6 +28,7 @@ public class Style {
         this.x = x;
     }
     
+    @Override
     public int getY() {
         return y;
     }
@@ -34,6 +37,7 @@ public class Style {
         this.y = y;
     }
     
+    @Override
     public int getWidth() {
         return width;
     }
@@ -42,6 +46,7 @@ public class Style {
         this.width = width;
     }
     
+    @Override
     public int getHeight() {
         return height;
     }
@@ -50,6 +55,7 @@ public class Style {
         this.height = height;
     }
     
+    @Override
     public String getColour() {
         return colour;
     }
@@ -62,6 +68,7 @@ public class Style {
      * Determines if an applied style with this feature enabled should be drawn distinctly from others.
      * @return True if the applied style should visually differ from other style.
      */
+    @Override
     public boolean isDrawDistinct() {
         return drawDistinct;
     }

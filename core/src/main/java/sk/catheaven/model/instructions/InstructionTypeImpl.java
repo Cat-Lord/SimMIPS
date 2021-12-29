@@ -1,5 +1,8 @@
 package sk.catheaven.model.instructions;
 
+import sk.catheaven.core.instructions.Field;
+import sk.catheaven.core.instructions.InstructionType;
+
 import java.util.List;
 
 /**
@@ -8,10 +11,11 @@ import java.util.List;
  * which instruction type and what sizes are the fields of.
  * @author catlord
  */
-public class InstructionType {
+public class InstructionTypeImpl implements InstructionType {
     private String label;			// I, R, ...
     private List<Field> fields;
     
+    @Override
     public String getLabel() {
         return label;
     }
@@ -20,6 +24,7 @@ public class InstructionType {
         this.label = label;
     }
     
+    @Override
     public List<Field> getFields() {
         return fields;
     }

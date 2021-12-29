@@ -1,10 +1,17 @@
-package sk.catheaven.core;
+package sk.catheaven.core.cpu;
 
-import sk.catheaven.model.Data;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.context.annotation.Scope;
+import sk.catheaven.core.Data;
+import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.Map;
 
-@org.springframework.stereotype.Component
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = ComponentImpl.class)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = ComponentImpl.class)
+})
 public interface Component {
     String getLabel();
     Map<String, Data> getInputs();

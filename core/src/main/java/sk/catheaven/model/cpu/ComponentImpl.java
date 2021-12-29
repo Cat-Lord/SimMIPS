@@ -2,9 +2,9 @@ package sk.catheaven.model.cpu;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import sk.catheaven.core.Component;
-import sk.catheaven.model.Data;
-import sk.catheaven.model.Style;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.cpu.Component;
+import sk.catheaven.model.StyleImpl;
 import sk.catheaven.model.cpu.components.ALU;
 import sk.catheaven.model.cpu.components.AND;
 import sk.catheaven.model.cpu.components.Adder;
@@ -46,7 +46,7 @@ public abstract class ComponentImpl implements Component {
 	public static String IGNORED_LABEL = "";
 	
 	protected String label = "";
-	private Style style;
+	private StyleImpl style;
 	private String description = "";
 	
 	protected Map<String, Data> inputs = new HashMap<>();
@@ -130,11 +130,11 @@ public abstract class ComponentImpl implements Component {
 		this.label = label;
 	}
 	
-	public Style getStyle() {
+	public StyleImpl getStyle() {
 		return style;
 	}
 	
-	public void setStyle(Style style) {
+	public void setStyle(StyleImpl style) {
 		this.style = style;
 	}
 	

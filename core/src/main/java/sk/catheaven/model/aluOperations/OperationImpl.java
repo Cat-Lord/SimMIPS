@@ -2,7 +2,9 @@ package sk.catheaven.model.aluOperations;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import sk.catheaven.model.Data;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.cpu.Operation;
+import sk.catheaven.model.DataImpl;
 import sk.catheaven.model.aluOperations.operations.ADD;
 import sk.catheaven.model.aluOperations.operations.AND;
 import sk.catheaven.model.aluOperations.operations.BNEQ;
@@ -40,17 +42,19 @@ import sk.catheaven.model.aluOperations.operations.XOR;
         @JsonSubTypes.Type(value = SUB.class),
         @JsonSubTypes.Type(value = XOR.class)
 })
-public class Operation {
-    public Operation() { }
-    public Operation(Integer code) { setCode(code); }
+public class OperationImpl implements Operation {
+    public OperationImpl() { }
+    public OperationImpl(Integer code) { setCode(code); }
     
+    @Override
     public Data perform(Data inputA, Data inputB) {
-        return new Data();
+        return new DataImpl();
     }
     
     private int code;
     private String label;
     
+    @Override
     public int getCode() {
         return code;
     }
@@ -59,6 +63,7 @@ public class Operation {
         this.code = code;
     }
     
+    @Override
     public String getLabel() {
         return label;
     }

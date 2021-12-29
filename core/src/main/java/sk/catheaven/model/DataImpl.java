@@ -2,6 +2,8 @@ package sk.catheaven.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.Tuple;
 import sk.catheaven.model.cpu.components.CPUBase;
 
 /**
@@ -11,7 +13,7 @@ import sk.catheaven.model.cpu.components.CPUBase;
  * Mask is created on data initialization.
  * @author catlord
  */
-public class Data {
+public class DataImpl implements Data {
     private int mask = 0;
     private int data = 0;
     private int bitSize;
@@ -19,9 +21,10 @@ public class Data {
 	
     private static Logger log = LogManager.getLogger();
  
-    public Data() { this(CPUBase.BIT_SIZE); }
-	public Data(int bitSize) { setBitSize(bitSize); }
+    public DataImpl() { this(CPUBase.BIT_SIZE); }
+	public DataImpl(int bitSize) { setBitSize(bitSize); }
  
+	@Override
 	public void setBitSize(int bitSize) {
 		if (bitSize > CPUBase.BIT_SIZE)
 			this.bitSize = CPUBase.BIT_SIZE;            // assign highest possible value
@@ -34,20 +37,21 @@ public class Data {
 	}
 	
 	/**
-	 * According to bit-size of this objects data creates a mask.
+	 * According to bit-size of this object data creates a mask.
 	 */
-	public void createMask() {
+	private void createMask() {
 		this.mask = (-1 >>> (CPUBase.BIT_SIZE - bitSize));
 	}
 	
+	@Override
 	public Tuple<Integer, Integer> getRange() {
 		return range;
 	}
 	
 	// integer values get loaded by jackson as strings
+	@Override
 	public void setRange(Tuple<?, ?> range) {
-		this.range = new Tuple<>(Integer.parseInt((String) range.getLeft()),
-								Integer.parseInt((String) range.getRight()));
+		this.range = (Tuple<Integer, Integer>) range;
 	}
 	    
     /**
@@ -69,10 +73,11 @@ public class Data {
 	 * 		expected:		 0010 1010 1010
 	 * actual result:	     1010 1010 1010x		(shift >>> 1)
 	 *
-	 * THEREFORE we need to carefully erase the data with the mask.
+	 * THEREFORE, we need to carefully erase the data with the mask.
      * @param data input data to set
      */
-    public void setData(int data){
+    @Override
+	public void setData(int data){
         this.data = data;
 	
 		if (range != null) {
@@ -81,12 +86,14 @@ public class Data {
 			this.data = this.data >>> range.getRight();
 		}
     }
-    public void setData(Data data) { setData(data.getData());}
+    @Override
+	public void setData(Data data) { setData(data.getData());}
     /**
      * Returns data appropriately adjusted by the mask.
      * @return Integer representation of data.
      */
-    public int getData(){
+    @Override
+	public int getData(){
 		return data & mask;
     }
     
@@ -102,7 +109,8 @@ public class Data {
      * Returns mask. Used for debugging purposes.
      * @return mask
      */
-    public int getMask(){
+    @Override
+	public int getMask(){
         return mask;
     }
 	
@@ -110,12 +118,13 @@ public class Data {
      * Returns bitSize. Used for debugging purposes.
      * @return mask
      */
+	@Override
 	public int getBitSize(){
 		return bitSize;
 	}
 	
 	public Data newInstance() {
-		Data copy = new Data(getBitSize());
+		Data copy = new DataImpl(getBitSize());
 		if (this.range != null)
 			copy.setRange(this.range);
 		copy.setData(this.getDataUnmasked());

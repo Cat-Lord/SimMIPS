@@ -3,6 +3,8 @@ package sk.catheaven.model.instructions;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sk.catheaven.core.instructions.Instruction;
+import sk.catheaven.core.instructions.InstructionType;
 import sk.catheaven.model.instructions.argumentTypes.DataArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.IntArgumentType;
 import sk.catheaven.model.instructions.argumentTypes.LabelArgumentType;
@@ -18,7 +20,7 @@ import java.util.Map;
  * @author catlord
  */
 @JsonIgnoreProperties(value = { "type" })
-public class Instruction {
+public class InstructionImpl implements Instruction {
     private final static Logger log = LogManager.getLogger();
     
     private InstructionType type;				// needs to be stored because we have to know how many bits should each field have
@@ -27,11 +29,12 @@ public class Instruction {
     private Map<String, String> fields;	        // mapping each instruction field to a value (constant, argument or offset(base))
     private String description;
     
-    public Instruction() {
+    public InstructionImpl() {
         arguments = new ArrayList<>();
         fields = new HashMap<>();
     }
     
+    @Override
     public InstructionType getType() {
         return type;
     }
@@ -40,6 +43,7 @@ public class Instruction {
         this.type = type;
     }
     
+    @Override
     public String getMnemo() {
         return mnemo;
     }
@@ -48,6 +52,7 @@ public class Instruction {
         this.mnemo = mnemo;
     }
     
+    @Override
     public List<ArgumentType> getArguments() {
         return arguments;
     }
@@ -63,6 +68,7 @@ public class Instruction {
             }
     }
     
+    @Override
     public Map<String, String> getFields() {
         return fields;
     }
@@ -71,6 +77,7 @@ public class Instruction {
         this.fields = fields;
     }
     
+    @Override
     public String getDescription() {
         return description;
     }

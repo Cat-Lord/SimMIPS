@@ -1,6 +1,7 @@
 package sk.catheaven.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import sk.catheaven.core.Tuple;
 import sk.catheaven.utils.TupleDeserializer;
 
 /**
@@ -10,12 +11,11 @@ import sk.catheaven.utils.TupleDeserializer;
  * @param <A>
  * @param <B>
  */
-@JsonDeserialize(using = TupleDeserializer.class)
-public class Tuple<A,B> {
+public class TupleImpl<A,B> implements Tuple<A, B> {
 	private A left;
 	private B right;
 	
-	public Tuple(A left, B right){
+	public TupleImpl(A left, B right){
 		this.left = left;
 		this.right = right;
 	}
@@ -31,6 +31,7 @@ public class Tuple<A,B> {
 	/**
 	 * @return the left
 	 */
+	@Override
 	public A getLeft() {
 		return left;
 	}
@@ -38,6 +39,7 @@ public class Tuple<A,B> {
 	/**
 	 * @return the right
 	 */
+	@Override
 	public B getRight() {
 		return right;
 	}
