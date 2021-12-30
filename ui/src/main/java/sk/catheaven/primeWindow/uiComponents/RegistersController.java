@@ -9,25 +9,28 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import sk.catheaven.core.Component;
-import sk.catheaven.model.Data;
-import sk.catheaven.model.Tuple;
-import sk.catheaven.model.cpu.components.RegBank;
+import sk.catheaven.core.Data;
+import sk.catheaven.core.cpu.CPU;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 @Controller
 public class RegistersController implements Initializable {
+    private static Logger log = LogManager.getLogger();
 
     @FXML private TableView<Data> registersTable;
     @FXML private TableColumn<Data, Void> regIndexColumn;
     @FXML private TableColumn<Data, Integer> regValueColumn;
 
-    @Autowired
-    private Component registerBank;
+    private Data[] registers;
+
+    public RegistersController(CPU cpu) {
+        this.registers = cpu.getRegisters();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -51,7 +54,7 @@ public class RegistersController implements Initializable {
     }
 
     public void addItems() {
-        registersTable.getItems().addAll(((RegBank) registerBank).getRegisters());
+        registersTable.getItems().addAll(registers);
     }
 
     public BooleanProperty visibleProperty() {
