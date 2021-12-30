@@ -14,15 +14,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import sk.catheaven.events.ApplicationEvent;
 
 import java.io.IOException;
 
+// TODO - solve hanging threads problem:
+//          after closing the application window, some threads are still alive and prevent
+//          proper application shutdown. May present problems when running outside of IDE.
 public class FxApplication extends Application {
     private static final Logger log = LogManager.getLogger();
 
@@ -50,17 +53,18 @@ public class FxApplication extends Application {
             beans.append("     ").append(beanClass).append(": ").append(beanName).append("\n");
         }
         log.debug(beans);
-        this.context.publishEvent(new StageReadyEvent(stage));
+        context.publishEvent(new StageReadyEvent(stage));
     }
 
     @Override
     public void stop() {
-        this.context.close();
+        context.publishEvent(new ApplicationEvent.SHUTDOWN());
+        context.close();
         Platform.exit();
     }
 
     @Component
-    static class StageInitializer implements ApplicationListener<StageReadyEvent> {
+    static class StageInitializer {
 
         private final String applicationTitle;
         private final ApplicationContext applicationContext;
@@ -72,7 +76,7 @@ public class FxApplication extends Application {
             this.applicationContext = applicationContext;
         }
 
-        @Override
+        @EventListener
         public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
             try {
                 Stage stage = stageReadyEvent.getStage();
@@ -99,12 +103,10 @@ public class FxApplication extends Application {
         }
     }
 
-    static class StageReadyEvent extends ApplicationEvent {
-
+    static class StageReadyEvent {
         private final Stage stage;
 
         StageReadyEvent(Stage stage) {
-            super(stage);
             this.stage = stage;
         }
 
