@@ -5,25 +5,31 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import sk.catheaven.core.Style;
 import sk.catheaven.core.cpu.Component;
 
-@org.springframework.stereotype.Component
 public class DatapathComponent {
-    private Component component;
     private Shape shape;
-    private StyleImpl style;
+    private Style style;
     private String label;
+
+    public DatapathComponent(Component component) {
+        this.style = component.getStyle();
+        this.label = component.getLabel();
+        this.shape = getShape();
+    }
 
     /**
      * Allows subclasses to define their own shape.
      * @return Shape of the component
      */
     protected Shape getShape() {
-        return null;    // todo
-//        return style.getIsDrawDistinct() ? new Ellipse(style.getWidth(), style.getHeight())
-//                                        : new Rectangle(style.getWidth(), style.getHeight());
+        return style.isDrawDistinct() ? new Ellipse(style.getWidth(), style.getHeight())
+                                      : new Rectangle(style.getWidth(), style.getHeight());
     }
 
     /**
@@ -70,7 +76,7 @@ public class DatapathComponent {
         this.shape = shape;
     }
 
-    public StyleImpl getStyle() {
+    public Style getStyle() {
         return style;
     }
 
