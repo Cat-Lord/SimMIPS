@@ -3,6 +3,7 @@ package sk.catheaven.core.cpu;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sk.catheaven.core.Data;
+import sk.catheaven.core.Style;
 import sk.catheaven.model.cpu.ComponentImpl;
 
 import java.util.Map;
@@ -21,6 +22,7 @@ public interface Component {
     boolean setOutput(String outputLabel, Data data);
     Data getInput(String inputLabel);
     Data getOutput(String outputLabel);
+    Style getStyle();
     void execute();
     void reset();
 
