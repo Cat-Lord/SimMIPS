@@ -11,19 +11,18 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.reactfx.Subscription;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import sk.catheaven.core.instructions.Instruction;
 import sk.catheaven.events.ApplicationEvent;
-import sk.catheaven.model.instructions.ArgumentType;
-import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.core.instructions.ArgumentType;
 import sk.catheaven.service.Assembler;
 
 import java.util.Arrays;
@@ -40,10 +39,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class CodeEditor {
+    private final static Logger log = LogManager.getLogger();
+
     private static final String NUMBER_PATTERN_STRING = "\\d+";
     private static final String COMMENT_PATTERN_STRING = Assembler.COMMENT_CHAR + ".*\\R?";
-    private static final String REGISTER_PATTERN_STRING = ArgumentType.getRegisterRegex();
-    private static final String LABEL_PATTERN_STRING = ArgumentType.getLabelRegex();
+    private static final String REGISTER_PATTERN_STRING = ArgumentType.getRegexFor("register");
+    private static final String LABEL_PATTERN_STRING =    ArgumentType.getRegexFor("label");
     private static Pattern HIGHLIGHTED_WORDS_PATTERN;
 
     private final CodeArea codeArea;
@@ -51,8 +52,6 @@ public class CodeEditor {
     private final Subscription cleanupWhenDone;
 
     public CodeEditor(Instruction[] instructionSet) {
-        EventBus.getDefault().register(this);
-
         String mnemoKeywords = Arrays.stream(instructionSet)
                                      .map(Instruction::getMnemo)
                                      .collect(Collectors.joining("|"));
@@ -158,10 +157,11 @@ public class CodeEditor {
         return codeArea;
     }
 
-    @Subscribe
-    public void stop(ApplicationEvent event) {
+    @EventListener
+    public void stop(ApplicationEvent.SHUTDOWN event) {
         cleanupWhenDone.unsubscribe();
-        executor.shutdown();
+        executor.shutdownNow();
+        codeArea.dispose();
     }
 
     public CodeArea getCodeArea() {

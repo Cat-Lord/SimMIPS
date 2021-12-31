@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.primeWindow.PrimeWindowController">
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.ui.controllers.PrimeWindowController">
    <bottom>
       <HBox prefHeight="15.0" prefWidth="1920.0" BorderPane.alignment="CENTER" />
    </bottom>
@@ -37,6 +40,11 @@
    <right>
       <AnchorPane style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER_LEFT">
          <children>
+            <Button fx:id="assembleButton" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#assembleCode" prefHeight="147.0" text="ASSEMBLE" textAlignment="CENTER">
+               <font>
+                  <Font name="Navilu" size="30.0" />
+               </font>
+            </Button>
             <fx:include fx:id="instructionsTable" source="InstructionsTable.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <fx:include fx:id="registersTable" source="RegistersTable.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>

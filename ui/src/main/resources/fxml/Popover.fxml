@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.ui.controllers.PopOverFactory">
+   <children>
+      <TableView fx:id="contentTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+          <TableColumn fx:id="firstColumn" editable="false" maxWidth="-1.0" minWidth="90.0" prefWidth="-1.0" sortable="false"  style="-fx-alignment: right;" />
+          <TableColumn fx:id="firstColumnValue" editable="false" maxWidth="-1.0" minWidth="120.0" prefWidth="-1.0" sortable="false"  style="-fx-alignment: center;" />
+          <TableColumn fx:id="secondColumn" editable="false" maxWidth="-1.0" minWidth="90.0" prefWidth="-1.0" sortable="false"  style="-fx-alignment: right;" />
+          <TableColumn fx:id="secondColumnValue" editable="false" maxWidth="-1.0" minWidth="120.0" prefWidth="-1.0" sortable="false"  style="-fx-alignment: center;" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

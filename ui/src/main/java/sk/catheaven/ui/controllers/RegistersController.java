@@ -1,4 +1,4 @@
-package sk.catheaven.primeWindow.uiComponents;
+package sk.catheaven.ui.controllers;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 @Controller
 public class RegistersController implements Initializable {
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     @FXML private TableView<Data> registersTable;
     @FXML private TableColumn<Data, Void> regIndexColumn;

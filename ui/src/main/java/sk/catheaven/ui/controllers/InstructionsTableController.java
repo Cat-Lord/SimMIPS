@@ -1,4 +1,4 @@
-package sk.catheaven.primeWindow.uiComponents;
+package sk.catheaven.ui.controllers;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
@@ -15,29 +15,39 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
-import sk.catheaven.model.instructions.Instruction;
+import sk.catheaven.core.cpu.CPU;
+import sk.catheaven.core.instructions.Instruction;
+import sk.catheaven.events.SimulationEvent;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimerTask;
 
 @Controller
 public class InstructionsTableController implements Initializable {
     private static final Logger log = LogManager.getLogger();
+
+    @Autowired
+    private Instruction[] instructionSet;
+
+    @Autowired
+    private ConfigurableApplicationContext context;
+
+    @Autowired
+    private CPU cpu;
 
     @FXML private VBox instructionVbox;
     @FXML private TableView<Instruction> instructionsTable;
     @FXML private TableColumn<Instruction, String> mnemoColumn;
     @FXML private TableColumn<Instruction, String> formatColumn;
 
-    @FXML private Button assembleButton;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         instructionsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         instructionsTable.setPlaceholder(new Label("\tInstruction set is \n\tnot properly loaded !"));
-
         mnemoColumn.setCellValueFactory(new PropertyValueFactory<>("mnemo"));
         formatColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
@@ -47,21 +57,26 @@ public class InstructionsTableController implements Initializable {
         instructionsTable.setRowFactory(callback -> {
             TableRow<Instruction> row = new TableRow<>();
             row.setOnMouseClicked( (event) -> {
+                // TODO - popup window on selected instruction (show basic info)
+                // doesnt work for now, doesnt register clicks for some reason
                 if (row.isEmpty() == false  &&  isDoubleClick(event))
-                    log.info("Selected instruction: {}", row.getItem().getMnemo());		// TODO - popup window
+                    log.info("Selected instruction: {}", row.getItem().getMnemo());
             });
             return row;
         });
 
         instructionsTable.getSortOrder().add(mnemoColumn);
         instructionsTable.sort();
+        addItems();
     }
 
-    // todo - add items into the table !
-    public void addItems(Map<String, Instruction> instructionMap) {
-        for (String mnemo : instructionMap.keySet())
-            instructionsTable.getItems().add(instructionMap.get(mnemo));
+    public VBox getInstructionVbox() {
+        return instructionVbox;
+    }
 
+    public void addItems() {
+        for (Instruction instruction : instructionSet)
+            instructionsTable.getItems().add(instruction);
     }
 
     private boolean isDoubleClick(MouseEvent event) {

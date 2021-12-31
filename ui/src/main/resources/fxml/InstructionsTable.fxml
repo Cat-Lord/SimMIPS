@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox fx:id="instructionVbox"
-      alignment="TOP_CENTER"
-      xmlns="http://javafx.com/javafx/16"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="sk.catheaven.primeWindow.uiComponents.InstructionsTableController">
+<VBox fx:id="instructionVbox" alignment="TOP_CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.catheaven.ui.controllers.InstructionsTableController">
    <opaqueInsets>
       <Insets />
    </opaqueInsets>
@@ -22,13 +16,5 @@
             <TableColumn fx:id="formatColumn" prefWidth="159.0" text="Format" />
          </columns>
       </TableView>
-      <Button fx:id="assembleButton" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefHeight="147.0" text="ASSEMBLE" textAlignment="CENTER">
-         <font>
-            <Font name="Navilu" size="30.0" />
-         </font>
-         <VBox.margin>
-            <Insets bottom="5.0" top="15.0" />
-         </VBox.margin>
-      </Button>
    </children>
 </VBox>
