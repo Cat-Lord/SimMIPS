@@ -1,6 +1,7 @@
 package sk.catheaven.core.cpu;
 
 import sk.catheaven.core.Data;
+import sk.catheaven.core.SyntaxErrorsContainer;
 import sk.catheaven.core.instructions.AssembledInstruction;
 
 import java.util.Collection;
@@ -13,7 +14,6 @@ public interface CPU {
 
     void execute();                 // single- or multi-cycle
     void reset();                   // simulation goes back to the original state
-    void assembleCode(String code);
-    boolean hasErrors();
+    SyntaxErrorsContainer assembleCode(String code);
     AssembledInstruction getLastInstruction();
 }

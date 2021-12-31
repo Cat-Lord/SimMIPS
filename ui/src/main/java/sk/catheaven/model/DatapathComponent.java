@@ -1,7 +1,7 @@
 package sk.catheaven.model;
 
 
-import javafx.scene.Group;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
@@ -13,14 +13,15 @@ import sk.catheaven.core.Style;
 import sk.catheaven.core.cpu.Component;
 
 public class DatapathComponent {
-    private Shape shape;
+    private final Component component;
+    private Node node;
     private Style style;
     private String label;
 
     public DatapathComponent(Component component) {
+        this.component = component;
         this.style = component.getStyle();
         this.label = component.getLabel();
-        this.shape = getShape();
     }
 
     /**
@@ -48,20 +49,30 @@ public class DatapathComponent {
      * @return Node with shape and text on top of it
      */
     public Node getNode() {
-        final StackPane layout = new StackPane();
-        layout.setLayoutX(style.getX());
-        layout.setLayoutY(style.getY());
+        if (this.node == null) {
+            final StackPane layout = new StackPane();
+            layout.setMaxWidth(style.getWidth());
+            layout.setAlignment(Pos.CENTER_LEFT);
 
-        final Shape shape = getShape();
-        shape.setStroke(Paint.valueOf("black"));
-        shape.setFill(Paint.valueOf(getStyle().getColour()));
-        layout.getChildren().add(shape);
+            layout.setLayoutX(style.getX());
+            layout.setLayoutY(style.getY());
 
-        final Text text = getTextNode();
-        layout.getChildren().add(text);
-        text.toFront();		// call *after* adding to the layout
+            final Shape shape = getShape();
+            shape.setStroke(Paint.valueOf("black"));
+            shape.setFill(Paint.valueOf(getStyle().getColour()));
+            layout.getChildren().add(shape);
 
-        return new Group(layout);
+            final Text text = getTextNode();
+            text.setText(" ".concat(this.label));   // visual space in front
+
+            // only add the label if it fits 'into' the shape
+            if (text.getLayoutBounds().getWidth() < shape.getLayoutBounds().getWidth()) {
+                layout.getChildren().add(text);
+                text.toFront();        // call *after* adding to the layout
+            }
+            this.node = layout;
+        }
+        return node;
     }
 
     public String getLabel() {
@@ -72,10 +83,6 @@ public class DatapathComponent {
         this.label = label;
     }
 
-    public void setShape(Shape shape) {
-        this.shape = shape;
-    }
-
     public Style getStyle() {
         return style;
     }
@@ -83,4 +90,5 @@ public class DatapathComponent {
     public void setStyle(StyleImpl style) {
         this.style = style;
     }
+
 }

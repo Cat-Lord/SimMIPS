@@ -1,6 +1,7 @@
 package sk.catheaven.model.cpu;
 
 import sk.catheaven.core.Data;
+import sk.catheaven.core.SyntaxErrorsContainer;
 import sk.catheaven.core.cpu.CPU;
 import sk.catheaven.core.cpu.Component;
 import sk.catheaven.core.cpu.Connector;
@@ -56,14 +57,10 @@ public class CPUImpl implements CPU {
     }
 
     @Override
-    public void assembleCode(String code) {
+    public SyntaxErrorsContainer assembleCode(String code) {
         List<AssembledInstruction> program = assembler.assembleCode(code);
         cpu.setAssembledCode(program);
-    }
-
-    @Override
-    public boolean hasErrors() {
-        return assembler.getSyntaxErrors().isEmpty() == false;
+        return assembler.getSyntaxErrors();
     }
 
     @Override

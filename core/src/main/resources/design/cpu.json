@@ -173,8 +173,8 @@
         "ControlUnit": {
           "label": "CU",
           "style": {
-            "x": 560,
-            "y": 260,
+            "x": 540,
+            "y": 200,
             "width": 35,
             "height": 70,
             "colour": "#d1eaff",
@@ -444,8 +444,8 @@
         "SignExtend": {
           "label": "SE",
           "style": {
-            "x": 650,
-            "y": 745,
+            "x": 620,
+            "y": 700,
             "width": 30,
             "height": 50,
             "colour": "#e87b7b",

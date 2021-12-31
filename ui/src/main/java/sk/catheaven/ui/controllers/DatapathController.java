@@ -1,10 +1,14 @@
-package sk.catheaven.primeWindow.uiComponents;
+package sk.catheaven.ui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.controlsfx.control.PopOver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
@@ -22,6 +26,8 @@ import java.util.ResourceBundle;
 
 @Controller
 public class DatapathController implements Initializable {
+    private static final Logger log = LogManager.getLogger();
+
     @FXML AnchorPane datapathPane;
 
     // Phases Labels
@@ -37,15 +43,25 @@ public class DatapathController implements Initializable {
     private final List<Wire> wires;
 
     @Autowired
-    public DatapathController(CPU cpu) {
+    public DatapathController(CPU cpu, PopOverFactory popoverFactory) {
         datapathComponents = new ArrayList<>();
         wires = new ArrayList<>();
 
-        for (Component component : cpu.getComponents())
-            datapathComponents.add(new DatapathComponent(component));
+        for (Component component : cpu.getComponents()) {
+            DatapathComponent datapathComponent = new DatapathComponent(component);
+            PopOver popOver = createPopover(popoverFactory);
 
-        for (Connector connector : cpu.getConnectors())
-            wires.add(new Wire(connector));
+            assignMouseClickAction(datapathComponent.getNode(), popOver);
+            datapathComponents.add(datapathComponent);
+        }
+
+        for (Connector connector : cpu.getConnectors()) {
+            Wire wire = new Wire(connector);
+            PopOver popOver = createPopover(popoverFactory);
+
+            assignMouseClickAction(wire.getClickLine(), popOver);
+            wires.add(wire);
+        }
     }
 
     @Override
@@ -54,16 +70,36 @@ public class DatapathController implements Initializable {
         // have to be initialized here because they are loaded from FXML
         labelsList = List.of(InstructionFetchLabel, InstructionDecodeLabel, ExecuteLabel, MemoryLabel, WritebackLabel);
 
-        // add wires first so they are visually 'below' the components
-        for (Wire wire  : wires) {
+        // add wires first, so they are visually 'below' the components
+        for (Wire wire : wires) {
             datapathPane.getChildren().add(wire.getLine());
             datapathPane.getChildren().add(wire.getClickLine());
+            wire.getClickLine().toFront();
         }
 
         for (DatapathComponent component : datapathComponents) {
             Node shape = component.getNode();
             datapathPane.getChildren().add(shape);
         }
+    }
+
+    private void assignMouseClickAction(Node node, PopOver popOver) {
+        node.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2)
+                if (popOver.isShowing())
+                    popOver.hide();
+                else
+                    popOver.show(node, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        });
+    }
+
+    private PopOver createPopover(PopOverFactory popoverFactory) {
+        Label popoverContent = new Label();
+        popoverContent.setPadding(new Insets(15));
+
+        PopOver popOver = popoverFactory.newPopoverInstance();
+        popOver.setContentNode(popoverContent);
+        return popOver;
     }
 
     @EventListener
